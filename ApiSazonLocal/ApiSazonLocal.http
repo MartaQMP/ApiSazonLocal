@@ -1,0 +1,6 @@
+@ApiSazonLocal_HostAddress = http://localhost:5137
+
+GET {{ApiSazonLocal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
