@@ -1,0 +1,55 @@
+﻿@model List<Pedido>
+@{
+    int idUsuario = ViewBag.IdUsuario;
+}
+<div id="main-content-partial">
+    <div class="pedidos-container">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+                <h5 class="text-muted">No tienes pedidos pendientes</h5>
+                <p class="text-muted small">Cuando un cliente realice un pedido de tus productos aparecerá aquí.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var pedido in Model)
+            {
+                <div class="pedido-card shadow-sm mb-4">
+                    <div class="pedido-header">
+                        <span class="badge-pedido">PEDIDO #@pedido.IdPedido</span>
+                        <span class="text-muted ms-3">@pedido.FechaPedido.ToShortDateString()</span>
+                    </div>
+                    <div class="pedido-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Finca</th>
+                                    <th class="text-center">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var detalle in pedido.DetallesPedido.Where(d => d.Producto.Finca.IdAgricultor == idUsuario))
+                                {
+                                    <tr>
+                                        <td>@detalle.Producto.Nombre</td>
+                                        <td><small class="text-success">@detalle.Producto.Finca.Nombre</small></td>
+                                        <td class="text-center">@detalle.Cantidad @detalle.Producto.UnidadMedida</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-light">
+                        <form asp-action="ActualizarEstadoPedido" method="post" class="ajax-form">
+                            <input type="hidden" name="idPedido" value="@pedido.IdPedido" />
+                            <button type="submit" class="btn-en-camino w-100">Confirmar Salida</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

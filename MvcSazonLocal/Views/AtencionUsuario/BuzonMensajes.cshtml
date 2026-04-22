@@ -1,0 +1,66 @@
+﻿@model List<Mensaje>
+@section style {
+    <link rel="stylesheet" href="~/css/views/atencion-usuario/buzon-mensajes.css" asp-append-version="true" />
+}
+
+<div class="msgmgr-page-container">
+
+    <div class="mb-5 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: var(--primary-hard)">Buzón de Atención</h2>
+            <p class="text-muted mb-0">Gestión de consultas de clientes y agricultores.</p>
+        </div>
+        <span class="badge rounded-pill px-4 py-2" style="background-color: var(--primary-color); font-size: 1rem;">
+            @Model.Count(s => !s.EsLeido) Pendientes
+        </span>
+    </div>
+
+    <div class="msgmgr-wrapper">
+        @if (!Model.Any())
+        {
+            <div class="msgmgr-item text-center d-block p-5">
+                <i class="bi bi-inbox-fill display-4 text-muted opacity-25"></i>
+                <p class="mt-3 mb-0">No hay mensajes pendientes de revisar.</p>
+            </div>
+        }
+
+        @foreach (var msg in Model)
+        {
+            <div class="msgmgr-item @(msg.EsLeido ? "" : "unread")">
+                <div class="msgmgr-icon">
+                    <i class="bi @(msg.EsLeido ? "bi-envelope-open" : "bi-envelope-fill")"></i>
+                </div>
+
+                <div class="msgmgr-content">
+                    <div class="msgmgr-subject">@msg.Asunto</div>
+                    <div class="small text-muted mb-2">
+                        <i class="bi bi-person-fill me-1"></i> <strong>@msg.Nombre</strong>
+                        <span class="mx-2">|</span>
+                        <i class="bi bi-calendar3 me-1"></i> @msg.FechaEnvio.ToShortDateString()
+                    </div>
+                    <div class="msgmgr-preview">
+                        @msg.Contenido
+                    </div>
+                </div>
+
+                <div class="msgmgr-actions">
+                    @if (!msg.EsLeido)
+                    {
+                        <form asp-action="MarcarComoLeido" method="post" class="d-inline">
+                            <input type="hidden" name="idMensaje" value="@msg.IdMensaje" />
+                            <button type="submit" class="btn btn-outline-secondary" title="Leído" style="border-radius: var(--radius-sm)">
+                                <i class="bi bi-check2-all"></i>
+                            </button>
+                        </form>
+                    }
+                    @if (!msg.EsRespondido)
+                    {
+                        <a asp-action="ResponderMensaje" asp-route-idMensaje="@msg.IdMensaje" class="btn btn-primary px-4" style="background-color: var(--primary-color); border:none; border-radius: var(--radius-sm)">
+                            <i class="bi bi-reply-fill me-1"></i> Responder
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

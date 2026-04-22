@@ -1,0 +1,37 @@
+﻿@model List<CarritoItem>
+@section style{
+    <link rel="stylesheet" href="~/css/views/compra/carrito.css" asp-append-version="true" />
+}
+
+<div class="cart-container">
+    <h2 class="cart-title">Tu Cesta de la Compra</h2>
+
+    <div class="cart-layout">
+        <div class="cart-layout" id="contenedor-carrito">
+            @await Html.PartialAsync("_PartialCarrito", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function actualizarCantidad(id, cant) {
+            var url = "/Compra/_ActualizarCantidadCarrito?idProducto=" + id + "&cantidad=" + cant;
+            $("#contenedor-carrito").load(url, function() 
+            {
+                var nuevoTotal = $("#total-productos-input").val();
+                $("#cart-badge").text(nuevoTotal);
+            });
+        }
+
+        function eliminarDelCarrito(id) {
+            console.log("PRODUCTO A eliminarDelCarrito: "+id)
+            var url = "/Compra/_EliminarProductoCarrito?idProducto=" + id;
+            $("#contenedor-carrito").load(url, function()
+            {
+                var nuevoTotal = $("#total-productos-input").val();
+                $("#cart-badge").text(nuevoTotal);
+            });
+        }
+    </script>
+}

@@ -1,0 +1,98 @@
+﻿/* --- CONTENEDOR DE LA PÁGINA --- */
+.form-finca-page {
+    width: 100%;
+    padding: 2% 0;
+}
+
+.btn-volver {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+    .btn-volver:hover {
+        color: var(--primary-color);
+    }
+
+/* --- TARJETA DEL FORMULARIO --- */
+.card-form {
+    background: var(--white);
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 25px;
+    height: 100%; /* Para igualar altura si el mapa es grande */
+}
+
+.info-label {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* --- MAPA --- */
+.custom-div-icon {
+    background: transparent;
+    border: none;
+}
+
+.marker-pin {
+    color: var(--status-error);
+    font-size: 32px;
+    filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.3));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#mapaFinca {
+    width: 100%;
+    min-height: 550px;
+    border-radius: 20px;
+    border: 2px solid var(--border-line);
+    box-shadow: var(--shadow-md);
+    cursor: crosshair;
+}
+
+/* --- ALERTA DE AYUDA --- */
+.alert-warning {
+    background-color: #fff9eb;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    border-radius: 12px;
+}
+
+/* --- BOTONES --- */
+.btn-custom-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 12px 25px;
+    border-radius: var(--radius-md);
+    border: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+    .btn-custom-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3);
+    }
+
+/* --- RESPONSIVE (MÓVIL) --- */
+@media (max-width: 991px) {
+    #mapaFinca {
+        min-height: 350px;
+        margin-top: 20px;
+    }
+
+    .card-form {
+        margin-bottom: 20px;
+    }
+}

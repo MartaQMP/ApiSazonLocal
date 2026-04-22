@@ -1,0 +1,75 @@
+﻿@model List<Finca>
+
+<div id="admin-content-partial">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: var(--primary-hard)">Validación de Fincas</h2>
+        <div class="filter-group">
+            <a asp-action="GestionFincas" asp-route-estado="0" class="ajax-link btn btn-sm btn-outline-secondary">Solo Pendientes</a>
+            <a asp-action="GestionFincas" asp-route-estado="" class="ajax-link btn btn-sm btn-outline-secondary">Ver Todas</a>
+        </div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info border-0 shadow-sm">
+            <i class="bi bi-info-circle me-2"></i> No hay fincas que coincidan con el filtro.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var finca in Model)
+            {
+                <div class="col-12">
+                    <div class="finca-card">
+                        <div class="finca-header">
+                            <div>
+                                <h5 class="mb-0 fw-bold" style="color: var(--text-main)">@finca.Nombre</h5>
+                                <small class="text-muted"><i class="bi bi-person me-1"></i> @finca.Agricultor.Nombre</small>
+                            </div>
+                            @{
+                                string badgeClass = finca.EstaValidada == 1 ? "status-pendiente" :
+                                finca.EstaValidada == 2 ? "status-aceptada" : "status-rechazada";
+                                string statusText = finca.EstaValidada == 1 ? "Pendiente" :
+                                finca.EstaValidada == 2 ? "Aceptada" : "Rechazada";
+                            }
+                            <span class="status-badge @badgeClass">@statusText</span>
+                        </div>
+
+                        <div class="finca-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <p class="mb-1"><strong>Dirección:</strong> @finca.Direccion, @finca.Municipio, @finca.Provincia</p>
+                                    <p class="mb-0 text-muted small">ID Finca: #@finca.IdFinca</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    @if (finca.EstaValidada != 2)
+                                    {
+                                        <form asp-action="ValidarFinca" method="post" class="ajax-form d-inline">
+                                            <input type="hidden" name="idFinca" value="@finca.IdFinca" />
+                                            <input type="hidden" name="nuevoEstado" value="2" />
+                                            <button type="submit" class="btn-validar me-2">
+                                                <i class="bi bi-check-lg"></i> Aceptar
+                                            </button>
+                                        </form>
+                                    }
+
+                                    @if (finca.EstaValidada != 3)
+                                    {
+                                        <form asp-action="ValidarFinca" method="post" class="ajax-form d-inline">
+                                            <input type="hidden" name="idFinca" value="@finca.IdFinca" />
+                                            <input type="hidden" name="nuevoEstado" value="3" />
+                                            <button type="submit" class="btn-rechazar">
+                                                <i class="bi bi-x-lg"></i> Rechazar
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

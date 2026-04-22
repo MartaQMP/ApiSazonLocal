@@ -1,0 +1,115 @@
+﻿/* --- CONTENEDOR PRINCIPAL DEL MAPA --- */
+#map {
+    height: 600px;
+    width: 100%;
+    border-radius: 20px;
+    border: 2px solid #ddd;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+/* --- DISEÑO DE LA LEYENDA --- */
+.info.legend {
+    padding: 10px 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    line-height: 24px;
+    color: var(--text-main);
+}
+
+.legend i {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-right: 10px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+}
+
+/* --- MARCADORES PERSONALIZADOS --- */
+.marker-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: none;
+}
+
+.pin-label {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 0 2px white) drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+    .pin-label:hover {
+        transform: scale(1.2) translateY(-5px);
+    }
+
+/* --- PALETA DE COLORES DE UBICACIONES --- */
+.pin-casa {
+    color: var(--light-cream) !important;
+}
+
+.pin-trabajo {
+    color: #072E1B !important;
+}
+
+.pin-finca {
+    color: var(--status-error) !important;
+}
+
+.pin-otro {
+    color: var(--accent-color) !important;
+}
+
+.pin-pendiente {
+    color: gray !important;
+}
+
+.pin-rechazada {
+    color: var(--status-warning) !important;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    #map {
+        height: 500px;
+        border-width: 3px;
+    }
+
+    .pin-label {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #map {
+        height: 400px; 
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .info.legend {
+        font-size: 12px;
+        padding: 5px 10px;
+        line-height: 18px;
+    }
+
+    .legend i {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+    }
+
+    .pin-label {
+        font-size: 1.5rem;
+    }
+}

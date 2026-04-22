@@ -1,0 +1,36 @@
+﻿@section style {
+    <link rel="stylesheet" href="~/css/views/auth/cambiar-contrasena.css" asp-append-version="true" />
+}
+
+<div class="auth-container">
+    <h2 class="auth-title">Casi listo...</h2>
+    <p class="auth-subtitle">Escribe el código de 6 caracteres que te hemos enviado y elige tu nueva clave.</p>
+
+    @if (ViewBag.MensajeError != null)
+    {
+        <div class="error-msg">
+            @ViewBag.MensajeError
+        </div>
+    }
+
+    <form asp-action="ValidarCodigo" method="post">
+        <div class="form-group-custom">
+            <label>Código de Seguridad</label>
+            <input type="text" name="codigo" class="form-control-custom"
+                   style="text-align: center; font-size: 1.5rem; letter-spacing: 8px; text-transform: uppercase;"
+                   maxlength="6" required />
+        </div>
+
+        <div class="form-group-custom">
+            <label>Nueva Contraseña</label>
+            <input type="password" name="password" class="form-control-custom" required />
+        </div>
+
+        <div class="form-group-custom">
+            <label>Repite la Contraseña</label>
+            <input type="password" name="confirmPassword" class="form-control-custom" required />
+        </div>
+
+        <button type="submit" class="btn-auth-accent">Actualizar Contraseña</button>
+    </form>
+</div>

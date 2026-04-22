@@ -1,0 +1,213 @@
+﻿/* --- CONTENEDOR DE PEDIDO (TARJETA) --- */
+.ordermgr-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+    .ordermgr-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+/* --- PANEL DE MÉTRICAS SUPERIOR --- */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-line);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-soft);
+    }
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-hard);
+    display: block;
+}
+
+/* --- CABECERA COLAPSABLE --- */
+.ordermgr-header {
+    padding: 1.25rem;
+    background-color: var(--bg-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.ordermgr-summary {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.ordermgr-id {
+    font-weight: 800;
+    color: var(--primary-hard);
+    font-size: 1.1rem;
+}
+
+/* --- DETALLE Y TABLA DE PRODUCTOS --- */
+.ordermgr-detail-box {
+    padding: 1.5rem;
+    background-color: var(--white);
+    border-top: 1px solid var(--border-line);
+}
+
+.ordermgr-table {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+    .ordermgr-table th {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-line);
+    }
+
+.ordermgr-item-row {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .ordermgr-item-row td {
+        padding: 0.75rem 0;
+        vertical-align: middle;
+    }
+
+/* --- ESTADOS DE PREPARACIÓN --- */
+.item-ready {
+    color: var(--status-success);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.item-waiting {
+    color: var(--status-warning);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* --- PIE DE TARJETA Y ACCIONES --- */
+.ordermgr-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px dashed var(--border-line);
+}
+
+.btn-shipment {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    transition: var(--transition);
+}
+
+    .btn-shipment:disabled {
+        background-color: var(--border-line);
+        color: var(--text-muted);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .btn-shipment:not(:disabled):hover {
+        background-color: var(--primary-hover);
+        transform: scale(1.02);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .ordermgr-summary {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ordermgr-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .ordermgr-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .ordermgr-table thead {
+        display: none;
+    }
+
+    .ordermgr-item-row {
+        display: block;
+        padding: 1rem 0;
+    }
+
+        .ordermgr-item-row td {
+            display: block;
+            padding: 0.25rem 0;
+            text-align: left;
+        }
+
+    .ordermgr-footer {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .btn-shipment {
+        width: 100%;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.6rem;
+    }
+}

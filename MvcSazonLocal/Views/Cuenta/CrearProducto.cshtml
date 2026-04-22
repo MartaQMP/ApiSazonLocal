@@ -1,0 +1,218 @@
+﻿@{
+    List<Finca> fincas = ViewBag.Fincas as List<Finca>;
+    List<Categoria> categorias = ViewBag.Categorias as List<Categoria>;
+    List<Subcategoria> subcategorias = ViewBag.Subcategorias as List<Subcategoria>;
+    List<UnidadMedida> unidadesMedida = ViewBag.UnidadesMedida as List<UnidadMedida>;
+}
+
+<div id="main-content-partial">
+    <div class="crear-producto-container animate-fade-in">
+        <div class="header-section">
+            <h4 class="fw-bold text-main">Nuevo Producto</h4>
+            <p class="text-muted">Organiza tu cosecha de forma clara para tus clientes.</p>
+        </div>
+
+        <form asp-action="CrearProducto" method="post" enctype="multipart/form-data" class="ajax-form">
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="card-form p-4 shadow-sm mb-4">
+                        <div class="mb-4">
+                            <label class="info-label">Nombre del Producto</label>
+                            <input type="text" name="nombre" class="form-control" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="info-label">Descripción</label>
+                            <textarea name="descripcion" class="form-control" rows="3"></textarea>
+                        </div>
+                        <hr />
+                        <h6 class="text-main fw-bold mb-3">Clasificación y Origen</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="info-label">Finca</label>
+                                <select name="idFinca" class="form-select" required>
+                                    @foreach (var finca in fincas)
+                                    {
+                                        <option value="@finca.IdFinca">@finca.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="info-label">Categoría</label>
+                                <select id="select-categoria" name="idCategoria" class="form-select" required>
+                                    <option value="">Seleccione Categoría...</option>
+                                    @foreach (var cat in categorias)
+                                    {
+                                        <option value="@cat.IdCategoria">@cat.Nombre</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="info-label">Subcategoría</label>
+                                <select id="select-subcategoria" name="idSubcategoria" class="form-select" required disabled>
+                                    <option value="">Esperando categoría...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card-form p-4 shadow-sm height-100">
+                        <div class="mb-4">
+                            <label class="info-label">Imagen</label>
+                            <div class="upload-container">
+                                <input type="file" name="imagen" id="file-input" class="d-none" accept=".jpg,.jpeg,.png">
+                                <label for="file-input" class="upload-box">
+                                    <img id="img-preview" src="" class="d-none img-fluid rounded" style="max-height: 150px; margin-bottom: 10px;">
+                                    <div id="upload-placeholder">
+                                        <i class="bi bi-camera fs-2"></i>
+                                        <span>Subir foto</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="info-label">Precio y Stock</label>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">€</span>
+                                <input type="number" step="0.01" name="precioUnidad" class="form-control" placeholder="0.00" min="0.0" required>
+                            </div>
+
+                            <div class="fee-info">
+                                <p><i class="bi bi-info-circle-fill me-1"></i> Al precio indicado se le aplicará un <strong>+15%</strong> en la tienda para cubrir gastos de gestión y logística.</p>
+                            </div>
+
+                            <input type="number" step="1" name="stock" class="form-control mt-3" placeholder="Stock disponible" min="0" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="info-label">Unidad de Medida</label>
+                            <select name="unidadMedida" class="form-select" required>
+                                    @foreach(UnidadMedida medida in unidadesMedida)
+                                    {
+                                    <option value="@medida.IdUnidadMedida">@medida.Nombre</option>
+                                    }
+                            </select>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="estaActivo" value="true" checked>
+                            <label class="form-check-label small">Producto visible</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-actions mt-5 d-flex justify-content-center gap-3">
+                <a asp-controller="Cuenta" asp-action="MisProductos" class="btn-sazon-primary px-5 ajax-link">
+                    <i class="bi bi-arrow-left me-2"></i> Volver
+                </a>
+                <button type="button" id="btn-pre-save" class="btn-sazon-primary px-5">
+                    <i class="bi bi-plus-circle me-2"></i> Guardar Producto
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-warning text-dark border-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Revisa los datos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4">Recuerda que una vez creado, <strong>no podrás cambiar el nombre ni la categoría</strong>. Solo podrás editar el precio y el stock.</p>
+                    <ul class="list-group list-group-flush mb-0">
+                        <li class="list-group-item d-flex justify-content-between"><span>Producto:</span> <strong id="conf-nombre"></strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Finca:</span> <strong id="conf-finca"></strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Categoría:</span> <strong id="conf-categoria"></strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Subcategoría:</span> <strong id="conf-subcategoria"></strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Tu Precio:</span> <strong id="conf-precio"></strong></li>
+                        <li class="list-group-item d-flex justify-content-between text-success"><span>PVP Final (+15%):</span> <strong id="conf-precio-final"></strong></li>
+                        <li class="list-group-item d-flex justify-content-between"><span>Stock:</span> <strong id="conf-stock"></strong></li>
+                    </ul>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Corregir</button>
+                    <button type="button" id="btn-final-save" class="btn-sazon-primary px-4">Confirmar y Crear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("select-categoria").addEventListener("change", async (e) => {
+            const idCat = e.target.value;
+            const selectSub = document.getElementById("select-subcategoria");
+
+            if (!idCat) {
+                selectSub.innerHTML = '<option value="">Esperando categoría...</option>';
+                selectSub.disabled = true;
+                return;
+            }
+
+            const url = '@Url.Action("GetSubcategorias", "Cuenta")' + '?idCategoria=' + idCat;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            selectSub.innerHTML = '<option value="">Seleccione Subcategoría...</option>';
+            data.forEach(sub => {
+                const option = document.createElement("option");
+                option.value = sub.idSubcategoria;
+                option.textContent = sub.nombre;
+                selectSub.appendChild(option);
+            });
+
+            selectSub.disabled = false;
+        });
+
+
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            const preview = document.getElementById('img-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.classList.remove('d-none');
+                placeholder.classList.add('d-none');
+            }
+
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        document.getElementById('btn-pre-save').addEventListener('click', function() {
+
+            const nombre = document.querySelector('input[name="nombre"]').value;
+            const finca = document.querySelector('select[name="idFinca"] option:checked').text;
+            const categoria = document.querySelector('#select-categoria option:checked').text;
+            const subcategoria = document.querySelector('#select-subcategoria option:checked').text;
+            const precio = parseFloat(document.querySelector('input[name="precioUnidad"]').value);
+            const stock = document.querySelector('input[name="stock"]').value;
+            const unidad = document.querySelector('select[name="unidadMedida"] option:checked').text;
+
+            if(!nombre || !categoria || !subcategoria || isNaN(precio) || !stock) {
+                alert("Por favor, rellena los campos obligatorios antes de continuar.");
+                return;
+            }
+
+            const precioFinal = (precio * 1.15).toFixed(2);
+
+            document.getElementById('conf-nombre').innerText = nombre;
+            document.getElementById('conf-categoria').innerText = categoria;
+            document.getElementById('conf-subcategoria').innerText = subcategoria;
+            document.getElementById('conf-finca').innerText = finca;
+            document.getElementById('conf-precio').innerText = precio.toFixed(2) + " €";
+            document.getElementById('conf-precio-final').innerText = precioFinal + " €";
+            document.getElementById('conf-stock').innerText = stock + " " + unidad;
+
+            var myModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            myModal.show();
+        });
+
+        document.getElementById('btn-final-save').addEventListener('click', function() {
+            document.querySelector('form').submit();
+        });
+    </script>
+</div>

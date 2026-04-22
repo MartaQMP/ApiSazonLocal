@@ -1,0 +1,26 @@
+﻿@section style{
+    <link rel="stylesheet" href="~/css/views/compra/confirmacion.css" asp-append-version="true" />
+}
+
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="status-icon">
+            <i class="bi bi-check2-circle"></i>
+        </div>
+
+        <h1 class="text-primary-color">¡Pedido Confirmado!</h1>
+        <p class="subtitle">Gracias por confiar en <strong>Sazón Local</strong>.</p>
+
+        <hr class="divider">
+
+        <div class="info-box">
+            <p>Hemos enviado la factura detallada a tu correo electrónico.</p>
+            <p class="small text-muted">Si no la recibes en unos minutos, revisa tu carpeta de spam.</p>
+        </div>
+
+        <div class="action-buttons">
+            <a asp-controller="Productos" asp-action="Productos" class="btn-primary-custom">Volver a la tienda</a>
+            <a asp-controller="Cuenta" asp-action="Pedidos" class="btn-outline-custom">Ver mis pedidos</a>
+        </div>
+    </div>
+</div>

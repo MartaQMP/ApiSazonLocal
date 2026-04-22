@@ -1,0 +1,150 @@
+﻿/* --- CONTENEDOR PRINCIPAL --- */
+.ban-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-main);
+    padding: 2rem;
+}
+
+/* --- TARJETA DE BLOQUEO --- */
+.ban-card {
+    max-width: 600px;
+    width: 100%;
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-line);
+    overflow: hidden;
+    text-align: center;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- CUERPO Y ELEMENTOS VISUALES --- */
+.ban-card-body {
+    padding: 3.5rem 2.5rem;
+}
+
+.ban-icon-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.ban-icon {
+    font-size: 5.5rem;
+    color: var(--status-error);
+    filter: drop-shadow(0 4px 10px rgba(220, 53, 69, 0.2));
+}
+
+.ban-title {
+    color: var(--status-error);
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.5px;
+}
+
+.ban-text {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    font-size: 1.05rem;
+}
+
+/* --- ACCIONES Y BOTONES --- */
+.ban-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-sazon-danger {
+    background-color: var(--status-error);
+    color: var(--white);
+    padding: 0.8rem 1.8rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+}
+
+    .btn-sazon-danger:hover {
+        background-color: #bd2130;
+        color: var(--white);
+        transform: translateY(-2px);
+    }
+
+.btn-sazon-outline {
+    border: 1px solid var(--border-line);
+    color: var(--text-muted);
+    padding: 0.8rem 1.8rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+    .btn-sazon-outline:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-main);
+    }
+
+/* --- PIE DE TARJETA --- */
+.ban-card-footer {
+    background-color: #fff5f5; 
+    padding: 1.2rem;
+    color: var(--status-error);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-top: 1px solid #f8d7da;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .ban-card {
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ban-card-body {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .ban-title {
+        font-size: 1.8rem;
+    }
+
+    .ban-actions {
+        flex-direction: column;
+    }
+
+    .btn-sazon-danger,
+    .btn-sazon-outline {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .ban-container {
+        padding: 1rem;
+    }
+
+    .ban-icon {
+        font-size: 4rem;
+    }
+}

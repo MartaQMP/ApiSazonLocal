@@ -1,0 +1,143 @@
+﻿/* --- ESTRUCTURA DE CONTENEDORES --- */
+.usrmgr-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.usrmgr-row {
+    background-color: var(--white);
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    transition: var(--transition);
+}
+
+    .usrmgr-row:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-soft);
+    }
+
+/* --- ELEMENTOS DE IDENTIDAD (AVATAR) --- */
+.usrmgr-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: var(--bg-secondary);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* --- TEXTOS E INDICADORES --- */
+.usrmgr-info h6 {
+    margin: 0;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.usrmgr-role-tag {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-soft);
+    color: var(--primary-hard);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.usrmgr-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.usrmgr-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-active {
+    background-color: var(--status-success);
+    box-shadow: 0 0 5px var(--status-success);
+}
+
+.dot-blocked {
+    background-color: var(--status-error);
+}
+
+/* --- ACCIONES Y BOTONES --- */
+.usrmgr-btn-toggle {
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+.btn-to-block {
+    background-color: var(--bg-secondary);
+    color: var(--status-error);
+    border: 1px solid var(--status-error);
+}
+
+    .btn-to-block:hover {
+        background-color: var(--status-error);
+        color: var(--white);
+    }
+
+.btn-to-activate {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+    .btn-to-activate:hover {
+        background-color: var(--primary-hover);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .usrmgr-row {
+        gap: 1rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .usrmgr-row {
+        grid-template-columns: 50px 1fr;
+    }
+
+    .usrmgr-actions {
+        grid-column: 1 / span 2;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .usrmgr-btn-toggle {
+        width: 100%; 
+    }
+}
+
+@media (max-width: 480px) {
+    .usrmgr-row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .usrmgr-avatar {
+        margin-bottom: 0.5rem;
+    }
+}

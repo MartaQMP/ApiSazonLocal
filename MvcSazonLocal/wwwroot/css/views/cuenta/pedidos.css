@@ -1,0 +1,160 @@
+﻿/* --- LAYOUT PRINCIPAL --- */
+.pedidos-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 2% 0;
+}
+
+.header-section {
+    margin-bottom: 4%;
+}
+
+/* --- BOTON --- */
+.btn-custom {
+    background-color: transparent;
+    color: var(--primary-color);
+    text-decoration: none;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5%;
+}
+
+    .btn-custom:hover {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+
+/* --- ACORDEÓN --- */
+.accordion-custom .accordion-item {
+    background-color: var(--white);
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border-line);
+}
+
+.accordion-custom .accordion-button {
+    background-color: var(--white);
+    padding: 2% 3%;
+    box-shadow: none !important;
+}
+
+    .accordion-custom .accordion-button:not(.collapsed) {
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-line);
+    }
+
+/* --- GRID CABECERA PEDIDO --- */
+.pedido-header-grid {
+    display: grid;
+    grid-template-columns: 15% 30% 25% 30%;
+    width: 95%;
+    align-items: center;
+}
+
+.header-item .label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.header-item .value {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* --- ESTADOS --- */
+.badge-status {
+    padding: 3% 8%;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.status-entregado {
+    background-color: #e8f5e9;
+    color: var(--status-success);
+}
+
+.status-pendiente {
+    background-color: #fff3e0;
+    color: var(--status-warning);
+}
+
+.status-en-camino {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+/* --- TABLA DE DETALLES --- */
+.detalles-pedido-wrapper {
+    padding: 3% 5%;
+}
+
+.table-sazon {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table-sazon th {
+        padding: 1.5% 1%;
+        border-bottom: 2px solid var(--primary-soft);
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .table-sazon td {
+        padding: 1.5% 1%;
+        border-bottom: 1px solid var(--border-line);
+    }
+
+/* --- FILAS DE CIERRE --- */
+.fee-row td {
+    padding: 0.8% 1%;
+    border-bottom: none;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.text-free {
+    color: var(--status-success);
+    font-weight: 700;
+}
+
+.final-total-row td {
+    padding-top: 2%;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    border-top: 2px solid var(--primary-color) !important;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .pedido-header-grid {
+        grid-template-columns: 50% 50%;
+        gap: 10px;
+    }
+
+    .table-sazon thead {
+        display: none;
+    }
+
+    .table-sazon td {
+        display: block;
+        width: 100%;
+        text-align: right !important;
+        padding: 2% 0;
+    }
+
+        .table-sazon td::before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+        }
+}

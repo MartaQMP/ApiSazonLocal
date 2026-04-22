@@ -1,0 +1,99 @@
+﻿@model List<Pedido>
+
+<div id="main-content-partial">
+    <div class="pedidos-container animate-fade-in">
+        <div class="header-section">
+            <h4 class="fw-bold text-main">Mi Historial de Pedidos</h4>
+            <p class="text-muted">Gestiona tus pedidos y revisa los detalles de cada compra.</p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-cart-x"></i> <p>Parece que aún no has pedido nada de la huerta.</p>
+                <a asp-controller="Productos" asp-action="Productos" class="btn-custom">Ir a la tienda</a>
+            </div>
+        }
+        else
+        {
+            <div class="accordion accordion-custom" id="accordionPedidos">
+                @foreach (var pedido in Model)
+                {
+                    <div class="accordion-item mb-3 shadow-sm border-0">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pedido-@pedido.IdPedido">
+                                <div class="pedido-header-grid">
+                                    <div class="header-item">
+                                        <span class="label">ID Pedido</span>
+                                        <span class="value">#@pedido.IdPedido</span>
+                                    </div>
+                                    <div class="header-item">
+                                        <span class="label">Fecha</span>
+                                        <span class="value">@pedido.FechaPedido.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                    <div class="header-item">
+                                        <span class="label">Total Pagado</span>
+                                        <span class="value text-primary-color">@pedido.Total.ToString("C2")</span>
+                                    </div>
+                                    <div class="header-item text-end">
+                                        <span class="badge-status status-@pedido.Estado.ToLower().Replace(" ", "-")">
+                                            @pedido.Estado
+                                        </span>
+                                    </div>
+                                </div>
+                            </button>
+                        </h2>
+
+                        <div id="pedido-@pedido.IdPedido" class="accordion-collapse collapse" data-bs-parent="#accordionPedidos">
+                            <div class="accordion-body p-0">
+                                <div class="detalles-pedido-wrapper">
+                                    <table class="table-sazon">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th class="text-center">Cant.</th>
+                                                <th class="text-end">Precio</th>
+                                                <th class="text-end">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var detalle in pedido.DetallesPedido)
+                                            {
+                                                <tr>
+                                                    <td>@detalle.Producto.Nombre</td>
+                                                    <td class="text-center">@detalle.Cantidad</td>
+                                                    <td class="text-end">@detalle.PrecioUnitario.ToString("C2")</td>
+                                                    <td class="text-end">@((detalle.Cantidad * detalle.PrecioUnitario).ToString("C2"))</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="fee-row">
+                                                <td colspan="3" class="text-end">Suma Productos:</td>
+                                                <td class="text-end">@pedido.Subtotal.ToString("C2")</td>
+                                            </tr>
+                                            <tr class="fee-row">
+                                                <td colspan="3" class="text-end">Gastos de Gestión (Seguro):</td>
+                                                <td class="text-end">@pedido.TasaGestion.ToString("C2")</td>
+                                            </tr>
+                                            <tr class="fee-row">
+                                                <td colspan="3" class="text-end">Envío @(pedido.GastosEnvio == 0 ? "Gratis" : "Estándar"):</td>
+                                                <td class="text-end @(pedido.GastosEnvio == 0 ? "text-free" : "")">
+                                                    @(pedido.GastosEnvio == 0 ? "GRATIS" : pedido.GastosEnvio.ToString("C2"))
+                                                </td>
+                                            </tr>
+                                            <tr class="final-total-row">
+                                                <td colspan="3" class="text-end">TOTAL:</td>
+                                                <td class="text-end">@pedido.Total.ToString("C2")</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

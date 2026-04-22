@@ -1,0 +1,152 @@
+﻿/* --- CUERPO Y FONDO --- */
+body.auth-page {
+    background-color: var(--bg-main);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+/* --- TARJETA CONTENEDORA --- */
+.auth-card {
+    background-color: var(--white);
+    border: var(--border-main);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    width: 92%;
+    max-width: 400px;
+    margin: 3% auto;
+}
+
+.auth-card-wide {
+    max-width: 650px !important;
+}
+
+/* --- ENCABEZADO --- */
+.auth-header {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 6% 4%;
+    text-align: center;
+}
+
+    .auth-header h3 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+/* --- CUERPO DEL FORMULARIO --- */
+.card-body-auth {
+    padding: 6% 8%;
+}
+
+/* --- ETIQUETAS Y CAMPOS --- */
+.form-label-auth {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1.5%;
+    display: block;
+}
+
+.form-control-auth {
+    width: 100%;
+    padding: 2.5% 4%;
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-md);
+    background-color: var(--white);
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+.form-select-auth {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+}
+
+/* --- CONTROLES DE CONTRASEÑA --- */
+.input-group-auth {
+    display: flex;
+    align-items: center;
+}
+
+.btn-toggle-pw {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    z-index: 5;
+}
+
+/* --- BOTÓN PRINCIPAL --- */
+.btn-auth {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    padding: 3% 0;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 4%;
+}
+
+    .btn-auth:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+/* --- ALERTAS Y PIE --- */
+.alert-auth {
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    padding: 3% 5%;
+}
+
+.auth-footer {
+    text-align: center;
+    padding: 5% 4%;
+    background-color: var(--bg-secondary);
+    border-top: var(--border-main);
+}
+
+.auth-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .auth-card-wide {
+        max-width: 90% !important;
+    }
+
+    .row > div {
+        margin-bottom: 4%;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-card-wide {
+        width: 95% !important;
+        margin: 5% auto;
+    }
+
+    .card-body-auth {
+        padding: 10% 6%;
+    }
+
+    .auth-header {
+        padding: 10% 5%;
+    }
+}

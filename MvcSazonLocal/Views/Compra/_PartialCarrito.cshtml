@@ -1,0 +1,177 @@
+﻿@using System.Security.Claims
+@model List<CarritoItem>
+@section style {
+    <link rel="stylesheet" href="~/css/views/compra/carrito.css" asp-append-version="true" />
+}
+
+<div class="cart-items-section">
+    <input type="hidden" id="total-productos-input" value="@(Model.Sum(i => i.Cantidad) + (ViewBag.Agotados != null ? ((List<CarritoItem>)ViewBag.Agotados).Sum(a => a.Cantidad) : 0))" />
+    @if ((Model != null && Model.Any()) || (ViewBag.Agotados != null && ((List<CarritoItem>)ViewBag.Agotados).Any()))
+    {
+        @foreach (var item in Model)
+        {
+            <div class="cart-item">
+                <div class="item-img">
+                    <img src="@item.Producto.Imagen" alt="@item.Producto.Nombre">
+                </div>
+                <div class="item-details">
+                    <h3>@item.Producto.Nombre</h3>
+                    <p class="item-unit">@item.Producto.PrecioUnidad.ToString("0.00")€ / @item.Producto.UnidadMedida.Nombre</p>
+                </div>
+
+                <div class="item-quantity">
+                    <div class="qty-stepper">
+                        <button type="button" class="btn-qty" onclick="actualizarCantidad(@item.IdProducto, @(item.Cantidad - 1))"  @(item.Cantidad <= 1 ? "disabled" : "")>
+                            -
+                        </button>
+                        <span class="qty-number">@item.Cantidad</span>
+                        <button type="button" class="btn-qty" onclick="actualizarCantidad(@item.IdProducto, @(item.Cantidad + 1))" @(item.Cantidad >= item.Producto.Stock ? "disabled" : "")>
+                            +
+                        </button>
+                    </div>
+                </div>
+
+                <div class="item-total">
+                    @((item.Producto.PrecioUnidad * item.Cantidad).ToString("0.00"))€
+                </div>
+
+                <div class="item-remove">
+                    <button type="button" class="btn-delete" onclick="eliminarDelCarrito(@item.IdProducto)">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                </div>
+            </div>
+        }
+
+        @if (ViewBag.Insuficientes != null)
+        {
+            @foreach (var item in (List<CarritoItem>)ViewBag.Insuficientes)
+            {
+                <div class="cart-item item-insufficient">
+                    <div class="item-img">
+                        <img src="@item.Producto.Imagen" alt="@item.Producto.Nombre">
+                    </div>
+                    <div class="item-details">
+                        <h3>@item.Producto.Nombre</h3>
+                        <span class="badge-warning">STOCK INSUFICIENTE (Máx: @item.Producto.Stock)</span>
+                    </div>
+
+                    <div class="item-quantity">
+                        <div class="qty-stepper">
+                            <button type="button" class="btn-qty" onclick="actualizarCantidad(@item.IdProducto, @(item.Cantidad - 1))">
+                                -
+                            </button>
+                            <span class="qty-number color-danger">@item.Cantidad</span>
+                            <button type="button" class="btn-qty" disabled>
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="item-total">
+                        @((item.Producto.PrecioUnidad * item.Cantidad).ToString("0.00"))€
+                    </div>
+
+                    <div class="item-remove">
+                        <button type="button" class="btn-delete" onclick="eliminarDelCarrito(@item.IdProducto)">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+
+        @if (ViewBag.Agotados != null)
+        {
+            @foreach (var agotado in (List<CarritoItem>)ViewBag.Agotados)
+            {
+                <div class="cart-item item-out-of-stock">
+                    <div class="item-img">
+                        <img src="@agotado.Producto.Imagen" alt="@agotado.Producto.Nombre">
+                    </div>
+                    <div class="item-details">
+                        <h3>@agotado.Producto.Nombre</h3>
+                        <span class="badge-out">AGOTADO</span>
+                    </div>
+                    <div class="item-quantity text-muted">
+                        Sin existencias
+                    </div>
+                    <div class="item-remove">
+                        <button type="button" class="btn-delete" onclick="eliminarDelCarrito(@agotado.IdProducto)">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    }
+    else
+    {
+        <div class="empty-cart">
+            <i class="bi bi-cart-x"></i>
+            <p>No hay productos en tu cesta.</p>
+        </div>
+    }
+</div>
+
+@if ((Model != null && Model.Any()) || (ViewBag.Agotados != null && ((List<CarritoItem>)ViewBag.Agotados).Any()) || (ViewBag.Insuficientes != null && ((List<CarritoItem>)ViewBag.Insuficientes).Any()))
+{
+    <aside class="cart-summary">
+        <div class="summary-card">
+            <h3>Resumen</h3>
+            @{
+                decimal subtotal = Model?.Sum(x => x.Producto.PrecioUnidad * x.Cantidad) ?? 0;
+                decimal gestion = subtotal * 0.05m;
+                decimal envio = 0;
+                if (subtotal < 50.00m)
+                {
+                    envio = 3.99m;
+                }
+                decimal total = subtotal + gestion + envio;
+            }
+            <div class="summary-line"><span>Subtotal</span><span>@subtotal.ToString("0.00")€</span></div>
+            <div class="summary-line"><span>Gestión</span><span>@gestion.ToString("0.00")€</span></div>
+            <div class="summary-line"><span>Envío</span>@(envio == 0 ? "GRATIS" : envio.ToString("0.00") + "€")</div>
+            <hr>
+            <div class="summary-line total"><span>Total</span><span>@total.ToString("0.00")€</span></div>
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Compra" asp-action="Checkout" asp-route-estaComprando="true" class="btn-checkout @(subtotal == 0 ? "disabled" : "")">
+                    IDENTIFÍCATE PARA COMPRAR
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Compra" asp-action="Checkout" class="btn-checkout @(subtotal == 0 ? "disabled" : "")">
+                    CONTINUAR COMPRA
+                </a>
+            }
+        </div>
+    </aside>
+}else
+{
+    <aside class="cart-summary-disabled">
+        <div class="summary-card">
+            <h3>Resumen</h3>
+            <div class="summary-line"><span>Subtotal</span><span>0,00€</span></div>
+            <div class="summary-line"><span>Gestión</span><span>0,00€</span></div>
+            <div class="summary-line"><span>Envío</span>0,00€</div>
+            <hr>
+            <div class="summary-line total"><span>Total</span><span>0,00€</span></div>
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Compra" asp-action="Checkout" asp-route-estaComprando="true" class="btn-checkout disabled">
+                    IDENTIFÍCATE PARA COMPRAR
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Compra" asp-action="Checkout" class="btn-checkout disabled">
+                    CONTINUAR COMPRA
+                </a>
+            }
+        </div>
+    </aside>
+}

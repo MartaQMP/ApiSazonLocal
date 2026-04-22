@@ -1,0 +1,139 @@
+﻿@model Finca
+@{
+    bool esEdicion = Model != null && Model.IdFinca > 0;
+}
+
+<div id="main-content-partial">
+    <div class="form-finca-page animate-fade-in">
+        <div class="mb-4">
+            <a asp-action="MisFincas" class="btn-volver ajax-link">
+                <i class="bi bi-arrow-left"></i> Volver al listado
+            </a>
+            <h3 class="fw-bold text-main mt-3">@(esEdicion ? "Modificar Finca" : "Nueva Ubicación")</h3>
+        </div>
+
+        <form asp-action="GuardarFinca" method="post" class="row g-4 ajax-form">
+            <input type="hidden" name="idFinca" value="@(Model?.IdFinca ?? 0)" />
+
+            <input type="hidden" name="latitudStr" id="lat" value="@Model?.Latitud" />
+            <input type="hidden" name="longitudStr" id="lng" value="@Model?.Longitud" />
+
+            <div class="col-lg-4">
+                <div class="card-form shadow-sm p-4">
+                    <div class="mb-3">
+                        <label class="info-label">Nombre de la Finca</label>
+                        <input type="text" name="nombre" value="@Model?.Nombre" class="form-control" placeholder="Ej: Finca El Olivar" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="info-label">Dirección (Calle/Camino)</label>
+                        <input type="text" name="direccion" id="Direccion" value="@Model?.Direccion" class="form-control" placeholder="Dirección física" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="info-label">Municipio</label>
+                            <input type="text" name="municipio" id="Municipio" value="@Model?.Municipio" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="info-label">Provincia</label>
+                            <input type="text" name="provincia" id="Provincia" value="@Model?.Provincia" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning small border-0 mt-3">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Pincha en el mapa para marcar la ubicación exacta de la finca.
+                    </div>
+                    <button type="submit" class="btn-custom-primary w-100 mt-3 py-3">
+                        <i class="bi bi-save me-2"></i> Guardar Finca
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div id="mapaFinca" style="height: 550px; border-radius: 15px; border: 2px solid var(--border-line);"></div>
+            </div>
+        </form>
+    </div>
+    <script src="~/mapas/js/leaflet.js"></script>
+    <script>
+        var latStored = parseFloat("@(Model?.Latitud.ToString()?.Replace(',', '.') ?? "0")");
+        var lngStored = parseFloat("@(Model?.Longitud.ToString()?.Replace(',', '.') ?? "0")");
+
+        var esNueva = (latStored === 0 || isNaN(latStored));
+        var latIni = esNueva ? 40.4167 : latStored;
+        var lngIni = esNueva ? -3.7033 : lngStored;
+        var zoomInicial = esNueva ? 6 : 15;
+
+        var iconoLlamativo = L.divIcon({
+            className: '',
+            html: `<div style="
+                background: transparent;
+                border: none;
+                color: var(--status-error);
+                font-size: 32px;
+                filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.3));
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            ">
+                <i class="bi bi-geo-alt-fill"></i>
+            </div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+        var map = L.map('mapaFinca').setView([latIni, lngIni], zoomInicial);
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri'
+        }).addTo(map);
+
+        L.tileLayer.wms("https://www.ign.es/wms-inspire/unidades-administrativas", {
+            layers: 'AU.AdministrativeUnit',
+            format: 'image/png',
+            transparent: true,
+            opacity: 0.6
+        }).addTo(map);
+
+        var marker;
+
+        if (!esNueva) {
+            marker = L.marker([latIni, lngIni], { icon: iconoLlamativo }).addTo(map);
+        }
+
+        map.on('click', function (e) {
+            if (marker) marker.setLatLng(e.latlng);
+            else marker = L.marker(e.latlng, { icon: iconoLlamativo }).addTo(map);
+
+            var latValue = e.latlng.lat.toFixed(8);
+            var lngValue = e.latlng.lng.toFixed(8);
+            document.getElementById('lat').value = latValue;
+            document.getElementById('lng').value = lngValue;
+
+            var url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latValue}&lon=${lngValue}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.address) {
+                        var dir = data.address.road || data.address.suburb || data.address.pedestrian || "Sin dirección (Zona Rural)";
+                        var mun = data.address.city || data.address.town || data.address.village || data.address.municipality || "";
+                        var pro = data.address.province || data.address.state || "";
+
+                        if (document.getElementById('Nombre')) {
+                            if (document.getElementById('Nombre').value === "") {
+                                document.getElementById('Nombre').value = "Finca en " + (mun || pro);
+                            }
+                        }
+                        document.getElementById('Direccion').value = dir;
+                        document.getElementById('Municipio').value = mun;
+                        document.getElementById('Provincia').value = pro;
+
+                        marker.bindPopup(`<b>Ubicación detectada:</b><br>${mun} (${pro})`).openPopup();
+                }
+            })
+            .catch(err => console.error("Error obteniendo dirección:", err));
+        });
+
+        setTimeout(function () { map.invalidateSize(); }, 400);
+    </script>
+</div>

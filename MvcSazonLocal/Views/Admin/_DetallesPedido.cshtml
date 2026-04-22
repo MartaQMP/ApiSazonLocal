@@ -1,0 +1,35 @@
+﻿@model Pedido
+<table class="ordermgr-table">
+    <thead>
+        <tr>
+            <th>Producto / Finca</th>
+            <th class="text-center">Cant.</th>
+            <th class="text-end">P. Unit.</th>
+            <th class="text-end">Total</th>
+            @if (Model.Estado == "PENDIENTE")
+            {
+                <th class="text-center">Listo</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model.DetallesPedido)
+        {
+            <tr class="ordermgr-item-row">
+                <td>
+                    <div class="fw-bold">@d.Producto.Nombre</div>
+                    <div class="small text-muted">@d.Producto.Finca.Nombre</div>
+                </td>
+                <td class="text-center">@d.Cantidad</td>
+                <td class="text-end">@d.PrecioUnitario.ToString("C")</td>
+                <td class="text-end fw-bold">@((d.Cantidad * d.PrecioUnitario).ToString("C"))</td>
+                @if (Model.Estado == "PENDIENTE")
+                {
+                    <td class="text-center">
+                        <i class="bi @(d.Listo ? "bi-check-circle-fill text-success" : "bi-hourglass-split text-warning")"></i>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

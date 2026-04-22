@@ -1,0 +1,75 @@
+﻿@model Pedido
+
+<div id="main-content-partial">
+    <div class="seguridad-container animate-fade-in">
+        <div class="header-section">
+            <h4 class="fw-bold text-main">Seguridad de la Cuenta</h4>
+            <p class="text-muted">Actualiza tu contraseña periódicamente para mantener tu cuenta segura.</p>
+        </div>
+
+        @if (ViewBag.ErrorMensaje != null)
+        {
+            <div class="alert alert-danger border-0 shadow-sm rounded-lg p-3 mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.ErrorMensaje
+            </div>
+        }
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <div class="alert alert-success border-0 shadow-sm rounded-lg p-3 mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i> @ViewBag.Mensaje
+            </div>
+        }
+
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="card-seguridad p-4 shadow-sm">
+                    <h5 class="mb-4 text-main"><i class="bi bi-key me-2"></i> Cambiar Contraseña</h5>
+
+                    <form asp-action="Seguridad" method="post" class="ajax-form">
+                        <div class="mb-3">
+                            <label class="info-label">Contraseña Actual</label>
+                            <input type="password" name="oldPassword" class="form-control" required>
+                        </div>
+
+                        <hr class="my-4" style="border-top: 1px solid var(--border-line);">
+
+                        <div class="mb-3">
+                            <label class="info-label">Nueva Contraseña</label>
+                            <input type="password" id="newPass" name="newPassword" class="form-control" required>
+                            <div class="password-strength-container mt-2">
+                                <div class="strength-bar"></div>
+                            </div>
+                            <small id="strength-text" class="text-muted" style="font-size: 0.7rem;">Introduce una contraseña segura</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="info-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" name="confirmPassword" class="form-control" required>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn-custom">
+                                Actualizar Contraseña
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card-info-seguridad p-4">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-lightbulb text-warning me-2"></i> Consejos Sazón</h6>
+                    <ul class="list-unstyled small text-secondary">
+                        <li class="mb-3 border-bottom pb-2">Usa al menos 8 caracteres, incluyendo números y símbolos.</li>
+                        <li class="mb-3 border-bottom pb-2">No utilices la misma contraseña que en otros sitios.</li>
+                        <li>Evita usar tu fecha de nacimiento o nombres de mascotas comunes.</li>
+                    </ul>
+                    <div class="alert alert-info border-0 mt-4" style="background-color: var(--bg-secondary); font-size: 0.8rem;">
+                        <i class="bi bi-info-circle me-2"></i> Al cambiarla, se cerrará la sesión en tus otros dispositivos por seguridad.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

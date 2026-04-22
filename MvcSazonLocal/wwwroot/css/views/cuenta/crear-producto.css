@@ -1,0 +1,135 @@
+﻿
+/* --- CONTENEDOR PRINCIPAL --- */
+.crear-producto-container {
+    width: 100%;
+    padding: 2% 0;
+}
+
+.header-section {
+    margin-bottom: 4%;
+}
+
+.card-form {
+    background-color: var(--white);
+    border: var(--border-main);
+    border-radius: var(--radius-lg);
+    height: 100%;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 2%;
+    display: block;
+}
+
+/* --- ESTILOS INPUTS --- */
+.form-control, .form-select {
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-md);
+    padding: 2.5% 4%;
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.1);
+    }
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.input-group-text {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-line);
+    color: var(--primary-hard);
+}
+
+/* --- UPLOAD BOX --- */
+.upload-box {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--border-line);
+    cursor: pointer;
+    transition: var(--transition);
+    overflow: hidden;
+    padding: 10px;
+}
+
+#img-preview {
+    object-fit: cover;
+    width: 100%;
+}
+
+    .upload-box:hover {
+        border-color: var(--primary-soft);
+        background-color: var(--light-cream);
+        color: var(--primary-color);
+    }
+
+/* --- BOTÓN PRINCIPAL --- */
+.btn-sazon-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 1.5% 4%;
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+}
+
+    .btn-sazon-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+.footer-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* --- INFO --- */
+.fee-info {
+    background-color: var(--bg-secondary);
+    border-left: 4px solid var(--primary-color);
+    padding: 10px 15px;
+    margin-top: 10px;
+    border-radius: var(--radius-sm);
+}
+
+    .fee-info p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+    }
+
+    .fee-info strong {
+        color: var(--primary-hard);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .btn-sazon-primary {
+        width: 100%;
+        justify-content: center;
+        padding: 4%;
+    }
+
+    .card-form {
+        margin-bottom: 5%;
+    }
+}

@@ -1,0 +1,254 @@
+﻿/* --- CONTENEDOR PRINCIPAL Y HEADER --- */
+.fincas-container, .form-finca-page {
+    width: 100%;
+    padding: 2% 0;
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.btn-volver {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+    .btn-volver:hover {
+        color: var(--primary-color);
+    }
+
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-decoration:none;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .btn-primary-custom:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+/* --- GRID DE TARJETAS (VISTA LISTADO) --- */
+.fincas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+.finca-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid var(--border-line);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+    .finca-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-soft);
+    }
+
+/* --- ESTILOS ESPECÍFICOS: MIS FINCAS --- */
+.finca-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: var(--border-main);
+    padding: 1.5rem;
+    transition: var(--transition);
+    position: relative;
+}
+
+.finca-disabled {
+    background-color: #f2f2f2;
+    border-style: dashed;
+    opacity: 0.8;
+}
+
+.finca-header-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    outline: none !important;
+    border: none !important;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-pending {
+    background-color: var(--status-warning);
+    color: var(--white);
+}
+
+.badge-approved {
+    background-color: var(--status-success);
+    color: var(--white);
+}
+
+.badge-rejected {
+    background-color: var(--status-error);
+    color: var(--white);
+}
+
+.status-dot {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+}
+
+.dot-online {
+    background-color: var(--status-success);
+}
+
+.dot-offline {
+    background-color: var(--status-error);
+}
+
+.finca-body {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.finca-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--light-cream);
+    color: var(--primary-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.finca-info h5 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* --- BOTONES DE ACCIÓN EN TARJETAS --- */
+.finca-footer {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-finca-action {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-line);
+    background: var(--white);
+    font-size: 0.85rem;
+    text-decoration: none;
+    text-align: center;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+    .btn-finca-action.edit:hover {
+        background-color: var(--light-cream);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-finca-action.delete:hover {
+        background-color: #fff5f5;
+        border-color: var(--status-error);
+        color: var(--status-error);
+    }
+
+.btn-status-toggle {
+    border: none;
+    padding: 8px 15px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-status-toggle.active {
+        background-color: var(--primary-soft);
+        color: var(--primary-active);
+    }
+
+    .btn-status-toggle.inactive {
+        background-color: var(--border-line);
+        color: var(--text-muted);
+    }
+
+    .btn-status-toggle:hover {
+        filter: brightness(0.9);
+        transform: scale(1.05);
+    }
+
+.btn-finca-action.edit {
+    background-color: var(--white);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    text-decoration: none;
+    text-align: center;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+    .btn-finca-action.edit:hover {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }
+
+/* --- ESTILOS DEL FORMULARIO Y MAPA --- */
+.card-form {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-line);
+}
+
+.info-label {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .fincas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    }
+
+    #mapaFinca {
+        height: 350px !important;
+        margin-top: 20px;
+    }
+}

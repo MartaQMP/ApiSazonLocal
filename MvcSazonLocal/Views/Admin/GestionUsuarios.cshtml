@@ -1,0 +1,54 @@
+﻿@model List<Usuario>
+
+<div id="admin-content-partial">
+    <div class="mb-4">
+        <h2 class="fw-bold" style="color: var(--primary-hard)">Control de Usuarios</h2>
+        <p class="text-muted">Gestiona el acceso de clientes y agricultores a la plataforma.</p>
+    </div>
+
+    <div class="usrmgr-container">
+        @foreach (var u in Model)
+        {
+            <div class="usrmgr-row">
+                <div class="usrmgr-avatar">
+                    @u.Nombre.Substring(0, 1).ToUpper()
+                </div>
+
+                <div class="usrmgr-info">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <h6>@u.Nombre @u.Apellidos</h6>
+                        <span class="usrmgr-role-tag">@u.Rol</span>
+                    </div>
+                    <div class="text-muted small">
+                        <i class="bi bi-envelope me-1"></i> @u.Email
+                    </div>
+                    <div class="usrmgr-status-indicator mt-2">
+                        <span class="usrmgr-dot @(u.EstaActivo ? "dot-active" : "dot-blocked")"></span>
+                        <span style="color: @(u.EstaActivo ? "var(--status-success)" : "var(--status-error)")">
+                            @(u.EstaActivo ? "Cuenta Activa" : "Cuenta Bloqueada")
+                        </span>
+                    </div>
+                </div>
+
+                <div class="usrmgr-actions">
+                    <form asp-action="CambiarEstadoUsuario" method="post" class="ajax-form">
+                        <input type="hidden" name="idUsuario" value="@u.IdUsuario" />
+
+                        @if (u.EstaActivo)
+                        {
+                            <button type="submit" class="usrmgr-btn-toggle btn-to-block">
+                                <i class="bi bi-slash-circle me-1"></i> Bloquear
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="usrmgr-btn-toggle btn-to-activate">
+                                <i class="bi bi-check-circle me-1"></i> Activar
+                            </button>
+                        }
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

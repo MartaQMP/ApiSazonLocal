@@ -1,0 +1,131 @@
+﻿/* --- ESTRUCTURA DE GESTIÓN --- */
+.wrapper-gestion {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-main);
+}
+
+/* --- SIDEBAR ANCHA Y ELEGANTE --- */
+.sidebar-gestion {
+    min-width: 320px;
+    max-width: 320px;
+    background-color: var(--white);
+    border-right: var(--border-main);
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    z-index: 100;
+    transition: var(--transition); 
+}
+
+.sidebar-header-gestion {
+    padding: 5% 8%;
+    border-bottom: var(--border-main);
+    background-color: var(--bg-secondary);
+}
+
+/* --- ÍTEMS DEL MENÚ --- */
+.item-menu-gestion {
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    margin: 1% 3%;
+    padding: 3.5% 6%; 
+    font-weight: 600;
+    color: var(--text-secondary);
+    background-color: transparent;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+    .item-menu-gestion.active {
+        background-color: var(--primary-color) !important;
+        color: var(--white) !important;
+        box-shadow: var(--shadow-md);
+        border-left: 4px solid var(--primary-hard);
+    }
+
+    .item-menu-gestion:hover {
+        background-color: var(--primary-soft);
+        color: var(--primary-hard);
+        transform: translateX(5px);
+    }
+
+    .item-menu-gestion i {
+        font-size: 1.2rem;
+    }
+
+/* --- SECCIONES DE TEXTO --- */
+.titulo-seccion-sidebar {
+    color: var(--accent-color);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin: 8% 8% 3% 8%;
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content-gestion {
+    flex-grow: 1;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.header-gestion {
+    background-color: var(--white);
+    border-bottom: var(--border-main);
+    padding: 2% 4%;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.container-gestion-amplio {
+    padding: 4% 5%; 
+}
+
+/* --- TEXTOS AUXILIARES --- */
+.text-olive {
+    color: var(--primary-color);
+}
+
+.text-main {
+    color: var(--text-main);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .sidebar-gestion {
+        min-width: 260px;
+        max-width: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper-gestion {
+        flex-direction: column;
+    }
+
+    .sidebar-gestion {
+        min-width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: var(--border-main);
+    }
+
+    .sidebar-header-gestion {
+        padding: 3% 5%;
+    }
+
+    .item-menu-gestion {
+        margin: 0.5% 2%;
+        padding: 3% 4%;
+    }
+
+    .container-gestion-amplio {
+        padding: 5% 3%;
+    }
+}

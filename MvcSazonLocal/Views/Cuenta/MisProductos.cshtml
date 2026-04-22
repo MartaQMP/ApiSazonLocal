@@ -1,0 +1,134 @@
+﻿@model IEnumerable<IGrouping<string, Producto>>
+
+<div id="main-content-partial">
+    <div class="gestion-productos-container animate-fade-in">
+        <div class="header-flex">
+            <div>
+                <h4 class="fw-bold text-main">Mis Productos</h4>
+                <p class="text-muted">Gestiona tu inventario organizado por tus diferentes fincas.</p>
+            </div>
+            <a asp-action="CrearProducto" class="btn-custom-primary ajax-link">
+                <i class="bi bi-plus-lg"></i> Añadir Producto
+            </a>
+        </div>
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <div class="alert alert-success border-0 shadow-sm mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i> @ViewBag.Mensaje
+            </div>
+        }
+
+        @foreach (var finca in Model)
+        {
+            <div class="finca-group mb-5">
+                <div class="finca-header">
+                    <h5 class="fw-bold text-main">
+                        <i class="bi bi-geo-alt-fill me-2" style="color: var(--primary-color);"></i>
+                        Finca: @finca.Key
+                    </h5>
+                    <span class="badge-count">@finca.Count() productos</span>
+                </div>
+
+                <div class="productos-grid">
+                    @foreach (var prod in finca.OrderByDescending(p => p.EstaActivo).ThenByDescending(p => p.Stock > 0))
+                    {
+                        <div class="producto-card @(!prod.EstaActivo || prod.Stock == 0 ? "producto-pausado" : "")">
+
+                            <div class="card-badge @(prod.EstaActivo && prod.Stock > 0 ? "badge-active" : "badge-inactive")">
+                                @if (!prod.EstaActivo)
+                                {
+                                    <span>Pausado</span>
+                                }
+                                else if (prod.Stock == 0)
+                                {
+                                    <span>Agotado</span>
+                                }
+                                else
+                                {
+                                    <span>Activo</span>
+                                }
+                            </div>
+
+                            <div class="pro-img-wrapper">
+                                <img src="@prod.Imagen" alt="@prod.Nombre">
+                            </div>
+
+                            <div class="card-content">
+                                <h6 class="prod-title">@prod.Nombre</h6>
+                                <p class="prod-desc">@prod.Descripcion</p>
+
+                                <div class="prod-info-row">
+                                    @if (ViewBag.IdEditando == prod.IdProducto)
+                                    {
+                                        <form asp-action="ActualizarProducto" method="post" class="edit-form-inline ajax-form">
+                                            <input type="hidden" name="idProducto" value="@prod.IdProducto" />
+
+                                            <div class="edit-inputs-wrapper">
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">€</span>
+                                                    <input type="number" min="0" step="0.01" name="nuevoPrecio" class="form-control" 
+                                                           value="@prod.PrecioUnidad.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" required>
+                                                </div>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
+                                                    <input type="number" min="0" step="1" name="nuevoStock" class="form-control" 
+                                                           value="@prod.Stock" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="edit-buttons-wrapper">
+                                                <button type="submit" class="btn-save-sm">
+                                                    <i class="bi bi-check-lg"></i> Guardar
+                                                </button>
+                                                <a asp-action="MisProductos" class="btn-cancel-sm ajax-link">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </a>
+                                            </div>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@prod.PrecioUnidad.ToString("C2", new System.Globalization.CultureInfo("es-ES")) / @prod.UnidadMedida.Nombre</span>
+                                        <span class="stock">Stock: <strong>@prod.Stock</strong></span>
+                                    }
+                                </div>
+                            
+                                <div class="card-actions">
+                                    @if (ViewBag.IdEditando != prod.IdProducto)
+                                    {
+                                        <a asp-action="MisProductos" asp-route-idEditando="@prod.IdProducto" class="btn-action edit ajax-link">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-action edit opacity-50" disabled>
+                                            <i class="bi bi-pencil-square"></i> Editando...
+                                        </button>
+                                    }
+
+                                    <form asp-action="CambiarEstado" method="post" style="width: 48%;" class="ajax-form">
+                                        <input type="hidden" name="idProducto" value="@prod.IdProducto" />
+                                        @if (prod.EstaActivo)
+                                        {
+                                            <button type="submit" class="btn-action desactivate w-100 h-100">
+                                                <i class="bi bi-eye-slash"></i> Pausar
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn-action activate w-100 h-100">
+                                                <i class="bi bi-eye"></i> Activar
+                                            </button>
+                                        }
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

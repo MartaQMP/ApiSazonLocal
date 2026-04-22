@@ -1,0 +1,88 @@
+﻿@section style {
+    <link rel="stylesheet" href="~/css/views/atencion-usuario/contacto.css" asp-append-version="true" />
+}
+
+<div class="contact-page container py-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-5">
+            <div class="contact-branding">
+                <span class="badge-sazon mb-3">CONECTA CON NOSOTROS</span>
+                <h1 class="display-5 fw-bold text-primary-color mb-4">¿Hablamos?</h1>
+                <p class="lead text-secondary mb-5">
+                    Tanto si tienes una duda sobre tu pedido, como si eres un agricultor con ganas de colaborar o simplemente quieres dejarnos una sugerencia en nuestro buzón.
+                </p>
+
+                <div class="contact-methods">
+                    <div class="method-item shadow-sm">
+                        <i class="bi bi-envelope-paper-heart"></i>
+                        <div>
+                            <h6>Escríbenos</h6>
+                            <p>sazonlocal.sl@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="method-item shadow-sm mt-3">
+                        <i class="bi bi-patch-check"></i>
+                        <div>
+                            <h6>Buzón de Sugerencias</h6>
+                            <p>Tu opinión nos ayuda a seleccionar lo mejor del campo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="contact-card shadow-lg">
+                @if (ViewBag.Mensaje != null)
+                {
+                    <div class="alert alert-success shadow-sm mb-4">
+                        <i class="bi bi-check-circle-fill me-2"></i> @ViewBag.Mensaje
+                    </div>
+                }
+
+                @if (ViewBag.MensajeError != null)
+                {
+                    <div class="alert alert-danger shadow-sm mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.MensajeError
+                    </div>
+                }
+                <form asp-controller="AtencionUsuario" asp-action="EnviarMensaje" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label custom-label">Tu Nombre</label>
+                            <input type="text" name="nombre" class="form-control custom-input" placeholder="Ej. Carlos Ruiz" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label custom-label">Tu Email</label>
+                            <input type="email" name="email" class="form-control custom-input" placeholder="email@ejemplo.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label custom-label">Motivo de contacto</label>
+                        <select name="tipoConsulta" class="form-select custom-input" required>
+                            <option value="SUGERENCIA"><i class="bi bi-lightbulb"></i> Sugerencia de producto / mejora</option>
+                            <option value="DUDA"><i class="bi bi-question-lg"></i> Duda sobre un pedido</option>
+                            <option value="AGRICULTOR"><i class="bi bi-truck"></i> Quiero ser proveedor (Agricultor)</option>
+                            <option value="OTROS"><i class="bi bi-three-dots"></i> Otros motivos</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label custom-label">Asunto</label>
+                        <input type="text" name="asunto" class="form-control custom-input" placeholder="¿De qué trata tu mensaje?">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label custom-label">Tu Mensaje</label>
+                        <textarea name="mensaje" class="form-control custom-input" rows="5" placeholder="Cuéntanos con detalle..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-sazon-submit">
+                        <i class="bi bi-send-fill me-2"></i> ENVIAR AL BUZÓN
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

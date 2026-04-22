@@ -1,0 +1,134 @@
+﻿@model Usuario
+@{
+    bool esModoEdicion = Context.Request.Query["edit"] == "true";
+}
+
+<div id="main-content-partial">
+    <form asp-action="ActualizarPerfil" method="post" enctype="multipart/form-data" class="animate-fade-in ajax-form">
+        <div class="perfil-card-container">
+            @if (ViewBag.ErrorMensaje != null)
+            {
+                <div class="alert alert-danger border-0 shadow-sm rounded-lg p-3 mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.ErrorMensaje
+                </div>
+            }
+            <div class="columna-foto">
+                <div class="card-perfil-personalizada card-body-perfil p-5">
+                    <div class="profile-image-container mb-4">
+                        <div class="img-wrapper">
+                            <img id="img-preview" src="@Model.Imagen" alt="@Model.Nombre">
+                        </div>
+                        @if (esModoEdicion)
+                        {
+                            <label for="fileInput" class="upload-badge">
+                                <i class="bi bi-camera-fill"></i>
+                            </label>
+                            <input type="file" id="fileInput" name="imagen" hidden accept=".jpg,.jpeg,.png">
+                        }
+                    </div>
+
+                    <div class="profile-info-block text-center">
+                        <div class="mt-3">
+                            <span class="badge rounded-pill bg-primary-soft text-primary-hard px-3 py-2 badge-rol-estilo">
+                                <i class="bi bi-shield-check me-1"></i>
+                                @(Model.IdRol == 2 ? "Agricultor" : "Cliente")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columna-datos">
+                <div class="card-perfil-personalizada p-4 d-flex flex-column h-100">
+                    <div class="mb-4 border-bottom pb-3">
+                        <h5 class="fw-bold mb-0 text-main">Información Personal</h5>
+                    </div>
+
+                    <div class="row g-4 flex-grow-1">
+                        <div class="col-md-6">
+                            <label class="info-label">Nombre</label>
+                            @if (esModoEdicion)
+                            {
+                                <input type="text" name="nombre" class="form-control" value="@Model.Nombre">
+                            }
+                            else
+                            {
+                                <div class="info-value">@Model.Nombre</div>
+                            }
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="info-label">Apellidos</label>
+                            @if (esModoEdicion)
+                            {
+                                <input type="text" name="apellidos" class="form-control" value="@Model.Apellidos">
+                            }
+                            else
+                            {
+                                <div class="info-value">@Model.Apellidos</div>
+                            }
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="info-label">Correo Electrónico</label>
+                                @if (esModoEdicion)
+                                {
+                                <input type="email" name="email" class="form-control" value="@Model.Email" disabled>
+                                }
+                                else
+                                {
+                                <div class="info-value text-muted bg-light">
+                                    <i class="bi bi-envelope me-2"></i> @Model.Email
+                                </div>
+                                }
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="info-label">Teléfono</label>
+                            @if (esModoEdicion)
+                            {
+                                <input type="tel" name="telefono" class="form-control" value="@Model.Telefono">
+                            }
+                            else
+                            {
+                                <div class="info-value"><i class="bi bi-phone me-2"></i> @Model.Telefono</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-5 pt-4 border-top">
+                        @if (!esModoEdicion)
+                        {
+                            <a href="?edit=true" class="btn btn-primary-custom px-4 ajax-link">
+                                <i class="bi bi-pencil-square me-2"></i>Modificar Datos
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="?" class="btn btn-outline-secondary me-3 px-4 ajax-link">
+                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom px-4">
+                                <i class="bi bi-check2-circle me-2"></i>Guardar Cambios
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+         document.getElementById('fileInput').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            const preview = document.getElementById('img-preview');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+            }
+
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    </script>
+</div>

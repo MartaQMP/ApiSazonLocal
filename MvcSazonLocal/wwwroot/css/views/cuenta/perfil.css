@@ -1,0 +1,215 @@
+﻿/* --- LAYOUT DE COLUMNAS --- */
+.perfil-card-container {
+    display: flex;
+    gap: 3%;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start;
+    width: 100%;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.columna-foto {
+    flex: 0 0 30%;
+    min-width: 300px;
+}
+
+.columna-datos {
+    flex: 1;
+}
+
+/* --- TARJETA PERSONALIZADA --- */
+.card-perfil-personalizada {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    border: var(--border-main);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .card-perfil-personalizada:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        transform: translateY(-4px);
+    }
+
+/* --- CONTENEDOR DE IMAGEN Y UPLOAD BADGE --- */
+.profile-image-container {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+    animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--white);
+    box-shadow: 0 4px 15px rgba(85, 107, 47, 0.15);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .profile-image-container:hover .profile-img {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(85, 107, 47, 0.25);
+    }
+
+.img-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid var(--white);
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.upload-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 3px solid var(--white);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    z-index: 10;
+}
+
+    .upload-badge:hover {
+        background-color: var(--primary-hover);
+        transform: scale(1.1);
+        background-color: var(--primary-light);
+    }
+
+/* --- BADGE DE ROL --- */
+.badge-rol-estilo {
+    display: inline-flex !important;
+    align-items: center;
+    border: 1px solid var(--primary-soft);
+    font-size: 0.85rem !important;
+    font-weight: 700;
+    color: var(--primary-hard) !important;
+    background-color: var(--primary-soft) !important;
+    padding: 0.5rem 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- FORMULARIO E INFO --- */
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 2%;
+    display: block;
+}
+
+.info-value, .form-control {
+    padding: 3% 5%;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    border: var(--border-main);
+    background-color: var(--white);
+    height: 54px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    transition: var(--transition);
+}
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(85, 107, 47, 0.15);
+        outline: none;
+    }
+
+/* --- BOTONES --- */
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .btn-primary-custom:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+.btn-outline-secondary {
+    border: 1px solid var(--border-line);
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    transition: var(--transition);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .perfil-card-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .columna-foto, .columna-datos {
+        width: 100%;
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-body-perfil {
+        padding: 10% 5% !important;
+    }
+
+    .d-flex.justify-content-end {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-primary-custom, .btn-outline-secondary {
+        width: 100%;
+        margin: 0 !important;
+    }
+}
+
+/* --- ANIMACIONES --- */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

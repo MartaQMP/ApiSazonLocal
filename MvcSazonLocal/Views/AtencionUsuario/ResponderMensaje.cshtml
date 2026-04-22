@@ -1,0 +1,39 @@
+﻿@model Mensaje
+@section style{
+    <link rel="stylesheet" href="~/css/views/atencion-usuario/buzon-mensajes.css" asp-append-version="true" />
+}
+
+    <div class="mb-4">
+        <a asp-action="BuzonMensajes" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left"></i> Volver al buzón
+        </a>
+        <h3 class="fw-bold mt-2" style="color: var(--primary-hard)">Responder a @Model.Nombre</h3>
+</div>
+
+<div class="reply-box shadow-sm">
+    <div class="original-msg">
+        <div class="fw-bold text-olive mb-1">Mensaje original:</div>
+        <p class="mb-0 italic">"@Model.Contenido"</p>
+    </div>
+
+    <form asp-action="EnviarRespuestaEmail" method="post">
+        <input type="hidden" name="emailDestino" value="@Model.Email" />
+        <input type="hidden" name="idMensaje" value="@Model.IdMensaje" />
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Asunto del Email</label>
+            <input type="text" name="asuntoRespuesta" class="form-control" value="RE: @Model.Asunto - Sazón Local" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tu Respuesta</label>
+            <textarea name="cuerpoRespuesta" class="form-control" rows="8" placeholder="Escribe aquí tu respuesta para el usuario..." required></textarea>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-lg btn-primary" style="background-color: var(--primary-color); border:none; padding: 10px 40px;">
+                <i class="bi bi-send me-2"></i> ENVIAR RESPUESTA POR EMAIL
+            </button>
+        </div>
+    </form>
+</div>

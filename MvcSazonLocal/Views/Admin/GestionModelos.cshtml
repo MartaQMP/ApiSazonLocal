@@ -1,0 +1,161 @@
+﻿@model AdminConfiguracionModels
+
+<div id="admin-content-partial">
+    <h2 class="fw-bold mb-4" style="color: var(--primary-hard)">Gestión de Modelos de Datos</h2>
+
+    <div class="modmgr-card">
+        <div class="modmgr-header"><h5 class="mb-0"><i class="bi bi-grid-fill me-2"></i> Categorías</h5></div>
+        <table class="table modmgr-table mb-0">
+            <thead>
+                <tr class="small text-muted">
+                    <th>Info</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model.Categorias)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@cat.Nombre</div>
+                            <div class="small text-muted">@(string.IsNullOrEmpty(cat.Descripcion) ? "Sin descripción" : cat.Descripcion)</div>
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="CambiarEstado" method="post" class="ajax-form">
+                                <input type="hidden" name="id" value="@cat.IdCategoria" />
+                                <input type="hidden" name="tabla" value="CATEGORIA" />
+                                <button type="submit" class="btn btn-sm @(cat.EstaActiva ? "btn-outline-danger" : "btn-outline-success")">
+                                    <i class="bi @(cat.EstaActiva ? "bi-eye-slash" : "bi-eye")"></i> @(cat.EstaActiva ? "Desactivar" : "Activar")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form asp-action="CrearCategoria" method="post" enctype="multipart/form-data" class="ajax-form modmgr-form-row border-top">
+            <input type="text" name="nombre" class="form-control" placeholder="Nombre Categoría" required />
+            <input type="text" name="descripcion" class="form-control" placeholder="Descripción (opcional)" />
+            <button type="submit" class="btn btn-primary" style="background: var(--primary-color); border:none">Crear</button>
+        </form>
+    </div>
+
+    <div class="modmgr-card">
+        <div class="modmgr-header">
+            <h5 class="mb-0"><i class="bi bi-diagram-3-fill me-2"></i> Subcategorías</h5>
+        </div>
+
+
+        <table class="table modmgr-table mb-0">
+            <thead>
+                <tr class="small text-muted">
+                    <th>Info</th>
+                    <th>Categoría Padre</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sub in Model.Subcategorias)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@sub.Nombre</div>
+                        </td>
+                        <td>
+                            <span class="small text-muted">@sub.Categoria.Nombre</span>
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="CambiarEstado" method="post" class="ajax-form">
+                                <input type="hidden" name="id" value="@sub.IdSubcategoria" />
+                                <input type="hidden" name="tabla" value="SUBCATEGORIA" />
+                                <button type="submit" class="btn btn-sm @(sub.EstaActiva ? "btn-outline-danger" : "btn-outline-success")">
+                                    <i class="bi @(sub.EstaActiva ? "bi-eye-slash" : "bi-eye")"></i> @(sub.EstaActiva ? "Desactivar" : "Activar")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form asp-action="CrearSubcategoria" method="post" enctype="multipart/form-data" class="ajax-form modmgr-form-row border-top p-4">
+
+            <div class="d-flex flex-column align-items-center">
+                <div class="profile-image-container" style="width: 80px; height: 80px; margin-bottom: 0;">
+                    <div class="img-wrapper" style="width: 80px; height: 80px;">
+                        <img id="img-preview-sub" src="~/images/placeholder-sub.png" alt="Previsualización">
+
+                        <label for="fileInputSub" class="upload-badge">
+                            <i class="bi bi-camera-fill"></i>
+                        </label>
+                        <input type="file" id="fileInputSub" name="imagen" hidden accept=".jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+                <small class="text-muted mt-1" style="font-size: 0.7rem;">Imagen Subcat.</small>
+            </div>
+
+            <div class="flex-grow-1">
+                <label class="info-label mb-1">Categoría Padre</label>
+                <select name="idCategoria" class="form-select" required>
+                    <option value="">Elegir Padre...</option>
+                    @foreach (var c in Model.Categorias.Where(x => x.EstaActiva))
+                    {
+                        <option value="@c.IdCategoria">@c.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="flex-grow-1">
+                <label class="info-label mb-1">Nombre</label>
+                <input type="text" name="nombre" class="form-control" placeholder="Ej: Tomates de colgar" required />
+            </div>
+
+            <div class="align-self-end">
+                <button type="submit" class="btn btn-primary-custom px-4" style="height: 38px;">
+                    <i class="bi bi-plus-circle me-1"></i> Crear
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="modmgr-card">
+        <div class="modmgr-header"><h5 class="mb-0"><i class="bi bi-scales me-2"></i> Unidades de Medida</h5></div>
+        <div class="p-3">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                @foreach (var u in Model.UnidadMedidas)
+                {
+                    <div class="border rounded p-2 d-flex align-items-center bg-white shadow-sm">
+                        <span class="me-3 @(u.EstaActiva ? "text-dark" : "text-muted text-decoration-line-through")">@u.Nombre</span>
+                        <form asp-action="CambiarEstado" method="post" class="ajax-form">
+                            <input type="hidden" name="id" value="@u.IdUnidadMedida" />
+                            <input type="hidden" name="tabla" value="UNIDAD_MEDIDA" />
+                            <button type="submit" class="btn btn-link btn-sm p-0 text-@(u.EstaActiva ? "danger" : "success")">
+                                <i class="bi @(u.EstaActiva ? "bi-x-circle" : "bi-check-circle")"></i>
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+            <form asp-action="CrearUnidadMedida" method="post" class="ajax-form d-flex gap-2 bg-light p-3 rounded">
+                <input type="text" name="nombre" class="form-control" placeholder="Nueva Unidad (ej: Kg, Litros...)" required />
+                <button type="submit" class="btn btn-primary" style="background: var(--primary-color); border:none">Añadir</button>
+            </form>
+        </div>
+    </div>
+    <script>
+         document.getElementById('fileInputSub').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            const preview = document.getElementById('img-preview-sub');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+            }
+
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    </script>
+</div>

@@ -1,0 +1,147 @@
+﻿/* --- CONTENEDOR DE PÁGINA --- */
+.error-acceso-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-main);
+}
+
+/* --- TARJETA DE ERROR --- */
+.error-card {
+    max-width: 550px;
+    width: 90%;
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: var(--border-main);
+    overflow: hidden;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- CUERPO DEL ERROR --- */
+.error-card-body {
+    padding: 3rem 2rem;
+}
+
+.error-icon-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.error-icon {
+    font-size: 5rem;
+    color: var(--accent-color);
+    filter: drop-shadow(0 4px 6px rgba(160, 82, 45, 0.2));
+}
+
+.error-title {
+    color: var(--primary-active);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+}
+
+.error-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+/* --- ACCIONES Y BOTONES --- */
+.btn-sazon-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 0.8rem 2rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: var(--transition);
+    border: none;
+}
+
+    .btn-sazon-primary:hover {
+        background-color: var(--primary-hover);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+.btn-sazon-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 1rem;
+    display: block;
+    transition: var(--transition);
+}
+
+    .btn-sazon-link:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+    }
+
+/* --- PIE DE TARJETA --- */
+.error-card-footer {
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: var(--border-main);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .error-card {
+        max-width: 500px;
+    }
+
+    .error-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .error-card-body {
+        padding: 2rem 1.5rem;
+    }
+
+    .error-icon {
+        font-size: 4rem;
+    }
+
+    .error-title {
+        font-size: 1.5rem;
+    }
+
+    .error-text {
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-acceso-container {
+        padding: 10px;
+    }
+
+    .btn-sazon-primary {
+        width: 100%;
+        padding: 0.8rem 1rem;
+    }
+}

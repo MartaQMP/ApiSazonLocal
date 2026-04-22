@@ -1,0 +1,85 @@
+﻿@model Direccion
+
+<div id="main-content-partial">
+    <div class="container-fluid animate-fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold mb-0 text-main">Nueva Dirección</h4>
+                <p class="text-muted small mb-0">Indica dónde quieres recibir tus pedidos de Sazón Local</p>
+            </div>
+            <a asp-action="Direcciones" class="btn-custom ajax-link">
+                <i class="bi bi-arrow-left me-2"></i>Volver al listado
+            </a>
+        </div>
+
+        <div class="card-perfil-personalizada shadow-md p-4 p-md-5">
+            <form asp-action="CrearDireccion" method="post" class="ajax-form">
+
+                <div class="row g-4 mb-5">
+                    <div class="col-12 border-bottom pb-2">
+                        <h6 class="text-primary-color fw-bold text-uppercase small">1. Identificación</h6>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="info-label">Nombre de la Etiqueta</label>
+                        <input type="text" name="nombreEtiqueta" class="form-control-custom" placeholder="Ej: Mi Casa, Oficina, Finca..." required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="info-label">Código Postal</label>
+                        <input type="text" name="cp" class="form-control-custom" placeholder="XXXXX" required>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-5 align-items-end">
+                    <div class="col-12 border-bottom pb-2">
+                        <h6 class="text-primary-color fw-bold text-uppercase small">2. Ubicación Exacta</h6>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="info-label">Calle y Número</label>
+                        <input type="text" name="calleNumero" class="form-control-custom" placeholder="Calle, Avenida, Plaza..." required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="info-label">Piso</label>
+                        <input type="text" name="piso" class="form-control-custom" placeholder="4º">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="info-label">Puerta</label>
+                        <input type="text" name="puerta" class="form-control-custom" placeholder="B">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="info-label">Municipio</label>
+                        <input type="text" name="municipio" class="form-control-custom" placeholder="Localidad" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="info-label">Provincia</label>
+                        <input type="text" name="provincia" class="form-control-custom" placeholder="Provincia" required>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-12 border-bottom pb-2">
+                        <h6 class="text-primary-color fw-bold text-uppercase small">3. Detalles de Entrega</h6>
+                    </div>
+                    <div class="col-12">
+                        <label class="info-label">Notas para el Repartidor</label>
+                        <textarea name="notasAdicionales" class="form-control-custom" rows="3" placeholder="Ej: El telefonillo no suena, dejar en el bar de abajo si no estoy..."></textarea>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check form-switch custom-switch mt-3">
+                            <input class="form-check-input" type="checkbox" name="esPrincipal" value="true" id="checkPrincipal">
+                            <label class="form-check-label ms-2 text-secondary" for="checkPrincipal">
+                                Marcar como mi dirección principal de entrega
+                            </label>
+                        </div> 
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 pt-4 border-top">
+                    <button type="reset" class="btn-custom">Limpiar</button>
+                    <button type="submit" class="btn-custom">
+                        <i class="bi bi-cloud-arrow-up me-2"></i>Guardar Dirección
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

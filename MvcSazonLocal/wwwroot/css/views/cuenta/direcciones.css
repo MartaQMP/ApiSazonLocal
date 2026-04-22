@@ -1,0 +1,192 @@
+﻿/* --- ESTILOS ACORDEÓN PERSONALIZADO --- */
+.accordion-custom .accordion-item {
+    background-color: var(--white);
+    border-radius: var(--radius-lg) !important;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .accordion-custom .accordion-item:hover {
+        box-shadow: 0 6px 20px rgba(85, 107, 47, 0.12);
+        transform: translateY(-2px);
+    }
+
+.accordion-custom .accordion-button {
+    background-color: var(--white);
+    color: var(--text-main);
+    font-weight: 600;
+    padding: 1.25rem 1.5rem;
+    box-shadow: none !important;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .accordion-custom .accordion-button:not(.collapsed) {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(245, 245, 220, 0.6) 100%);
+        color: var(--primary-color);
+    }
+
+    .accordion-custom .accordion-button:hover:not(.collapsed) {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(245, 245, 220, 0.8) 100%);
+    }
+
+    .accordion-custom .accordion-button::after {
+        filter: sepia(100%) hue-rotate(40deg) saturate(1000%);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .accordion-custom .accordion-button:not(.collapsed)::after {
+        transform: rotate(180deg);
+    }
+
+/* --- ESTILOS DE LA CARD INTERNA --- */
+.card-perfil-personalizada {
+    background-color: var(--white);
+    border-top: 1px solid var(--border-line);
+    animation: fadeIn 0.6s ease-out;
+}
+
+.info-label {
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.info-value {
+    background-color: var(--light-cream);
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    color: var(--text-main);
+    font-weight: 500;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .info-value:hover {
+        background-color: rgba(245, 245, 220, 0.8);
+        border-color: var(--primary-soft);
+    }
+
+/* --- INPUTS EN MODO EDICIÓN --- */
+.card-perfil-personalizada .form-control {
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-line);
+    padding: 0.8rem 1rem;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .card-perfil-personalizada .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(85, 107, 47, 0.15);
+        outline: none;
+        transform: translateY(-2px);
+    }
+
+    .card-perfil-personalizada .form-control:hover:not(:focus) {
+        border-color: var(--primary-soft);
+        background-color: var(--white);
+    }
+
+/* --- BADGES Y OTROS --- */
+.bg-success-soft {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4f1d4 100%);
+    box-shadow: 0 2px 8px rgba(46, 139, 87, 0.15);
+}
+
+.custom-switch .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(85, 107, 47, 0.3);
+}
+
+.text-primary-color {
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.btn-custom {
+    background-color: transparent;
+    color: var(--primary-color);
+    text-decoration: none;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5%;
+}
+
+    .btn-custom:hover{
+        background-color: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+    }
+
+/* --- ANIMACIONES --- */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .row.g-4 > div {
+        width: 100%;
+        margin-bottom: 4%;
+    }
+
+    .info-value, .card-perfil-personalizada .form-control {
+        min-height: 48px;
+        padding: 4% 6%;
+    }
+
+    .d-flex.justify-content-end {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-custom {
+        width: 100%;
+        margin: 0 !important;
+    }
+}

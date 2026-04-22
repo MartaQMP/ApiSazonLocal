@@ -1,0 +1,34 @@
+﻿@section style {
+    <link rel="stylesheet" href="~/css/views/auth/usuario-bloqueado.css" asp-append-version="true" />
+}
+
+<div class="ban-container">
+    <article class="ban-card">
+        <div class="ban-card-body">
+            <div class="ban-icon-wrapper">
+                <i class="bi bi-person-x-fill ban-icon"></i>
+            </div>
+
+            <h1 class="ban-title">Acceso Suspendido</h1>
+
+            <p class="ban-text">
+                Lo sentimos, pero tu cuenta en <strong>Sazón Local</strong> ha sido bloqueada temporalmente por el equipo de administración.
+                Esto puede deberse a un incumplimiento de nuestras normas de convivencia o incidencias técnicas con tu perfil.
+            </p>
+
+            <div class="ban-actions">
+                <a asp-controller="Productos" asp-action="Productos" class="btn-sazon-outline">
+                    Volver al Inicio
+                </a>
+
+                <a href="mailto:sazonlocal.sl@gmail.com" class="btn-sazon-danger">
+                    <i class="bi bi-envelope-exclamation me-2"></i> Contactar Soporte
+                </a>
+            </div>
+        </div>
+
+        <footer class="ban-card-footer">
+             Sazón Local Seguridad
+        </footer>
+    </article>
+</div>

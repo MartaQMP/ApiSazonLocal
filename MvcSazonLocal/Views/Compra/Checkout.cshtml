@@ -1,0 +1,227 @@
+﻿@inject IConfiguration Configuration
+@section style{
+    <link rel="stylesheet" href="~/css/views/compra/checkout.css" asp-append-version="true" />
+}
+@model List<Direccion>
+@{
+    decimal envio = ViewBag.Envio ?? 0;
+}
+
+<div class="checkout-container">
+    <form asp-action="ProcesarPedido" method="post" id="payment-form" class="checkout-grid">
+        
+        <input type="hidden" name="transactionId" id="transactionId" />
+        <input type="hidden" name="ultimosDigitos" id="ultimosDigitos" />
+        <input type="hidden" name="estadoPago" id="estadoPago" />
+
+        <div class="checkout-main">
+            <div class="mb-3">
+                <a asp-controller="Compra" asp-action="Carrito" class="text-decoration-none link-carrito">
+                    <i class="bi bi-arrow-left"></i></i> Volver al carrito
+                </a>
+            </div>
+
+            <h2 class="section-title">Finalizar Pedido</h2>
+
+            @if (ViewBag.ErrorMensaje != null)
+            {
+                <div class="error-alert-box">
+                    <div class="error-alert-content">
+                        <i class="fas fa-exclamation-circle error-icon"></i>
+                        <div class="error-text">
+                            <strong>¡Vaya! Algo ha salido mal</strong>
+                            <span>@Html.Raw(ViewBag.ErrorMensaje)</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close-error" onclick="this.parentElement.style.display='none'">&times;</button>
+                </div>
+            }
+
+            <section class="checkout-section">
+                <div class="section-header">
+                    <h3>1. Dirección de Envío</h3>
+                    <button type="button" class="btn-text" onclick="mostrarModalDireccion()">+ Añadir nueva</button>
+                </div>
+
+                <div class="address-grid">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var dir in Model)
+                        {
+                            <label class="address-card">
+                                <input type="radio" name="idDireccion" value="@dir.IdDireccion" required @(dir.EsPrincipal ? "checked" : "") />
+                                <div class="address-content">
+                                    <span class="address-name">@(dir.NombreEtiqueta == null ? dir.Usuario.Nombre : dir.NombreEtiqueta)</span>
+                                    <p>@dir.CalleNumero - @dir.Piso, @dir.Puerta</p>
+                                    <p>@dir.CodigoPostal, @dir.Municipio, @dir.Provincia</p>
+                                </div>
+                            </label>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <p>No tienes direcciones guardadas.</p>
+                            <button type="button" class="btn-primary" onclick="mostrarModalDireccion()">Añadir dirección</button>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h3>2. Método de Pago</h3>
+                <div class="payment-options">
+                    
+                    <label class="payment-card">
+                        <input type="radio" name="metodoPago" value="tarjeta" checked onclick="cambiarMetodoPago('stripe')" />
+                        <div class="payment-info">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Tarjeta de Crédito / Débito</span>
+                        </div>
+                    </label>
+
+                    <div id="stripe-element-container" class="payment-details-box">
+                        <label for="card-element">Datos de la tarjeta</label>
+                        <div id="card-element"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="checkout-sidebar">
+            <div class="summary-card">
+                <h3>Resumen del Pedido</h3>
+                <div class="summary-details">
+                    <div class="summary-line">
+                        <span>Productos (@ViewBag.CantidadProductos)</span>
+                        <span>@ViewBag.Subtotal.ToString("C")</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Tasa Gestion </span>
+                        <span>@ViewBag.Tasa.ToString("C")</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Gastos de envío</span>
+                        <span class="@(envio == 0 ? "free-shipping" : "")">
+                            @(envio == 0 ? "GRATIS" : envio.ToString("0.00") + "€")
+                        </span>
+                    </div>
+                    <hr />
+                    <div class="summary-line total">
+                        <span>Total (IVA incl.)</span>
+                        <span id="total-checkout">@ViewBag.Total.ToString("C")</span>
+                    </div>
+                </div>
+                
+                <button type="submit" id="submit-button" class="btn-confirm">
+                    <span id="button-text">CONFIRMAR Y PAGAR</span>
+                    <div class="spinner hidden" id="spinner"></div>
+                </button>
+                
+                <p class="secure-text"><i class="fas fa-lock"></i> Pago 100% seguro con Stripe</p>
+            </div>
+        </aside>
+    </form>
+</div>
+
+<div id="modalDireccion" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h5 class="fw-bold m-0">Añadir nueva dirección</h5>
+            <button type="button" class="btn-close" onclick="cerrarModalDireccion()"></button>
+        </div>
+
+        <form asp-action="GuardarDireccion" method="post" class="p-2">
+            <div class="row g-3 mb-4">
+                <div class="col-12 border-bottom pb-2">
+                    <h6 class="text-primary-color fw-bold text-uppercase small">1. Identificación</h6>
+                </div>
+                <div class="col-md-6">
+                    <label class="info-label">Nombre de la Etiqueta</label>
+                    <input type="text" name="NombreEtiqueta" class="form-control-custom" placeholder="Ej: Mi Casa, Oficina..." required>
+                </div>
+                <div class="col-md-6">
+                    <label class="info-label">Código Postal</label>
+                    <input type="text" name="CodigoPostal" class="form-control-custom" placeholder="XXXXX" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4 align-items-end">
+                <div class="col-12 border-bottom pb-2">
+                    <h6 class="text-primary-color fw-bold text-uppercase small">2. Ubicación Exacta</h6>
+                </div>
+                <div class="col-md-8">
+                    <label class="info-label">Calle y Número</label>
+                    <input type="text" name="CalleNumero" class="form-control-custom" placeholder="Calle, Avenida..." required>
+                </div>
+                <div class="col-md-2 col-6">
+                    <label class="info-label">Piso</label>
+                    <input type="text" name="Piso" class="form-control-custom" placeholder="4º">
+                </div>
+                <div class="col-md-2 col-6">
+                    <label class="info-label">Puerta</label>
+                    <input type="text" name="Puerta" class="form-control-custom" placeholder="B">
+                </div>
+                <div class="col-md-6">
+                    <label class="info-label">Municipio</label>
+                    <input type="text" name="Municipio" class="form-control-custom" placeholder="Localidad" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="info-label">Provincia</label>
+                    <input type="text" name="Provincia" class="form-control-custom" placeholder="Provincia" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12 border-bottom pb-2">
+                    <h6 class="text-primary-color fw-bold text-uppercase small">3. Detalles de Entrega</h6>
+                </div>
+                <div class="col-12">
+                    <label class="info-label">Notas para el Repartidor</label>
+                    <textarea name="NotasAdicionales" class="form-control-custom" rows="2" placeholder="Ej: El telefonillo no funciona..."></textarea>
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-switch custom-switch mt-2">
+                        <input class="form-check-input" type="checkbox" name="EsPrincipal" value="true" id="checkPrincipal">
+                        <label class="form-check-label ms-2 text-secondary small" for="checkPrincipal">
+                            Marcar como mi dirección principal de entrega
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                <button type="button" class="btn-custom" onclick="cerrarModalDireccion()">Cancelar</button>
+                <button type="submit" class="btn-custom">
+                    <i class="fas fa-save me-2"></i>Guardar Dirección
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="~/js/checkout-stripe.js" asp-append-version="true"></script>
+    
+    <script>
+        function cambiarMetodoPago(metodo) {
+            const stripeBox = document.getElementById('stripe-element-container');
+            const btnConfirmar = document.getElementById('submit-button');
+
+            if (metodo === 'stripe'){
+                stripeBox.classList.remove('hidden');
+                btnConfirmar.classList.remove('hidden');
+            }
+        }
+
+        // Funciones del Modal
+        function mostrarModalDireccion() {
+            document.getElementById('modalDireccion').classList.remove('hidden');
+        }
+
+        function cerrarModalDireccion() {
+            document.getElementById('modalDireccion').classList.add('hidden');
+        }
+
+    </script>
+}

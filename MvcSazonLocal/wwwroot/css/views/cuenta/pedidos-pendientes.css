@@ -1,0 +1,112 @@
+﻿/* --- CONTENEDORES Y GRID --- */
+.pedidos-container {
+    padding: 20px 0;
+}
+
+.pedidos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+/* --- TARJETA DE PEDIDO --- */
+.pedido-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-line);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.pedido-header {
+    padding: 15px 20px;
+    background-color: var(--light-cream);
+    border-bottom: 1px solid var(--border-line);
+}
+
+/* --- ELEMENTOS DE TEXTO Y BADGES --- */
+.text-primary-hard {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.badge-pedido {
+    background: var(--primary-soft);
+    color: var(--primary-hard);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* --- CUERPO Y TABLA --- */
+.pedido-body {
+    padding: 15px 20px;
+    flex-grow: 1;
+}
+
+.bg-light-soft {
+    background-color: #fafafa;
+}
+
+.total-destacado {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+/* --- ACCIONES Y BOTONES --- */
+.btn-en-camino {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+    .btn-en-camino:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1200px) {
+    .pedidos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .pedido-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pedidos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pedido-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .pedido-header .ms-3 {
+            margin-left: 0 !important;
+            font-size: 0.85rem;
+        }
+
+    .pedido-body {
+        padding: 10px;
+        overflow-x: auto;
+    }
+}

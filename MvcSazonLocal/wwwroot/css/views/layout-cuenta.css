@@ -1,0 +1,167 @@
+﻿/* --- ESTRUCTURA DE GESTIÓN --- */
+.wrapper-gestion {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-main);
+}
+
+/* --- SIDEBAR ANCHA Y ELEGANTE --- */
+.sidebar-gestion {
+    min-width: 320px;
+    max-width: 320px;
+    background: linear-gradient(180deg, var(--white) 0%, rgba(250, 249, 246, 0.5) 100%);
+    border-right: var(--border-main);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    z-index: 100;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sidebar-header-gestion {
+    padding: 5% 8%;
+    border-bottom: var(--border-main);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(245, 245, 220, 0.6) 100%);
+    animation: fadeInDown 0.5s ease-out;
+}
+
+/* --- ÍTEMS DEL MENÚ --- */
+.item-menu-gestion {
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    margin: 1% 3%;
+    padding: 3.5% 6%; 
+    font-weight: 600;
+    color: var(--text-secondary);
+    background-color: transparent;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+    .item-menu-gestion::before {
+        content: '';
+        position: absolute;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(143, 188, 143, 0.2), transparent);
+        transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: -1;
+    }
+
+    .item-menu-gestion.active {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%) !important;
+        color: var(--white) !important;
+        box-shadow: 0 6px 20px rgba(85, 107, 47, 0.3);
+        border-left: 4px solid var(--primary-hard);
+        transform: translateX(5px);
+    }
+
+    .item-menu-gestion.active::before {
+        left: 0;
+    }
+
+    .item-menu-gestion:hover {
+        background-color: rgba(143, 188, 143, 0.15);
+        color: var(--primary-hard);
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(85, 107, 47, 0.1);
+    }
+
+    .item-menu-gestion:hover::before {
+        left: 0;
+    }
+
+    .item-menu-gestion i {
+        font-size: 1.2rem;
+        margin-right: 10px;
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .item-menu-gestion:hover i {
+        transform: scale(1.15) rotate(-10deg);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+/* --- SECCIONES DE TEXTO --- */
+.titulo-seccion-sidebar {
+    color: var(--accent-color);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin: 8% 8% 3% 8%;
+    animation: slideInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content-gestion {
+    flex-grow: 1;
+    width: 100%;
+    overflow-y: auto;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.header-gestion {
+    background: linear-gradient(90deg, var(--white) 0%, rgba(250, 249, 246, 0.5) 100%);
+    border-bottom: var(--border-main);
+    padding: 2% 4%;
+    display: flex;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.container-gestion-amplio {
+    padding: 4% 5%; 
+}
+
+/* --- TEXTOS AUXILIARES --- */
+.text-olive {
+    color: var(--primary-color);
+}
+
+.text-main {
+    color: var(--text-main);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .sidebar-gestion {
+        min-width: 260px;
+        max-width: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper-gestion {
+        flex-direction: column;
+    }
+
+    .sidebar-gestion {
+        min-width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: var(--border-main);
+    }
+
+    .sidebar-header-gestion {
+        padding: 3% 5%;
+    }
+
+    .item-menu-gestion {
+        margin: 0.5% 2%;
+        padding: 3% 4%;
+    }
+
+    .container-gestion-amplio {
+        padding: 5% 3%;
+    }
+}

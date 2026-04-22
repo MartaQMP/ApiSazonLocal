@@ -1,0 +1,109 @@
+﻿@section style {
+    <link rel="stylesheet" href="~/css/views/auth/register.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        function setupPasswordToggle(buttonId, inputId, iconId) {
+            document.getElementById(buttonId).addEventListener("click", function () {
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+                const isPassword = input.getAttribute("type") === "password";
+                input.setAttribute("type", isPassword ? "text" : "password");
+                icon.classList.toggle("bi-eye");
+                icon.classList.toggle("bi-eye-slash");
+            });
+        }
+
+        setupPasswordToggle("togglePassword", "password", "eyeIcon");
+        setupPasswordToggle("toggleConfirm", "confirmPassword", "eyeConfirmIcon");
+    </script>
+}
+
+<div class="auth-page">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-header">
+            <h3>Sazón Local</h3>
+            <p class="mb-0">Crea tu cuenta hoy</p>
+        </div>
+
+        <div class="card-body-auth">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-auth text-uppercase">Nombre</label>
+                        <input name="nombre" type="text" class="form-control-auth" placeholder="Tu nombre" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label-auth text-uppercase">Apellido</label>
+                        <input name="apellidos" type="text" class="form-control-auth" placeholder="Tu apellido" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-auth text-uppercase">Correo Electrónico</label>
+                    <input name="email" type="email" class="form-control-auth" pattern="[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,}$" placeholder="ejemplo@correo.com" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-auth text-uppercase">Teléfono</label>
+                    <input name="telefono" type="tel" class="form-control-auth" pattern="[0-9]{3}[0-9]{3}[0-9]{3}" placeholder="987 654 321" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-auth text-uppercase">Tipo de Perfil</label>
+                    <select name="idRol" class="form-control-auth form-select-auth" required>
+                        <option value="" disabled selected>Selecciona tu rol</option>
+                        <option value="3">Soy Cliente (Quiero comprar)</option>
+                        <option value="2">Soy Agricultor (Quiero vender y comprar)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-auth text-uppercase">Contraseña</label>
+                    <div class="input-group-auth position-relative">
+                        <input id="password" name="password" type="password" class="form-control-auth" placeholder="••••••••" required />
+                        <button type="button" id="togglePassword" class="btn-toggle-pw">
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-auth text-uppercase">Confirmar Contraseña</label>
+                    <div class="input-group-auth position-relative">
+                        <input id="confirmPassword" name="confirmPassword" type="password" class="form-control-auth" placeholder="••••••••" required />
+                        <button type="button" id="toggleConfirm" class="btn-toggle-pw">
+                            <i class="bi bi-eye" id="eyeConfirmIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                @if (ViewBag.MensajeError != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-4 alert-auth" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @ViewBag.MensajeError
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <button type="submit" class="btn-auth">
+                    CREAR CUENTA
+                </button>
+            </form>
+        </div>
+
+        <div class="auth-footer">
+            <span class="small text-muted">¿Ya tienes cuenta?</span>
+            <br />
+            <a asp-controller="Auth" asp-action="Login" class="auth-link">
+                ¡INICIA SESIÓN AQUÍ!
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <a asp-controller="Productos" asp-action="Index" class="text-muted small text-decoration-none">
+        ← Volver a la tienda
+    </a>
+</div>

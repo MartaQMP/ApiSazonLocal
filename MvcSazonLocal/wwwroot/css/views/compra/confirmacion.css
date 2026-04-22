@@ -1,0 +1,123 @@
+﻿/* --- CONTENEDOR DE PÁGINA --- */
+.confirmation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    background-color: var(--bg-main);
+    padding: 2rem;
+}
+
+/* --- TARJETA DE ÉXITO (CARD) --- */
+.confirmation-card {
+    background-color: var(--white);
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    max-width: 550px;
+    width: 100%;
+}
+
+/* --- ELEMENTOS VISUALES Y TEXTO --- */
+.status-icon {
+    font-size: 5rem;
+    color: var(--status-success);
+    margin-bottom: 1rem;
+    line-height: 1;
+}
+
+.text-primary-color {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.divider {
+    border: 0;
+    border-top: var(--border-main);
+    margin: 2rem 0;
+}
+
+/* --- CAJA DE INFORMACIÓN --- */
+.info-box {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    color: var(--text-main);
+}
+
+/* --- ACCIONES Y BOTONES --- */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .btn-primary-custom:hover {
+        background-color: var(--primary-hover);
+        color: var(--white);
+        transform: translateY(-2px);
+    }
+
+.btn-outline-custom {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .btn-outline-custom:hover {
+        background-color: var(--bg-secondary);
+        color: var(--primary-hard);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .confirmation-card {
+        padding: 2.5rem;
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .confirmation-container {
+        padding: 1rem;
+    }
+
+    .confirmation-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .status-icon {
+        font-size: 4rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-primary-custom,
+    .btn-outline-custom {
+        width: 100%;
+        text-align: center;
+    }
+}

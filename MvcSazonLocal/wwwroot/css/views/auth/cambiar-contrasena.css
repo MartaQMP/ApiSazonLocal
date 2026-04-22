@@ -1,0 +1,129 @@
+﻿/* --- CONTENEDOR DE AUTENTICACIÓN --- */
+.auth-container {
+    max-width: 450px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: var(--white);
+    border: var(--border-main);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+/* --- TEXTOS Y TÍTULOS --- */
+.auth-title {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* --- CAMPOS DEL FORMULARIO --- */
+.form-group-custom {
+    margin-bottom: 25px;
+}
+
+    .form-group-custom label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+.form-control-custom {
+    width: 100%;
+    padding: 12px 15px;
+    border: var(--border-main);
+    border-radius: var(--radius-md);
+    background-color: var(--white);
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-sm);
+    }
+
+/* --- BOTONES (PRIMARIO Y ACCENT) --- */
+.btn-auth-primary,
+.btn-auth-accent {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+    .btn-auth-primary:hover,
+    .btn-auth-accent:hover {
+        background-color: var(--primary-hover);
+    }
+
+/* --- MENSAJES DE ERROR Y LINKS --- */
+.error-msg {
+    background-color: #fce8e8;
+    color: var(--status-error);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    border-left: 4px solid var(--status-error);
+    font-size: 0.9rem;
+}
+
+.auth-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .auth-link:hover {
+        color: var(--accent-hover);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .auth-container {
+        margin: 40px auto;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-container {
+        max-width: 90%;
+        margin: 30px auto;
+        padding: 25px;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        border: none;
+        box-shadow: none;
+        padding: 15px;
+        margin-top: 10px;
+    }
+
+    .btn-auth-primary {
+        padding: 12px;
+    }
+}

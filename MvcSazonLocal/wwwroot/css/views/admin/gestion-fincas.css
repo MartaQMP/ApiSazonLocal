@@ -1,0 +1,133 @@
+﻿/* --- ESTRUCTURA DE TARJETAS --- */
+.finca-card {
+    background-color: var(--white);
+    border-radius: var(--radius-md);
+    border: var(--border-main);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+    .finca-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+/* --- CABECERA Y CUERPO --- */
+.finca-header {
+    background-color: var(--bg-secondary);
+    padding: 1rem 1.5rem;
+    border-bottom: var(--border-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.finca-body {
+    padding: 1.5rem;
+}
+
+/* --- ETIQUETAS DE ESTADO --- */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pendiente {
+    background-color: var(--status-warning);
+    color: white;
+}
+
+.status-aceptada {
+    background-color: var(--status-success);
+    color: white;
+}
+
+.status-rechazada {
+    background-color: var(--status-error);
+    color: white;
+}
+
+/* --- ACCIONES Y BOTONES --- */
+.btn-validar {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+    .btn-validar:hover {
+        background-color: var(--primary-hover);
+        color: var(--white);
+    }
+
+.btn-rechazar {
+    background-color: transparent;
+    color: var(--status-error);
+    border: 1px solid var(--status-error);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+    .btn-rechazar:hover {
+        background-color: var(--status-error);
+        color: var(--white);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .finca-header {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .finca-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .finca-body .row {
+        flex-direction: column;
+    }
+
+    .col-md-4.text-end {
+        text-align: left !important;
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-validar,
+    .btn-rechazar {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    .filter-group {
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+        .filter-group a {
+            flex: 1;
+            text-align: center;
+        }
+}

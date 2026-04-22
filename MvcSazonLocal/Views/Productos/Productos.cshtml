@@ -1,0 +1,208 @@
+﻿@model List<Producto>
+@section style {
+    <link rel="stylesheet" href="~/css/views/productos/productos.css" asp-append-version="true" />
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-olive">Nuestros Productos</h2>
+
+    <div class="search-section mb-5 p-4 shadow-sm rounded-4 bg-w.hite">
+        <form asp-action="Productos" method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">¿Qué estás buscando?</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                    <input type="text" name="buscador" value="@ViewBag.Buscador" class="form-control border-0 bg-light" placeholder="Ej: Limon, Tomate...">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">Categoría</label>
+                <select name="idCategoria" class="form-select border-0 bg-light">
+                    <option value="">Todas las categorías</option>
+                    @foreach(Categoria categoria in ViewBag.Categorias)
+                    {
+                        <option value="@categoria.IdCategoria" selected="@(categoria.IdCategoria == ViewBag.idCategoria)">@categoria.Nombre</option>
+                    }
+                    </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">Subcategoría</label>
+                <select name="idSubcategoria" class="form-select border-0 bg-light">
+                    <option value="">Todas las subcategorías</option>
+                    @foreach (Subcategoria subcategoria in ViewBag.Subcategorias)
+                    {
+                        <option value="@subcategoria.IdSubcategoria" selected="@(subcategoria.IdSubcategoria == ViewBag.IdSubcategoria)">@subcategoria.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">Finca</label>
+                <select name="idFinca" class="form-select border-0 bg-light">
+                    <option value="">Todas las fincas</option>
+                    @foreach (Finca finca in ViewBag.Fincas)
+                    {
+                        <option value="@finca.IdFinca" selected="@(finca.IdFinca == ViewBag.IdFinca)">@finca.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">Precio máximo (€)</label>
+                <input type="number" min="0" name="precio" value="@ViewBag.PrecioMax" class="form-control border-0 bg-light" placeholder="Sin límite">
+            </div>
+
+            <div class="col-md-2 text-end">
+                <button type="submit" class="btn btn-sazon w-100 rounded-pill">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var producto in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 product-card shadow-sm border-0">
+                        <div class="product-img-container">
+                            <img src="@producto.Imagen" class="card-img-top" alt="@producto.Nombre">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-dark">@producto.Nombre</h5>
+                            <p class="card-text text-muted small">@producto.Descripcion</p>
+
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="product-price">@producto.PrecioUnidad.ToString("0.00")<small>€/@producto.UnidadMedida.Nombre</small></span>
+                                </div>
+
+                                @{
+                                    var cantidades = ViewBag.CantidadesCarrito as Dictionary<int, int>;
+                                    int cantidadEnCarrito = 0;
+                                    bool yaEnCarrito = cantidades != null && cantidades.TryGetValue(producto.IdProducto, out cantidadEnCarrito);
+                                }
+
+                                <div class="d-flex gap-2 action-container">
+                                    <button type="button" class="btn btn-sazon flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+                                            onclick="anadirAlCarrito(@producto.IdProducto)">
+                                        <span id="text-btn-@producto.IdProducto">
+                                            @if (yaEnCarrito)
+                                            {
+                                                <i class="bi bi-check-circle"></i> <span>ACTUALIZAR</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-cart-plus"></i> <span>AÑADIR</span>
+                                            }
+                                        </span>
+                                    </button>
+
+                                    <div class="quantity-stepper d-flex align-items-center">
+                                        <button type="button" class="btn-step" onclick="cambiarCant(@producto.IdProducto, -1)">-</button>
+                                        <input type="number" name="cantidad" id="cant-@producto.IdProducto" class="input-step" value="@(yaEnCarrito ? cantidadEnCarrito : 1)" min="1" max="@producto.Stock" readonly>
+                                        <button type="button" class="btn-step" onclick="cambiarCant(@producto.IdProducto, 1)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="d-flex justify-content-center mt-5 mb-5">
+            <nav aria-label="Navegacion de productos">
+                <ul class="pagination align-items-center">
+                    <li class="page-item @(ViewBag.Actual <= 0 ? "disabled" : "")">
+                        <a class="page-link shadow-sm" asp-action="Productos"
+                           asp-route-posicion="@ViewBag.Primero"
+                           asp-route-buscador="@ViewBag.Buscador"
+                           asp-route-idCategoria="@ViewBag.IdCategoria"
+                           asp-route-precio="@ViewBag.PrecioMax">
+                            <i class="bi bi-arrow-left-circle-fill"></i> Primero
+                        </a>
+                    </li>
+                    <li class="page-item @(ViewBag.Actual <= 0 ? "disabled" : "")">
+                        <a class="page-link shadow-sm" asp-action="Productos"
+                           asp-route-posicion="@ViewBag.Anterior"
+                           asp-route-buscador="@ViewBag.Buscador"
+                           asp-route-idCategoria="@ViewBag.IdCategoria"
+                           asp-route-precio="@ViewBag.PrecioMax">
+                            <i class="bi bi-arrow-left-circle-fill"></i> Anterior
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link bg-transparent border-0 text-muted">
+                            @ViewBag.Total resultados encontrados
+                        </span>
+                    </li>
+                    <li class="page-item @(ViewBag.Actual + 30 >= ViewBag.Total ? "disabled" : "")">
+                        <a class="page-link shadow-sm" asp-action="Productos"
+                           asp-route-posicion="@ViewBag.Siguiente"
+                           asp-route-buscador="@ViewBag.Buscador"
+                           asp-route-idCategoria="@ViewBag.IdCategoria"
+                           asp-route-precio="@ViewBag.PrecioMax">
+                            Siguiente <i class="bi bi-arrow-right-circle-fill"></i>
+                        </a>
+                    </li>
+                    <li class="page-item @(ViewBag.Actual + 30 >= ViewBag.Total ? "disabled" : "")">
+                        <a class="page-link shadow-sm" asp-action="Productos"
+                           asp-route-posicion="@ViewBag.Ultimo"
+                           asp-route-buscador="@ViewBag.Buscador"
+                           asp-route-idCategoria="@ViewBag.IdCategoria"
+                           asp-route-precio="@ViewBag.PrecioMax">
+                            Ultimo <i class="bi bi-arrow-right-circle-fill"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center border-0 rounded-4 p-5">
+            <i class="bi bi-emoji-frown fs-1 d-block mb-3"></i>
+            No hemos encontrado productos que coincidan con tu búsqueda.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function cambiarCant(id, delta) {
+            const input = document.getElementById('cant-' + id);
+            let valorActual = parseInt(input.value);
+            let nuevoValor = valorActual + delta;
+
+            const min = parseInt(input.getAttribute('min'));
+            const max = parseInt(input.getAttribute('max'));
+
+            if (nuevoValor >= min && nuevoValor <= max) {
+                input.value = nuevoValor;
+            }
+        }
+
+        function anadirAlCarrito(id) {
+            var cantidadInput = $("#cant-" + id).val();
+
+            $.post("/Productos/AnadirCarrito", { 
+                idProducto: id, 
+                cantidad: cantidadInput, 
+                esCarrito: false 
+            }, function(nuevoTotalBadge) {
+                $("#cart-badge").text(nuevoTotalBadge);
+                $("#cart-badge").show();
+
+                $("#text-btn-" + id).html('<i class="bi bi-check-lg"></i> ¡LISTO!');
+                
+                setTimeout(function() {
+                    $("#text-btn-" + id).html('<i class="bi bi-check-circle"></i> ACTUALIZAR');
+                }, 2000);
+            });
+        }
+    </script>
+}

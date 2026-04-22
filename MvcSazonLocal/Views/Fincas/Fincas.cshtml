@@ -1,0 +1,102 @@
+﻿@section style{
+    <link rel="stylesheet" href="~/css/views/fincas/fincas.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/mapas/css/leaflet.css" />
+}
+
+<div class="container-fluid px-4 mt-4 animate-fade-in">
+    <div class="header-flex mb-4">
+        <div>
+            <h2 class="fw-bold text-main"><i class="bi bi-geo-fill me-2"></i>Centro de Ubicaciones</h2>
+            <p class="text-muted">Visualiza tus fincas y puntos de interés sobre el relieve.</p>
+        </div>
+    </div>
+
+    <div id="map" style="height: 700px; width: 100%; border-radius: var(--radius-lg); border: 2px solid var(--border-line);"></div>
+</div>
+
+@section Scripts {
+    <script src="~/mapas/js/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var map = L.map('map').setView([40.4167, -3.7033], 6);
+
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+            L.tileLayer.wms("https://www.ign.es/wms-inspire/unidades-administrativas", {
+                layers: 'AU.AdministrativeUnit', format: 'image/png', transparent: true, opacity: 0.7
+            }).addTo(map);
+
+            function crearIcono(icono, claseColor) {
+                return L.divIcon({
+                    className: 'marker-container',
+                    html: `<div class="pin-label ${claseColor}"><i class="bi ${icono}"></i></div>`,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40],
+                    popupAnchor: [0, -35]
+                });
+            }
+
+            var bounds = [];
+
+            @foreach (var dir in ViewBag.Direcciones)
+            {
+                    <text>
+                    (function() {
+                        var nombre = "@dir.NombreEtiqueta".toLowerCase();
+                        var icono = "bi-geo-alt-fill";
+                        var clase = "pin-otro";
+
+                            if (nombre.includes("casa")) { icono = "bi-house-fill"; clase = "pin-casa"; }
+                        else if (nombre.includes("trabajo")) { icono = "bi-briefcase-fill"; clase = "pin-trabajo"; }
+
+                        var pos = [@dir.Latitud.ToString().Replace(',', '.'), @dir.Longitud.ToString().Replace(',', '.')];
+                        L.marker(pos, { icon: crearIcono(icono, clase) }).addTo(map).bindPopup("<b>@dir.NombreEtiqueta</b>");
+                        bounds.push(pos);
+                    })();
+                    </text>
+            }
+
+            @foreach (var finca in ViewBag.Fincas)
+            {
+                    <text>
+                    (function() {
+                        var posF = [@finca.Latitud.ToString().Replace(',', '.'), @finca.Longitud.ToString().Replace(',', '.')];
+                            L.marker(posF, { icon: crearIcono("bi-geo-alt-fill", "pin-finca") })
+                         .addTo(map)
+                         .bindPopup(`<b>@finca.Nombre</b>`);
+                        bounds.push(posF);
+                    })();
+                    </text>
+            }
+            @if (User.IsInRole("ADMINISTRADOR"))
+            {
+                foreach (var finca in ViewBag.FincasPendiente)
+                {
+                        <text>
+                        (function() {
+                            var posF = [@finca.Latitud.ToString().Replace(',', '.'), @finca.Longitud.ToString().Replace(',', '.')];
+                                    L.marker(posF, { icon: crearIcono("bi-geo-alt-fill", "pin-pendiente") })
+                             .addTo(map)
+                             .bindPopup(`<b>@finca.Nombre</b><br><span style="color:gray">⏳ Pendiente de validación</span>`);
+                            bounds.push(posF);
+                        })();
+                        </text>
+                }
+
+                foreach (var finca in ViewBag.FincasRechazadas)
+                {
+                        <text>
+                        (function() {
+                            var posF = [@finca.Latitud.ToString().Replace(',', '.'), @finca.Longitud.ToString().Replace(',', '.')];
+                            L.marker(posF, { icon: crearIcono("bi-x-circle-fill", "pin-rechazada") })
+                             .addTo(map)
+                             .bindPopup(`<b>@finca.Nombre</b><br><span style="color:red">❌ Finca rechazada</span>`);
+                            bounds.push(posF);
+                        })();
+                        </text>
+                }
+            }
+
+            if (bounds.length > 0) map.fitBounds(bounds, { padding: [50, 50] });
+        });
+    </script>
+}

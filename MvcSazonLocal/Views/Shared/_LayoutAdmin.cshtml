@@ -1,0 +1,185 @@
+﻿@using System.Security.Claims;
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sazón Local</title>
+    <link rel="icon" type="image/png" href="~/images/Logo_Sazon_Local.png" />
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/views/layout-admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/mapas/css/leaflet.css" />
+
+    <link rel="stylesheet" href="~/css/views/admin/gestion-usuarios.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/views/admin/gestion-modelos.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/views/admin/gestion-fincas.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/views/admin/gestion-pedidos.css" asp-append-version="true" />
+    @RenderSection("style", false)
+</head>
+<body>
+    @await Html.PartialAsync("_Navbar")
+    <div class="d-flex wrapper-gestion">
+        <nav class="sidebar-gestion border-end shadow-sm bg-white">
+            <div class="p-4 border-bottom mb-2">
+                <h5 class="fw-bold text-olive mb-0"><i class="bi bi-person-badge me-2"></i>Mi Cuenta</h5>
+                <small class="text-muted">Centro de Gestión</small>
+            </div>
+
+            <div class="list-group list-group-flush px-3">
+                <p class="text-uppercase small fw-bold text-muted mb-2 mt-3 px-2">General</p>
+                <a asp-controller="Admin" asp-action="GestionPedidos"
+                   class="list-group-item list-group-item-action item-menu-gestion ajax-nav @(ViewContext.RouteData.Values["Action"].ToString() == "GestionPedidos" ? "active" : "")">
+                    <i class="bi bi-person-vcard me-2"></i> Gestion Pedidos
+                </a>
+                <a asp-controller="Admin" asp-action="GestionUsuarios"
+                   class="list-group-item list-group-item-action item-menu-gestion ajax-nav @(ViewContext.RouteData.Values["Action"].ToString() == "GestionUsuarios" ? "active" : "")">
+                    <i class="bi bi-geo-alt me-2"></i> Gestion Usuarios
+                </a>
+                <a asp-controller="Admin" asp-action="GestionFincas"
+                   class="list-group-item list-group-item-action item-menu-gestion ajax-nav @(ViewContext.RouteData.Values["Action"].ToString() == "GestionFincas" ? "active" : "")">
+                    <i class="bi bi-bag-check me-2"></i> Gestion Fincas
+                </a>
+                <a asp-controller="Admin" asp-action="GestionModelos"
+                   class="list-group-item list-group-item-action item-menu-gestion ajax-nav @(ViewContext.RouteData.Values["Action"].ToString() == "GestionModelos" ? "active" : "")">
+                    <i class="bi bi-bag-check me-2"></i> Gestion Modelos
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content-gestion bg-light-soft">
+            <header class="navbar navbar-expand navbar-light bg-white shadow-sm px-4 mb-4">
+                <button class="btn btn-link d-md-none me-3">
+                    <i class="bi bi-list fs-3 text-olive"></i>
+                </button>
+                <span class="navbar-text fw-bold text-olive">Panel de Control</span>
+            </header>
+
+            <div class="container-fluid px-lg-5 pb-5" id="admin-content">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+    @await Html.PartialAsync("_Footer")
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/mapas/js/leaflet.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            function ejecutarScripts(contenedor) {
+                const scripts = contenedor.querySelectorAll('script');
+
+                const scriptsArray = Array.from(scripts);
+
+                function cargarSiguiente(index) {
+                    if (index >= scriptsArray.length) return;
+
+                    const scriptViejo = scriptsArray[index];
+                    const scriptNuevo = document.createElement('script');
+
+                    Array.from(scriptViejo.attributes).forEach(attr => {
+                        scriptNuevo.setAttribute(attr.name, attr.value);
+                    });
+                    scriptNuevo.textContent = scriptViejo.textContent;
+
+                    if (scriptViejo.src) {
+                        scriptNuevo.onload = () => cargarSiguiente(index + 1);
+                        scriptViejo.parentNode.replaceChild(scriptNuevo, scriptViejo);
+                    } else {
+                        scriptViejo.parentNode.replaceChild(scriptNuevo, scriptViejo);
+                        cargarSiguiente(index + 1);
+                    }
+                }
+                cargarSiguiente(0);
+            }
+
+            function normalizarUrl(u) {
+                return u.toLowerCase().replace(/\/$/, '');
+            }
+
+            function actualizarActivo(url) {
+                const enlaces = Array.from(document.querySelectorAll('.ajax-nav'));
+                enlaces.forEach(l => l.classList.remove('active'));
+
+                const activeLink = enlaces.find(l => normalizarUrl(l.href) === normalizarUrl(url));
+
+                if (activeLink) activeLink.classList.add('active');
+            }
+
+            function cargarContenido(url) {
+                const content = document.getElementById('admin-content');
+                content.style.transition = 'opacity 0.15s ease';
+                content.style.opacity = '0.4';
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.getElementById('admin-content-partial');
+
+                    if (newContent) {
+                        content.innerHTML = newContent.innerHTML;
+                        ejecutarScripts(content);
+                    }
+
+                    content.style.opacity = '1';
+                    history.pushState(null, '', url);
+                    actualizarActivo(url);
+                })
+                .catch(() => {
+                    window.location.href = url;
+                });
+            }
+
+            document.querySelectorAll('.ajax-nav').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    cargarContenido(this.href);
+                });
+            });
+
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (!form.classList.contains('ajax-form')) return;
+
+                e.preventDefault();
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(() => {
+                    cargarContenido(window.location.pathname);
+                })
+                .catch(() => {
+                    form.submit();
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('.ajax-link');
+                if (!link) return;
+
+                e.preventDefault();
+                cargarContenido(link.href);
+            });
+
+            window.addEventListener('popstate', function () {
+                cargarContenido(location.href);
+            });
+
+        });
+    </script>
+</body>
+</html>

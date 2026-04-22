@@ -1,0 +1,187 @@
+﻿@model List<Direccion>
+
+<div id="main-content-partial">
+    <div class="container-fluid animate-fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0 text-main">Mis Direcciones</h4>
+            <a asp-action="CrearDireccion" class="btn btn-primary-custom px-4 ajax-link">
+                <i class="bi bi-plus-circle me-2"></i>Añadir Nueva Dirección
+            </a>
+        </div>
+        @if (ViewBag.ErrorMensaje != null)
+        {
+            <div class="alert alert-danger border-0 shadow-sm rounded-lg p-3 mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.ErrorMensaje
+            </div>
+        }
+        @if (ViewBag.SinDirecciones != null)
+        {
+            <div class="alert alert-info border-0 shadow-sm rounded-lg p-4">
+                <i class="bi bi-geo-alt me-2"></i> @ViewBag.SinDirecciones
+            </div>
+        }
+        else
+        {
+            <div class="accordion accordion-custom" id="accordionDirecciones">
+                @foreach (var dir in Model)
+                {
+                    bool esModoEdicion = (ViewBag.IdEditar == dir.IdDireccion);
+
+                    <div class="accordion-item mb-3 border-0 shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button @(esModoEdicion ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@dir.IdDireccion">
+                                <div class="d-flex align-items-center w-100">
+                                    <i class="bi bi-geo-fill me-3 text-primary-color"></i>
+                                    <span class="fw-bold">@(string.IsNullOrEmpty(dir.NombreEtiqueta) ? dir.CalleNumero : dir.NombreEtiqueta)</span>
+                                    @if (dir.EsPrincipal)
+                                    {
+                                        <span class="badge bg-success-soft text-success ms-3 px-3 py-2 rounded-pill">Principal</span>
+                                    }
+                                </div>
+                            </button>
+                        </h2>
+
+                        <div id="collapse-@dir.IdDireccion" class="accordion-collapse collapse @(esModoEdicion ? "show" : "")" data-bs-parent="#accordionDirecciones">
+                            <div class="accordion-body p-0">
+                                <div class="card-perfil-personalizada p-4">
+                                    <form asp-action="Actualizar" method="post" class="ajax-form">
+                                        <input type="hidden" name="idDireccion" value="@dir.IdDireccion" />
+
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <label class="info-label">Nombre Etiqueta</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="nombreEtiqueta" class="form-control" value="@dir.NombreEtiqueta" placeholder="Ej: Casa, Trabajo...">
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@(dir.NombreEtiqueta ?? "Sin etiqueta")</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="info-label">Código Postal</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="cp" class="form-control" value="@dir.CodigoPostal" required>
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.CodigoPostal</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-8">
+                                                <label class="info-label">Calle y Número</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="calleNumero" class="form-control" value="@dir.CalleNumero" required>
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.CalleNumero</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="info-label">Piso</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="piso" class="form-control" value="@dir.Piso">
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.Piso</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="info-label">Puerta</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="puerta" class="form-control" value="@dir.Puerta">
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.Puerta</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="info-label">Municipio</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="municipio" class="form-control" value="@dir.Municipio" required>
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.Municipio</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="info-label">Provincia</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <input type="text" name="provincia" class="form-control" value="@dir.Provincia" required>
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.Provincia</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="info-label">Notas Adicionales</label>
+                                                @if (esModoEdicion)
+                                                {
+                                                    <textarea type="text" name="notasAdicionales" class="form-control" rows="3">@dir.NotasAdicionales</textarea>
+                                                }
+                                                else
+                                                {
+                                                    <div class="info-value">@dir.NotasAdicionales</div>
+                                                }
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="form-check form-switch custom-switch mt-2">
+                                                    <input class="form-check-input" type="checkbox" name="esPrincipal" value="true" @(dir.EsPrincipal ? "checked" : "") @(esModoEdicion ? "" : "disabled")>
+                                                    <label class="form-check-label ms-2 text-secondary">Establecer como dirección principal</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end mt-4 pt-4 border-top gap-2">
+                                            @if (!esModoEdicion)
+                                            {
+                                                <a asp-action="Direcciones" asp-route-idEditar="@dir.IdDireccion" class="btn-custom ajax-link">
+                                                    <i class="bi bi-pencil-square me-2"></i>Modificar
+                                                </a>
+                                                <form asp-action="Eliminar" method="post" style="display:inline;" class="ajax-form">
+                                                    <input type="hidden" name="idDireccion" value="@dir.IdDireccion" />
+                                                    <button type="submit" class="btn-custom">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="Direcciones" class="btn-custom ajax-link">
+                                                    <i class="bi bi-x-circle me-2"></i>Cancelar
+                                                </a>
+                                                <button type="submit" class="btn-custom">
+                                                    <i class="bi bi-check2-circle me-2"></i>Guardar Cambios
+                                                </button>
+                                            }
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

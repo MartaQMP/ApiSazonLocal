@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="ApiSazonLocal/ApiSazonLocal.csproj" />
+  <Project Path="MvcSazonLocal/MvcSazonLocal.csproj" Id="16c6f1ae-a7df-4ec3-a38a-c402c065092a" />
 </Solution>

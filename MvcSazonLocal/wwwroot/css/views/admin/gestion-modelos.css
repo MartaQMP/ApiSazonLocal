@@ -1,0 +1,131 @@
+﻿/* --- CONTENEDORES DE BLOQUE (CARDS) --- */
+.modmgr-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-lg);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.modmgr-header {
+    padding: 1.25rem;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-line);
+}
+
+/* --- TABLAS DE DATOS --- */
+.modmgr-table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+}
+
+.modmgr-table thead th {
+    background-color: var(--bg-main);
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border-line);
+}
+
+/* --- FORMULARIOS DE CREACIÓN --- */
+.modmgr-form-row {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: var(--bg-main);
+}
+
+.info-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: block;
+}
+
+/* --- ESTILO DE IMAGEN (PERFIL/SUBCAT) --- */
+.profile-image-container .img-wrapper {
+    position: relative;
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--border-line);
+    overflow: hidden;
+    background-color: var(--white);
+}
+
+.profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+    .upload-badge:hover {
+        background-color: var(--primary-hover);
+        transform: scale(1.1);
+    }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .modmgr-form-row {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+        .modmgr-form-row > div,
+        .modmgr-form-row input,
+        .modmgr-form-row select {
+            flex: 1 1 calc(50% - 1rem);
+        }
+
+        .modmgr-form-row .align-self-end {
+            flex: 1 1 100%;
+        }
+
+        .modmgr-form-row button {
+            width: 100%;
+        }
+}
+
+@media (max-width: 768px) {
+    .modmgr-header h5 {
+        font-size: 1rem;
+    }
+
+    .modmgr-form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .modmgr-form-row > div,
+        .modmgr-form-row input,
+        .modmgr-form-row select {
+            width: 100%;
+        }
+
+    .modmgr-table td {
+        padding: 0.75rem;
+    }
+
+    .modmgr-table .text-muted.small {
+        display: block;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
