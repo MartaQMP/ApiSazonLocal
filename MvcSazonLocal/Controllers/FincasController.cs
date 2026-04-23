@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using Sazon_Local.Services;
+using MvcSazonLocal.Services;
 using System.Security.Claims;
 
 namespace MvcSazonLocal.Controllers

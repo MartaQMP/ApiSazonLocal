@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
     <PackageReference Include="sazonLocal.Helpers" Version="1.0.0" />
-    <PackageReference Include="sazonLocal.Interfaces" Version="1.0.0" />
+    <PackageReference Include="sazonLocal.Interfaces" Version="1.1.0" />
     <PackageReference Include="sazonLocal.Models" Version="1.3.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.13.15" />
   </ItemGroup>

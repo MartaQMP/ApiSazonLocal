@@ -1,9 +1,10 @@
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using Sazon_Local.Data;
-using Sazon_Local.Helpers;
-using Sazon_Local.Services;
+using MvcSazonLocal.Data;
+using MvcSazonLocal.Services;
+using SazonLocalHelpers.Helpers;
+using SazonLocalInterfaces.Services;
 using SazonLocalModels.Models;
 using Stripe;
 

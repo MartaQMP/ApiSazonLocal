@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Sazon_Local.Data;
-using Sazon_Local.Extensions;
+using MvcSazonLocal.Data;
+using MvcSazonLocal.Extensions;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
-using Sazon_Local.Services;
+using MvcSazonLocal.Services;
 using System.Security.Claims;
+using SazonLocalInterfaces.Services;
 
 namespace MvcSazonLocal.Controllers
 {

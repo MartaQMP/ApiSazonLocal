@@ -1,5 +1,6 @@
 ﻿using QuestPDF.Fluent;
 using SazonLocalHelpers.Helpers;
+using SazonLocalInterfaces.Services;
 using SazonLocalModels.Models;
 
 namespace MvcSazonLocal.Services

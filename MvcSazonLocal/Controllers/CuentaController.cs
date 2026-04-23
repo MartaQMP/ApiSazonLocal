@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Sazon_Local.Filters;
+using MvcSazonLocal.Filters;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
-using Sazon_Local.Services;
+using MvcSazonLocal.Services;
 using System.Globalization;
 using System.Security.Claims;
 

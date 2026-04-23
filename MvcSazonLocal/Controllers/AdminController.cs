@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sazon_Local.Filters;
+using MvcSazonLocal.Filters;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
-using Sazon_Local.Services;
+using MvcSazonLocal.Services;
 
 namespace MvcSazonLocal.Controllers
 {

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Sazon_Local.Extensions;
-using Sazon_Local.Filters;
-using Sazon_Local.Helpers;
-using Sazon_Local.Models;
-using Sazon_Local.Services;
+using MvcSazonLocal.Extensions;
+using MvcSazonLocal.Filters;
+using SazonLocalHelpers.Helpers;
+using SazonLocalModels.Models;
+using MvcSazonLocal.Services;
+using SazonLocalInterfaces.Services;
 using Stripe;
 using System.Security.Claims;
 using System.Threading.Tasks;

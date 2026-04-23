@@ -1,6 +1,7 @@
 ﻿using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SazonLocalInterfaces.Repositories;
 using SazonLocalModels.Models;
 
 namespace ApiSazonLocal.Controllers

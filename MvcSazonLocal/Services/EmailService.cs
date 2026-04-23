@@ -2,6 +2,7 @@
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using SazonLocalInterfaces.Services;
 using SazonLocalModels.Models;
 
 namespace MvcSazonLocal.Services

@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ApiSazonLocal.Data;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
-using System;
-using System.ComponentModel;
+using SazonLocalInterfaces.Repositories;
 using System.Data;
-using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ApiSazonLocal.Repositories
 {

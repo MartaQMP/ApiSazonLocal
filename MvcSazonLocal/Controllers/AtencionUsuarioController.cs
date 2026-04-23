@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Sazon_Local.Filters;
+using MvcSazonLocal.Filters;
 using SazonLocalModels.Models;
-using Sazon_Local.Services;
+using MvcSazonLocal.Services;
 using System.Security.Claims;
+using SazonLocalInterfaces.Services;
 
 namespace MvcSazonLocal.Controllers
 {
