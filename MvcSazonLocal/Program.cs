@@ -1,7 +1,6 @@
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using MvcSazonLocal.Data;
 using MvcSazonLocal.Services;
 using SazonLocalHelpers.Helpers;
 using SazonLocalInterfaces.Services;
@@ -14,8 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
 builder.Services.AddTransient<SazonApiService>();
-string connection = builder.Configuration.GetConnectionString("SqlServer");
-builder.Services.AddDbContext<SazonContext>(options => options.UseSqlServer(connection));
+
+string connection = builder.Configuration.GetConnectionString("ApiSazon");
 
 builder.Services.AddSession();
 builder.Services.AddAuthentication(options =>

@@ -2,7 +2,8 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -36,13 +37,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] string nombre,
-            [FromQuery] string descripcion)
+        public async Task<ActionResult> Post([FromBody] CategoriaDto categoria)
         {
             try
             {
-                await this.repo.InsertarCategoriaAsync(nombre, descripcion);
+                await this.repo.InsertarCategoriaAsync(categoria.Nombre, categoria.Descripcion);
                 return Ok(new { mensaje = "Categoría creada correctamente." });
             }
             catch (Exception)

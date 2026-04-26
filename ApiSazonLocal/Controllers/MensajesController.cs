@@ -2,7 +2,8 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -36,17 +37,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] int? idUsuario,
-            [FromQuery] string nombre,
-            [FromQuery] string email,
-            [FromQuery] string tipoConsulta,
-            [FromQuery] string asunto,
-            [FromQuery] string mensaje)
+        public async Task<ActionResult> Post([FromBody] MensajeDto mensaje)
         {
             try
             {
-                await this.repo.InsertarMensajeAsync(idUsuario, nombre, email, tipoConsulta, asunto, mensaje);
+                await this.repo.InsertarMensajeAsync(mensaje.IdUsuario, mensaje.Nombre, mensaje.Email, mensaje.TipoConsulta, mensaje.Asunto, mensaje.Contenido);
                 return Ok(new { mensaje = "Mensaje enviado correctamente." });
             }
             catch (Exception)

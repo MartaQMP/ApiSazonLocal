@@ -1,8 +1,7 @@
-using ApiSazonLocal.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -18,17 +17,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] int idPedido,
-            [FromQuery] string pasarela,
-            [FromQuery] string metodo,
-            [FromQuery] string ultimosDigitos,
-            [FromQuery] string estado,
-            [FromQuery] string transactionId)
+        public async Task<ActionResult> Post([FromBody] PagoDto pago)
         {
             try
             {
-                await this.repo.InsertarPagoUsuarioAsync(idPedido, pasarela, metodo, ultimosDigitos, estado, transactionId);
+                await this.repo.InsertarPagoUsuarioAsync(pago.IdPedido, pago.Pasarela, pago.MetodoPago, pago.UltimosDigitosTarjeta, pago.EstadoPago, pago.TransactionId);
                 return Ok(new { mensaje = "Pago registrado correctamente." });
             }
             catch (Exception)

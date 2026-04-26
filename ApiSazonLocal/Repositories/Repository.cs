@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ApiSazonLocal.Data;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
 using System.Data;
 
 namespace ApiSazonLocal.Repositories
@@ -46,7 +46,6 @@ namespace ApiSazonLocal.Repositories
                 Nombre = nombre,
                 Apellidos = apellidos,
                 Email = email,
-                Contrasena = password,
                 Imagen = imagen,
                 Telefono = telefono,
                 EstaActivo = true,
@@ -134,13 +133,11 @@ namespace ApiSazonLocal.Repositories
             return await this.context.KeysUsuarios.FirstOrDefaultAsync(k => k.IdUsuario == idUsuario);
         }
 
-        public async Task ActualizarPassword(int idUsuario, byte[] salt, byte[] password, string contrasena)
+        public async Task ActualizarPassword(int idUsuario, byte[] salt, byte[] password)
         {
             KeysUsuario key = await this.GetKeysUsuarioAsync(idUsuario);
             key.Salt = salt;
             key.Password = password;
-            Usuario usuario = await this.GetUsuarioByIdAsync(idUsuario);
-            usuario.Contrasena = contrasena;
             await this.context.SaveChangesAsync();
         }
         #endregion
@@ -273,7 +270,7 @@ namespace ApiSazonLocal.Repositories
                 IdSubcategoria = idSubcategoria
             };
             this.context.Productos.Add(pro);
-            this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync();
         }
 
         public async Task ActualizarProductoAsync(int idProducto, decimal nuevoPrecio, int nuevoStock)
@@ -393,9 +390,9 @@ namespace ApiSazonLocal.Repositories
         {
             return await this.context.Fincas.Include(f => f.Productos).FirstOrDefaultAsync(f => f.IdFinca == idFinca);
         }
-        public async Task InsertarFincaAsync(int idFinca, string nombre, string direccion, string municipio, string provincia, decimal latitud, decimal longitud, int idUsuario)
+        public async Task InsertarFincaAsync(string nombre, string direccion, string municipio, string provincia, decimal latitud, decimal longitud, int idUsuario)
         {
-            idFinca = await this.GetNextIdAsync("FINCAS");
+            int idFinca = await this.GetNextIdAsync("FINCAS");
             Finca finca = new Finca
             {
                 IdFinca = idFinca,
@@ -608,7 +605,7 @@ namespace ApiSazonLocal.Repositories
             return await this.context.Categorias.ToListAsync();
         }
 
-        public async Task InsertarCategoriaAsync(string nombre, string descripcion)
+        public async Task InsertarCategoriaAsync(string nombre, string? descripcion)
         {
             int idCategoria = await this.GetNextIdAsync("CATEGORIAS");
             Categoria categoria = new Categoria
@@ -765,7 +762,7 @@ namespace ApiSazonLocal.Repositories
         {
             Pedido pedido = await this.context.Pedidos.Where(p => p.IdPedido == idPedido).FirstOrDefaultAsync();
             pedido.Estado = nuevoEstado.ToUpper();
-            this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync();
         }
 
         public async Task<int> CrearPedidoAsync(int idUsuario, int idDireccion)

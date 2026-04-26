@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using MvcSazonLocal.Data;
 using MvcSazonLocal.Extensions;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
@@ -14,13 +13,11 @@ namespace MvcSazonLocal.Controllers
     public class AuthController : Controller
     {
         private SazonApiService serviceApi;
-        private SazonContext context;
         private IEmailService emailService;
 
-        public AuthController(SazonApiService serviceApi, SazonContext context, IEmailService emailService)
+        public AuthController(SazonApiService serviceApi, IEmailService emailService)
         {
             this.serviceApi = serviceApi;
-            this.context = context;
             this.emailService = emailService;
         }
 
@@ -105,14 +102,8 @@ namespace MvcSazonLocal.Controllers
                 byte[] salt = HelperAuth.GenerarSalt();
                 byte[] pass = HelperAuth.EncryptPassword("12345", salt);
 
-                this.context.KeysUsuarios.Add(new KeysUsuario
-                {
-                    IdUsuario = u.IdUsuario,
-                    Salt = salt,
-                    Password = pass
-                });
+                await this.serviceApi.ActualizarPassword(u.IdUsuario, salt, pass, "12345");
             }
-            await this.context.SaveChangesAsync();
             return RedirectToAction("LogIn");
         }
 

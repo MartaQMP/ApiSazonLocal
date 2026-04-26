@@ -2,7 +2,8 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -42,8 +43,8 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<List<Finca>>> GetFincasUsuario(int idUsuario)
+        [Route("[action]/Usuario/{idUsuario}")]
+        public async Task<ActionResult<List<Finca>>> GetFincas(int idUsuario)
         {
             var fincas = await this.repo.GetFincasUsuarioAsync(idUsuario);
             return Ok(fincas);
@@ -69,18 +70,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] string nombre,
-            [FromQuery] string direccion,
-            [FromQuery] string municipio,
-            [FromQuery] string provincia,
-            [FromQuery] decimal latitud,
-            [FromQuery] decimal longitud,
-            [FromQuery] int idUsuario)
+        public async Task<ActionResult> Post([FromBody] FincaDto finca)
         {
             try
             {
-                await this.repo.InsertarFincaAsync(0, nombre, direccion, municipio, provincia, latitud, longitud, idUsuario);
+                await this.repo.InsertarFincaAsync(finca.Nombre, finca.Direccion, finca.Municipio, finca.Provincia, finca.Latitud, finca.Longitud, finca.IdUsuario);
                 return Ok(new { mensaje = "Finca creada correctamente." });
             }
             catch (Exception)
@@ -91,25 +85,17 @@ namespace ApiSazonLocal.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public async Task<ActionResult> Actualizar(
-            int id,
-            [FromQuery] string nombre,
-            [FromQuery] string direccion,
-            [FromQuery] string municipio,
-            [FromQuery] string provincia,
-            [FromQuery] decimal latitud,
-            [FromQuery] decimal longitud,
-            [FromQuery] int idUsuario)
+        public async Task<ActionResult> Actualizar(int id, [FromBody] FincaDto finca)
         {
-            var finca = await this.repo.GetFincaByIdAsync(id);
-            if (finca == null)
+            var fincaId = await this.repo.GetFincaByIdAsync(id);
+            if (fincaId == null)
             {
                 return NotFound(new { mensaje = "Finca no encontrada." });
             }
 
             try
             {
-                await this.repo.ActualizarFincaAsync(id, nombre, direccion, municipio, provincia, latitud, longitud, idUsuario);
+                await this.repo.ActualizarFincaAsync(id, finca.Nombre, finca.Direccion, finca.Municipio, finca.Provincia, finca.Latitud, finca.Longitud, finca.IdUsuario);
                 return Ok(new { mensaje = "Finca actualizada correctamente." });
             }
             catch (Exception)

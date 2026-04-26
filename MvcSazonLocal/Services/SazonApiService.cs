@@ -1,37 +1,91 @@
-using Microsoft.EntityFrameworkCore;
-using MvcSazonLocal.Data;
 using SazonLocalModels.Models;
 using System.Globalization;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Newtonsoft.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace MvcSazonLocal.Services
 {
     public class SazonApiService
     {
-        private readonly HttpClient httpClient;
-        private readonly SazonContext context;
+        #region Configuracion y Helpers
+        private string ApiUrl;
+        private MediaTypeWithQualityHeaderValue header;
 
-        public SazonApiService(HttpClient httpClient, SazonContext context)
+        public SazonApiService(IConfiguration configuration)
         {
-            this.httpClient = httpClient;
-            this.context = context;
+            this.ApiUrl = configuration.GetValue<string>("ApiUrls:ApiSazon");
+            this.header = new MediaTypeWithQualityHeaderValue("application/json");
+        }
+
+        private HttpClient CreateClient()
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(this.ApiUrl);
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Accept.Add(this.header);
+            return client;
+        }
+
+        private HttpClient httpClient => this.CreateClient();
+
+        private async Task<T?> GetAsync<T>(string request)
+        {
+            return await this.CallApiAsync<T>(request);
         }
 
         private static string BuildUrl(string path, Dictionary<string, string?> query)
         {
-            if (query.Count == 0) return path;
-            var queryString = string.Join("&", query
-                .Where(kvp => kvp.Value != null)
-                .Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value!)}"));
-            return string.IsNullOrEmpty(queryString) ? path : $"{path}?{queryString}";
+            if (query.Count == 0)
+            {
+                return path;
+            }
+
+            List<string> parametros = new List<string>();
+
+            foreach (var item in query)
+            {
+                if (item.Value == null)
+                {
+                    continue;
+                }
+
+                string clave = Uri.EscapeDataString(item.Key);
+                string valor = Uri.EscapeDataString(item.Value);
+                parametros.Add($"{clave}={valor}");
+            }
+
+            if (parametros.Count == 0)
+            {
+                return path;
+            }
+
+            return $"{path}?{string.Join("&", parametros)}";
         }
 
-        private async Task<T?> GetAsync<T>(string url)
+        private async Task<T> CallApiAsync<T>(string request)
         {
-            return await this.httpClient.GetFromJsonAsync<T>(url);
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+                HttpResponseMessage response = await client.GetAsync(request);
+                if (response.IsSuccessStatusCode == true)
+                {
+                    return await response.Content.ReadFromJsonAsync<T>();
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
         }
+        #endregion
 
+        #region Usuarios
         public async Task<int> UsuariosSinHashAsync()
         {
             var usuarios = await this.GetUsuariosSinHashAsync();
@@ -40,43 +94,53 @@ namespace MvcSazonLocal.Services
 
         public async Task RegisterUserAsync(string nombre, string apellidos, string email, string password, string imagen, string telefono, int idRol)
         {
-            var response = await this.httpClient.PostAsJsonAsync("api/Auth/Register", new
+            using (HttpClient client = this.CreateClient())
             {
-                Nombre = nombre,
-                Apellidos = apellidos,
-                Email = email,
-                Password = password,
-                Telefono = telefono,
-                IdRol = idRol
-            });
-            response.EnsureSuccessStatusCode();
+                string request = "api/Auth/Register";
+                var user = new
+                {
+                    Nombre = nombre,
+                    Apellidos = apellidos,
+                    Email = email,
+                    Password = password,
+                    Telefono = telefono,
+                    IdRol = idRol
+                };
+
+                string json = JsonConvert.SerializeObject(user);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
+                response.EnsureSuccessStatusCode();
+            }
         }
 
         public async Task<Usuario> LogInAsync(string email, string password)
         {
-            var response = await this.httpClient.PostAsJsonAsync("api/Auth/Login", new
+            using (HttpClient client = this.CreateClient())
             {
-                Email = email,
-                Password = password
-            });
+                string request = "api/Auth/Login";
+                var loginData = new
+                {
+                    Email = email,
+                    Password = password
+                };
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return null;
+                string json = JsonConvert.SerializeObject(loginData);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                return await response.Content.ReadFromJsonAsync<Usuario>();
             }
-
-            return await response.Content.ReadFromJsonAsync<Usuario>();
         }
 
         public async Task<List<Usuario>> GetUsuariosSinHashAsync()
         {
-            var response = await this.httpClient.GetAsync("api/Usuarios/UsuariosSinHash");
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-            {
-                return new List<Usuario>();
-            }
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Usuario>>() ?? new List<Usuario>();
+            return await this.GetAsync<List<Usuario>>("api/Usuarios/UsuariosSinHash") ?? new List<Usuario>();
         }
 
         public async Task<Usuario> GetUsuarioByIdAsync(int idUsuario)
@@ -84,25 +148,28 @@ namespace MvcSazonLocal.Services
 
         public async Task UpdateUsuario(int idUsuario, string nombre, string apellidos, string telefono, string imagen)
         {
-            var response = await this.httpClient.PutAsJsonAsync("api/Usuarios/UpdatePerfil", new Usuario
+            using (HttpClient client = this.CreateClient())
             {
-                IdUsuario = idUsuario,
-                Nombre = nombre,
-                Apellidos = apellidos,
-                Telefono = telefono,
-                Imagen = imagen
-            });
-            response.EnsureSuccessStatusCode();
+                string request = "api/Usuarios/UpdatePerfil";
+                Usuario user = new Usuario
+                {
+                    IdUsuario = idUsuario,
+                    Nombre = nombre,
+                    Apellidos = apellidos,
+                    Telefono = telefono,
+                    Imagen = imagen
+                };
+
+                string json = JsonConvert.SerializeObject(user);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PutAsync(request, content);
+                response.EnsureSuccessStatusCode();
+            }
         }
 
         public async Task<Usuario> GetUsuarioByEmailAsync(string email)
         {
-            var response = await this.httpClient.GetAsync($"api/Usuarios/GetUsuarioByEmail/{Uri.EscapeDataString(email)}");
-            if (!response.IsSuccessStatusCode)
-            {
-                return null;
-            }
-            return await response.Content.ReadFromJsonAsync<Usuario>();
+            return await this.GetAsync<Usuario>($"api/Usuarios/GetUsuarioByEmail/{Uri.EscapeDataString(email)}");
         }
 
         public async Task<List<Usuario>> GetUsuariosAsync()
@@ -115,28 +182,28 @@ namespace MvcSazonLocal.Services
         }
 
         public async Task<KeysUsuario> GetKeysUsuarioAsync(int idUsuario)
-            => await this.context.KeysUsuarios.FirstOrDefaultAsync(k => k.IdUsuario == idUsuario);
+            => await this.GetAsync<KeysUsuario>($"api/Usuarios/GetKeysUsuario/{idUsuario}");
 
         public async Task ActualizarPassword(int idUsuario, byte[] salt, byte[] password, string contrasena)
         {
-            var key = await this.context.KeysUsuarios.FirstOrDefaultAsync(k => k.IdUsuario == idUsuario);
-            var usuario = await this.context.Usuarios.FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
-
-            if (key != null)
+            string request = "api/Usuarios/ActualizarPassword";
+            var payload = new
             {
-                key.Salt = salt;
-                key.Password = password;
-            }
+                IdUsuario = idUsuario,
+                Salt = salt,
+                Password = password,
+                Contrasena = contrasena
+            };
 
-            if (usuario != null)
-            {
-                usuario.Contrasena = contrasena;
-            }
-
-            await this.context.SaveChangesAsync();
+            string json = JsonConvert.SerializeObject(payload);
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await this.httpClient.PutAsync(request, content);
+            response.EnsureSuccessStatusCode();
         }
+        #endregion
 
-        public async Task<ProductosPaginacion> GetProductosFiltroAsync(int posicion, string buscador, int? idCategoria, int? idSubcategoria, int? idFinca, decimal? precio)
+        #region Productos y Unidades
+        public async Task<ProductosPaginacion> GetProductosFiltroAsync(int posicion, string? buscador, int? idCategoria, int? idSubcategoria, int? idFinca, decimal? precio)
         {
             var url = BuildUrl("api/Productos/GetProductosFiltro", new Dictionary<string, string?>
             {
@@ -147,7 +214,13 @@ namespace MvcSazonLocal.Services
                 ["idFinca"] = idFinca?.ToString(),
                 ["precio"] = precio?.ToString(CultureInfo.InvariantCulture)
             });
-            return await this.GetAsync<ProductosPaginacion>(url);
+            return await this.GetAsync<ProductosPaginacion>(url)
+                ?? new ProductosPaginacion
+                {
+                    Productos = new List<Producto>(),
+                    TotalProductos = 0,
+                    NumeroRegistros = 0
+                };
         }
 
         public async Task<List<Producto>> GetProductosUsuarioAsync(int idUsuario)
@@ -203,7 +276,9 @@ namespace MvcSazonLocal.Services
             var response = await this.httpClient.PutAsync($"api/UnidadMedida/CambiarEstado/{idUnidad}", null);
             response.EnsureSuccessStatusCode();
         }
+        #endregion
 
+        #region Fincas
         public async Task<List<Finca>> GetFincasActivasAsync()
             => await this.GetAsync<List<Finca>>("api/Fincas/GetFincasActivas") ?? new List<Finca>();
 
@@ -275,7 +350,9 @@ namespace MvcSazonLocal.Services
             var rechazadas = await this.GetAsync<List<Finca>>("api/Fincas/GetFincasAdmin/3") ?? new List<Finca>();
             return pendientes.Concat(aprobadas).Concat(rechazadas).DistinctBy(f => f.IdFinca).ToList();
         }
+        #endregion
 
+        #region Direcciones
         public async Task<Direccion> GetDireccionByIdAsync(int idDireccion)
             => await this.GetAsync<Direccion>($"api/Direcciones/{idDireccion}");
 
@@ -329,7 +406,9 @@ namespace MvcSazonLocal.Services
             var response = await this.httpClient.DeleteAsync($"api/Direcciones/{idDireccion}");
             response.EnsureSuccessStatusCode();
         }
+        #endregion
 
+        #region Categorias y Subcategorias
         public async Task<List<Categoria>> GetCategoriasAsync()
             => await this.GetAsync<List<Categoria>>("api/Categorias") ?? new List<Categoria>();
 
@@ -377,7 +456,9 @@ namespace MvcSazonLocal.Services
             var response = await this.httpClient.PutAsync($"api/Subcategorias/CambiarEstado/{idSubcategoria}", null);
             response.EnsureSuccessStatusCode();
         }
+        #endregion
 
+        #region Pedidos
         public async Task<List<Pedido>> GetPedidosUsuarioAsync(int idUsuario)
             => await this.GetAsync<List<Pedido>>($"api/Pedidos/GetPedidosUsuario/{idUsuario}") ?? new List<Pedido>();
 
@@ -422,7 +503,9 @@ namespace MvcSazonLocal.Services
 
         public async Task<List<DetallePedido>> GetDetallePedidosByPedidoAsync(int idPedido)
             => await this.GetAsync<List<DetallePedido>>($"api/Pedidos/GetDetalles/{idPedido}") ?? new List<DetallePedido>();
+        #endregion
 
+        #region Carrito
         public async Task InsertarProductoCarritoAsync(int cantidad, int idUsuario, int idProducto)
         {
             var url = BuildUrl("api/Carrito", new Dictionary<string, string?>
@@ -474,7 +557,9 @@ namespace MvcSazonLocal.Services
             using var document = await JsonDocument.ParseAsync(contentStream);
             return document.RootElement.GetProperty("subtotal").GetDecimal();
         }
+        #endregion
 
+        #region Pagos
         public async Task InsertarPagoUsuarioAsync(int idPedido, string pasarela, string metodo, string ultimosDigitos, string estado, string transactionId)
         {
             var url = BuildUrl("api/Pagos", new Dictionary<string, string?>
@@ -489,7 +574,9 @@ namespace MvcSazonLocal.Services
             var response = await this.httpClient.PostAsync(url, null);
             response.EnsureSuccessStatusCode();
         }
+        #endregion
 
+        #region Mensajes
         public async Task InsertarMensajeAsync(int? idUsuario, string nombre, string email, string tipoConsulta, string asunto, string mensaje)
         {
             var url = BuildUrl("api/Mensajes", new Dictionary<string, string?>
@@ -522,5 +609,6 @@ namespace MvcSazonLocal.Services
             var response = await this.httpClient.PutAsync($"api/Mensajes/MarcarRespondido/{idMensaje}", null);
             response.EnsureSuccessStatusCode();
         }
+        #endregion
     }
 }

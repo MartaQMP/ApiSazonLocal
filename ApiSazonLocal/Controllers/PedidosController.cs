@@ -1,8 +1,7 @@
-using ApiSazonLocal.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -36,8 +35,8 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<List<Pedido>>> GetPedidosUsuario(int idUsuario)
+        [Route("[action]/Usuario/{idUsuario}")]
+        public async Task<ActionResult<List<Pedido>>> GetPedidos(int idUsuario)
         {
             var pedidos = await this.repo.GetPedidosUsuarioAsync(idUsuario);
             return Ok(pedidos);
@@ -52,13 +51,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] int idUsuario,
-            [FromQuery] int idDireccion)
+        public async Task<ActionResult> Post([FromBody] PedidoDto pedido)
         {
             try
             {
-                int idPedido = await this.repo.CrearPedidoAsync(idUsuario, idDireccion);
+                int idPedido = await this.repo.CrearPedidoAsync(pedido.IdUsuario, pedido.IdDireccion);
                 return Ok(new { mensaje = "Pedido creado correctamente.", idPedido = idPedido });
             }
             catch (Exception)
@@ -69,7 +66,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpPut]
         [Route("[action]/{id}/{nuevoEstado}")]
-        public async Task<ActionResult> CambiarEstado(int id, string nuevoEstado)
+        public async Task<ActionResult> CambiarEstadoPedido(int id, string nuevoEstado)
         {
             var pedido = await this.repo.GetPedidoByIdAsync(id);
             if (pedido == null)
@@ -90,7 +87,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpGet]
         [Route("[action]/{idPedido}")]
-        public async Task<ActionResult<List<DetallePedido>>> GetDetalles(int idPedido)
+        public async Task<ActionResult<List<DetallePedido>>> GetDetallesPedido(int idPedido)
         {
             var detalles = await this.repo.GetDetallePedidosByPedidoAsync(idPedido);
             return Ok(detalles);
@@ -98,7 +95,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpGet]
         [Route("[action]/{idDetalle}")]
-        public async Task<ActionResult<DetallePedido>> GetDetalle(int idDetalle)
+        public async Task<ActionResult<DetallePedido>> GetDetallePedido(int idDetalle)
         {
             var detalle = await this.repo.GetDetallePedidoByIdAsync(idDetalle);
             if (detalle == null)
@@ -110,7 +107,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpPut]
         [Route("[action]/{idDetalle}")]
-        public async Task<ActionResult> CambiarEstadoDetalle(int idDetalle)
+        public async Task<ActionResult> CambiarEstadoDetallePedido(int idDetalle)
         {
             var detalle = await this.repo.GetDetallePedidoByIdAsync(idDetalle);
             if (detalle == null)

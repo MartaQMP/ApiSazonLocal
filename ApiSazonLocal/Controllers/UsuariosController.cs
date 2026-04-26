@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -68,11 +68,40 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("[action]/{idUsuario}")]
+        public async Task<ActionResult<KeysUsuario>> GetKeysUsuario(int idUsuario)
+        {
+            var keys = await this.repo.GetKeysUsuarioAsync(idUsuario);
+            if (keys == null)
+            {
+                return NotFound(new { mensaje = $"No se encontraron credenciales para el usuario {idUsuario}." });
+            }
+            return Ok(keys);
+        }
+
         [HttpPut]
         [Route("[action]")]
-        public async Task<ActionResult> UpdatePerfil(Usuario user)
+        public async Task<ActionResult> ActualizarPasswordUsuario([FromBody] KeysUsuario keys)
         {
-            var usuarioExistente = await this.repo.GetUsuarioByIdAsync(user.IdUsuario);
+            var usuario = await this.repo.GetUsuarioByIdAsync(keys.IdUsuario);
+            if (usuario == null)
+            {
+                return NotFound(new { mensaje = "Usuario no encontrado." });
+            }
+            await this.repo.ActualizarPassword(
+                keys.IdUsuario,
+                keys.Salt,
+                keys.Password
+            );
+            return Ok(new { mensaje = "Contraseña actualizada correctamente." });
+        }
+
+        [HttpPut]
+        [Route("[action]/{id}")]
+        public async Task<ActionResult> ActualizarPerfil(int id, [FromBody] Usuario user)
+        {
+            var usuarioExistente = await this.repo.GetUsuarioByIdAsync(id);
             if (usuarioExistente == null)
             {
                 return NotFound(new { mensaje = "No se puede actualizar: Usuario no encontrado." });
@@ -81,7 +110,7 @@ namespace ApiSazonLocal.Controllers
             try
             {
                 await this.repo.UpdateUsuario(
-                    user.IdUsuario,
+                    id,
                     user.Nombre,
                     user.Apellidos,
                     user.Telefono,
@@ -97,7 +126,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public async Task<ActionResult> UpdateEstado(int id)
+        public async Task<ActionResult> ActualizarEstadoUsuario(int id)
         {
             var usuario = await this.repo.GetUsuarioByIdAsync(id);
             if (usuario == null)

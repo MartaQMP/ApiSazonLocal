@@ -2,7 +2,8 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -18,8 +19,8 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<List<CarritoItem>>> GetCarritoUsuario(int idUsuario)
+        [Route("[action]/Usuario/{idUsuario}")]
+        public async Task<ActionResult<List<CarritoItem>>> GetCarrito(int idUsuario)
         {
             var carrito = await this.repo.GetCarritoUsuarioAsync(idUsuario);
             return Ok(carrito);
@@ -38,22 +39,19 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<decimal>> GetSubtotal(int idUsuario)
+        [Route("[action]/Usuario/{idUsuario}")]
+        public async Task<ActionResult<decimal>> GetSubtotalCarrito(int idUsuario)
         {
             decimal subtotal = await this.repo.GetSubtotalCarrito(idUsuario);
             return Ok(new { subtotal = subtotal });
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] int cantidad,
-            [FromQuery] int idUsuario,
-            [FromQuery] int idProducto)
+        public async Task<ActionResult> Post([FromBody] CarritoItemDto carrito)
         {
             try
             {
-                await this.repo.InsertarProductoCarritoAsync(cantidad, idUsuario, idProducto);
+                await this.repo.InsertarProductoCarritoAsync(carrito.Cantidad, carrito.IdUsuario, carrito.IdProducto);
                 return Ok(new { mensaje = "Producto añadido al carrito." });
             }
             catch (Exception)
@@ -63,10 +61,10 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPut]
-        [Route("[action]/{idUsuario}/{idProducto}/{nuevaCantidad}")]
-        public async Task<ActionResult> ActualizarCantidad(int idUsuario, int idProducto, int nuevaCantidad)
+        [Route("[action]")]
+        public async Task<ActionResult> ActualizarCantidad([FromBody] CarritoItemDto carrito)
         {
-            var item = await this.repo.GetProductoCarritoAsync(idUsuario, idProducto);
+            var item = await this.repo.GetProductoCarritoAsync(carrito.IdUsuario, carrito.IdProducto);
             if (item == null)
             {
                 return NotFound(new { mensaje = "Producto no encontrado en el carrito." });
@@ -74,7 +72,7 @@ namespace ApiSazonLocal.Controllers
 
             try
             {
-                await this.repo.ActualizarCantidadCarritoAsync(idUsuario, idProducto, nuevaCantidad);
+                await this.repo.ActualizarCantidadCarritoAsync(carrito.IdUsuario, carrito.IdProducto, carrito.Cantidad);
                 return Ok(new { mensaje = "Cantidad actualizada." });
             }
             catch (Exception)
@@ -84,8 +82,8 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpDelete]
-        [Route("[action]/{idUsuario}/{idProducto}")]
-        public async Task<ActionResult> EliminarProducto(int idUsuario, int idProducto)
+        [Route("[action]/Usuario/{idUsuario}/{idProducto}")]
+        public async Task<ActionResult> EliminarProductoCarrito(int idUsuario, int idProducto)
         {
             var item = await this.repo.GetProductoCarritoAsync(idUsuario, idProducto);
             if (item == null)

@@ -2,7 +2,8 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -26,7 +27,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<ActionResult<List<Subcategoria>>> GetConCategoria()
+        public async Task<ActionResult<List<Subcategoria>>> GetSubcategoriaConCategoria()
         {
             var subcategorias = await this.repo.GetSubcategoriasConCategoriaAsync();
             return Ok(subcategorias);
@@ -34,7 +35,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpGet]
         [Route("[action]/{idCategoria}")]
-        public async Task<ActionResult<List<Subcategoria>>> GetPorCategoria(int idCategoria)
+        public async Task<ActionResult<List<Subcategoria>>> GetSubcategoriaPorCategoria(int idCategoria)
         {
             var subcategorias = await this.repo.GetSubcategoriasByCategoriaAsync(idCategoria);
             return Ok(subcategorias);
@@ -52,15 +53,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] string nombre,
-            [FromQuery] string descripcion,
-            [FromQuery] string imagen,
-            [FromQuery] int idCategoria)
+        public async Task<ActionResult> Post([FromBody] SubcategoriaDto subcategoria)
         {
             try
             {
-                await this.repo.InsertarSubcategoriaAsync(nombre, descripcion, imagen, idCategoria);
+                await this.repo.InsertarSubcategoriaAsync(subcategoria.Nombre, subcategoria.Descripcion, subcategoria.Imagen, subcategoria.IdCategoria);
                 return Ok(new { mensaje = "Subcategoría creada correctamente." });
             }
             catch (Exception)
@@ -71,7 +68,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public async Task<ActionResult> CambiarEstado(int id)
+        public async Task<ActionResult> CambiarEstadoSubcategoria(int id)
         {
             var subcategoria = await this.repo.GetSubcategoriaByIdAsync(id);
             if (subcategoria == null)

@@ -1,7 +1,8 @@
 ﻿using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 using SazonLocalModels.Models;
 
 namespace ApiSazonLocal.Controllers
@@ -17,8 +18,9 @@ namespace ApiSazonLocal.Controllers
             this.repo = repo;
         }
 
-        [HttpPost("[action]")]
-        public async Task<ActionResult> Login(Login login)
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<ActionResult> Login([FromBody] Login login)
         {
             Usuario user = await this.repo.LogInAsync(login.Email, login.Password);
 
@@ -30,8 +32,9 @@ namespace ApiSazonLocal.Controllers
             return Ok(user);
         }
 
-        [HttpPost("[action]")]
-        public async Task<ActionResult> Register(Register model)
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<ActionResult> Register([FromBody] Register model)
         {
             string imagenPorDefecto = "usuario-generico.png";
             int rolFinal = model.IdRol;

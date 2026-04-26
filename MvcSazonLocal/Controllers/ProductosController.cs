@@ -19,9 +19,9 @@ namespace MvcSazonLocal.Controllers
         }
 
         #region PRODUCTOS
-        public async Task<IActionResult> Productos(int posicion = 0, string buscador = null, int? idCategoria = null, int? idSubcategoria = null, int? idFinca = null, decimal? precio = null)
+        public async Task<IActionResult> Productos(int posicion = 0, string? buscador = null, int? idCategoria = null, int? idSubcategoria = null, int? idFinca = null, decimal? precio = null)
         {
-            string claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int? idUsuario = null;
             if (claimId != null)
             {
@@ -40,7 +40,9 @@ namespace MvcSazonLocal.Controllers
             }
             ViewBag.CantidadesCarrito = cantidadesEnCarrito;
 
-            var productosPaginacion = await this.serviceApi.GetProductosFiltroAsync(posicion, buscador, idCategoria, idSubcategoria, idFinca, precio);
+            var productosPaginacion = await this.serviceApi.GetProductosFiltroAsync(posicion, buscador, idCategoria, idSubcategoria, idFinca, precio)
+                ?? new ProductosPaginacion();
+            productosPaginacion.Productos ??= new List<Producto>();
 
             ViewBag.Buscador = buscador;
             ViewBag.IdCategoria = idCategoria;
@@ -56,7 +58,7 @@ namespace MvcSazonLocal.Controllers
             ViewBag.Siguiente = posicion + salto;
             ViewBag.Anterior = posicion - salto;
             ViewBag.Primero = 0;
-            ViewBag.Ultimo = (productosPaginacion.NumeroRegistros - 1) * salto; ;
+            ViewBag.Ultimo = productosPaginacion.NumeroRegistros > 0 ? (productosPaginacion.NumeroRegistros - 1) * salto : 0;
 
             foreach (var producto in productosPaginacion.Productos)
             {
@@ -76,7 +78,7 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> AnadirCarrito(int idProducto, int cantidad, bool esCarrito)
         {
-            string claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int? idUsuario = null;
             if (claimId != null)
             {

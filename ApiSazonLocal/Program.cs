@@ -3,7 +3,7 @@ using ApiSazonLocal.Repositories;
 using Microsoft.EntityFrameworkCore;
 using SazonLocalHelpers.Helpers;
 using Scalar.AspNetCore;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

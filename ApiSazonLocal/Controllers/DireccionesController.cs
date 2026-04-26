@@ -2,7 +2,8 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -29,33 +30,21 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<List<Direccion>>> GetDireccionesUsuario(int idUsuario)
+        [Route("[action]/Usuario/{idUsuario}")]
+        public async Task<ActionResult<List<Direccion>>> GetDirecciones(int idUsuario)
         {
             var direcciones = await this.repo.GetDireccionesUsuarioAsync(idUsuario);
             return Ok(direcciones);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(
-            [FromQuery] int idUsuario,
-            [FromQuery] string? etiqueta,
-            [FromQuery] string calleNumero,
-            [FromQuery] string? piso,
-            [FromQuery] string? puerta,
-            [FromQuery] string cp,
-            [FromQuery] string municipio,
-            [FromQuery] string provincia,
-            [FromQuery] string? notasAdicionales,
-            [FromQuery] decimal latitud,
-            [FromQuery] decimal longitud,
-            [FromQuery] bool esPrincipal)
+        public async Task<ActionResult> Post([FromBody] DireccionDto direccion)
         {
             try
             {
                 await this.repo.InsertarDireccionAsync(
-                    idUsuario, etiqueta, calleNumero, piso, puerta, cp,
-                    municipio, provincia, notasAdicionales, latitud, longitud, esPrincipal);
+                    direccion.IdUsuario, direccion.NombreEtiqueta, direccion.CalleNumero, direccion.Piso, direccion.Puerta, direccion.CodigoPostal,
+                    direccion.Municipio, direccion.Provincia, direccion.NotasAdicionales, direccion.Latitud, direccion.Longitud, direccion.EsPrincipal);
                 return Ok(new { mensaje = "Dirección creada correctamente." });
             }
             catch (Exception)
@@ -65,23 +54,10 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Actualizar(
-            int id,
-            [FromQuery] string? etiqueta,
-            [FromQuery] string calleNumero,
-            [FromQuery] string? piso,
-            [FromQuery] string? puerta,
-            [FromQuery] string cp,
-            [FromQuery] string municipio,
-            [FromQuery] string provincia,
-            [FromQuery] string? notasAdicionales,
-            [FromQuery] decimal latitud,
-            [FromQuery] decimal longitud,
-            [FromQuery] bool esPrincipal,
-            [FromQuery] int idUsuario)
+        public async Task<ActionResult> Actualizar(int id, [FromBody] DireccionDto direccion)
         {
-            var direccion = await this.repo.GetDireccionByIdAsync(id);
-            if (direccion == null)
+            var direccionId = await this.repo.GetDireccionByIdAsync(id);
+            if (direccionId == null)
             {
                 return NotFound(new { mensaje = "Dirección no encontrada." });
             }
@@ -89,8 +65,8 @@ namespace ApiSazonLocal.Controllers
             try
             {
                 await this.repo.ActualizarDireccionAsync(
-                    id, etiqueta, calleNumero, piso, puerta, cp,
-                    municipio, provincia, notasAdicionales, latitud, longitud, esPrincipal, idUsuario);
+                    id, direccion.NombreEtiqueta, direccion.CalleNumero, direccion.Piso, direccion.Puerta, direccion.CodigoPostal,
+                    direccion.Municipio, direccion.Provincia, direccion.NotasAdicionales, direccion.Latitud, direccion.Longitud, direccion.EsPrincipal, direccion.IdUsuario);
                 return Ok(new { mensaje = "Dirección actualizada correctamente." });
             }
             catch (Exception)

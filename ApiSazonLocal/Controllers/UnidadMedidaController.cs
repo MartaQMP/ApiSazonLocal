@@ -2,7 +2,7 @@ using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
-using SazonLocalInterfaces.Repositories;
+using SazonLocalInterfaces.Interfaces;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -35,13 +35,12 @@ namespace ApiSazonLocal.Controllers
             return Ok(unidad);
         }
 
-        [HttpPost]
-        [Route("[action]/{nombre}")]
-        public async Task<ActionResult> Insertar(string nombre)
+        [HttpPost("{nombreUnidadMedida}")]
+        public async Task<ActionResult> Post(string nombreUnidadMedida)
         {
             try
             {
-                await this.repo.InsertarUnidadMedidaAsync(nombre);
+                await this.repo.InsertarUnidadMedidaAsync(nombreUnidadMedida);
                 return Ok(new { mensaje = "Unidad de medida creada correctamente." });
             }
             catch (Exception)
@@ -52,7 +51,7 @@ namespace ApiSazonLocal.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public async Task<ActionResult> CambiarEstado(int id)
+        public async Task<ActionResult> CambiarEstadoUnidadMedida(int id)
         {
             var unidad = await this.repo.GetUnidadMedidaByIdAsync(id);
             if (unidad == null)
