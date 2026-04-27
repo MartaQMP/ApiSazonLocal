@@ -1,17 +1,32 @@
 using ApiSazonLocal.Data;
 using ApiSazonLocal.Repositories;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using SazonLocalHelpers.Helpers;
-using Scalar.AspNetCore;
 using SazonLocalInterfaces.Interfaces;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+/* ---KEY VAULT--- */
+builder.Services.AddAzureClients(factory =>
+{
+    factory.AddSecretClient(builder.Configuration.GetSection("KeyVault"));
+});
+SecretClient secretClient = builder.Services.BuildServiceProvider().GetService<SecretClient>();
+
+KeyVaultSecret azureconnection = await secretClient.GetSecretAsync("AzureConnection");
+KeyVaultSecret jwtToken = await secretClient.GetSecretAsync("JwtToken");
+
+
+
 
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
 builder.Services.AddTransient<IRepository, Repository>();
-string connection = builder.Configuration.GetConnectionString("Sql");
-builder.Services.AddDbContext<SazonContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<SazonContext>(options => options.UseSqlServer(azureconnection.Value));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
