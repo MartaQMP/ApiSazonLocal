@@ -35,13 +35,13 @@
 }
 
     .form-control:focus, .form-select:focus {
-        border-color: var(--primary-color);
+        border-color: var(--primary-text-light);
         box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.1);
     }
 
 .form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: var(--primary-text-light);
+    border-color: var(--primary-text-light);
 }
 
 .input-group-text {
@@ -72,12 +72,12 @@
     .upload-box:hover {
         border-color: var(--primary-soft);
         background-color: var(--light-cream);
-        color: var(--primary-color);
+        color: var(--primary-text-light);
     }
 
 /* --- BOTÓN PRINCIPAL --- */
 .btn-sazon-primary {
-    background-color: var(--primary-color);
+    background-color: var(--primary-text-light);
     color: var(--white);
     text-decoration: none;
     border: none;
@@ -91,7 +91,7 @@
 }
 
     .btn-sazon-primary:hover {
-        background-color: var(--primary-hover);
+        background-color: var(--primary-text);
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
     }

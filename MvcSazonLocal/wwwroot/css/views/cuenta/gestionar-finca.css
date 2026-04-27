@@ -13,7 +13,7 @@
 }
 
     .btn-volver:hover {
-        color: var(--primary-color);
+        color: var(--primary-text-light);
     }
 
 /* --- TARJETA DEL FORMULARIO --- */
@@ -60,15 +60,15 @@
 
 /* --- ALERTA DE AYUDA --- */
 .alert-warning {
-    background-color: #fff9eb;
-    border: 1px solid #ffeeba;
-    color: #856404;
+    background-color: var(--status-warning-light);
+    border: 1px solid var(--status-warning);
+    color: var(--status-warning-dark);
     border-radius: 12px;
 }
 
 /* --- BOTONES --- */
 .btn-custom-primary {
-    background-color: var(--primary-color);
+    background-color: var(--primary-text-light);
     color: var(--white);
     padding: 12px 25px;
     border-radius: var(--radius-md);
@@ -80,7 +80,7 @@
 }
 
     .btn-custom-primary:hover {
-        background-color: var(--primary-hover);
+        background-color: var(--primary-text);
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3);
     }

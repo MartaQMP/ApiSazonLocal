@@ -1,12 +1,12 @@
 ﻿/* --- INDEX ---- */
 
 .text-olive {
-    color: var(--primary-color);
+    color: var(--primary-text);
 }
 
 /* --- SECCIÓN DE BÚSQUEDA --- */
 .search-section {
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--border-line);
     padding: 3% 4% !important;
     transition: transform 0.3s ease;
 }
@@ -79,14 +79,14 @@
     align-items: baseline;
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--primary-color);
+    color: var(--primary-text-light);
     margin-top: auto;
     letter-spacing: -0.5px;
 }
 
     .product-price small {
         font-size: 0.85rem !important;
-        color: #888;
+        color: var(--text-muted);
         font-weight: 600;
         margin-left: 4px;
     }
@@ -100,7 +100,7 @@
 
 .btn-sazon {
     background-color: var(--bg-secondary);
-    color: var(--primary-color);
+    color: var(--primary-text-light);
     border: 2px solid transparent;
     border-radius: var(--radius-md);
     padding: 0.75rem;
@@ -111,8 +111,11 @@
     height: 45px;
 }
 
+    .btn-sazon:hover{
+        color: var(--primary-text-light)
+    }
+
 .quantity-stepper {
-    background: var(--light-cream);
     border: 1px solid var(--border-line);
     border-radius: var(--radius-md);
     width:40%;
@@ -127,7 +130,7 @@
     background: transparent;
     width: 35% ;
     height: 100%;
-    color: var(--primary-color);
+    color: var(--primary-text-light);
     font-weight: bold;
     font-size: 1.2rem;
     cursor: pointer;
@@ -135,7 +138,7 @@
 }
 
     .btn-step:hover {
-        background: rgba(0,0,0,0.05);
+        background: var(--light-cream);
     }
 
 .input-step {
@@ -157,14 +160,21 @@
 
 /* --- PAGINACION --- */
 .page-link{
-    color: var(--primary-color);
-    background-color: var(--light-cream)
+    color: var(--primary-text);
+    background-color: var(--white);
 }
 
     .page-link:hover {
-        background-color: var(--primary-color);
-        color: var(--light-cream)
+        background-color: var(--primary-text);
+        color: var(--white);
     }
+
+.page-item.disabled .page-link {
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 
 /* --- RESPONSIVE --- */
 @media (max-width: 1200px) {

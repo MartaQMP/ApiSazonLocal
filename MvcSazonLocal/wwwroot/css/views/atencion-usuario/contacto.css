@@ -1,6 +1,6 @@
 ﻿/* --- ESTILOS DE IDENTIDAD Y TIPOGRAFÍA --- */
 .text-primary-color {
-    color: var(--primary-color);
+    color: var(--primary-text);
 }
 
 .badge-sazon {
@@ -24,7 +24,7 @@
 
 /* --- ETIQUETAS E INPUTS --- */
 .custom-label {
-    color: var(--primary-hard);
+    color: var(--primary-text);
     font-weight: 600;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
@@ -61,7 +61,7 @@
 
     .method-item h6 {
         margin: 0;
-        color: var(--primary-hard);
+        color: var(--primary-text);
         font-weight: 700;
     }
 
@@ -73,7 +73,7 @@
 
 /* --- BOTÓN DE ENVÍO --- */
 .btn-sazon-submit {
-    background-color: var(--primary-color);
+    background-color: var(--primary-text-light);
     color: var(--white);
     border: none;
     padding: 1rem 2rem;
@@ -86,7 +86,7 @@
 }
 
     .btn-sazon-submit:hover {
-        background-color: var(--primary-hover);
+        background-color: var(--primary-text);
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
     }

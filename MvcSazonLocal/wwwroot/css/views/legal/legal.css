@@ -16,7 +16,7 @@
 }
 
 .legal-title {
-    color: var(--primary-color);
+    color: var(--primary-text);
     font-weight: 700;
     font-size: 2.2rem;
 }
@@ -26,7 +26,7 @@
 }
 
     .legal-section h3 {
-        color: var(--primary-hard);
+        color: var(--primary-text-light);
         font-size: 1.4rem;
         font-weight: 600;
         margin-bottom: 1rem;
@@ -50,77 +50,6 @@
         text-align: justify;
     }
 
-.legal-highlight {
-    background-color: var(--bg-secondary);
-    padding: 1.5rem;
-    border-radius: var(--radius-md);
-    border-left: 4px solid var(--accent-color);
-    margin: 2rem 0;
-}
-
-    .legal-highlight strong {
-        color: var(--accent-hover);
-    }
-
-Aquí tienes el CSS para tus Páginas Legales (Aviso Legal, Privacidad, Cookies) organizado por secciones y con el bloque de Responsive diseñado para que los textos largos sean cómodos de leer en cualquier pantalla.
-
-CSS Páginas Legales con Responsive
-CSS
-/* --- CONTENEDOR LEGAL --- */
-.legal-container {
-    background-color: var(--white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    padding: 3rem;
-    margin-top: 2rem;
-    margin-bottom: 4rem;
-    border: var(--border-main);
-}
-
-/* --- CABECERA --- */
-.legal-header {
-    border-bottom: 2px solid var(--primary-soft);
-    padding-bottom: 1.5rem;
-    margin-bottom: 2.5rem;
-}
-
-.legal-title {
-    color: var(--primary-color);
-    font-weight: 700;
-    font-size: 2.2rem;
-}
-
-/* --- SECCIONES Y TEXTO --- */
-.legal-section {
-    margin-bottom: 2.5rem;
-}
-
-    .legal-section h3 {
-        color: var(--primary-hard);
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-    }
-
-        .legal-section h3::before {
-            content: "";
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            margin-right: 12px;
-        }
-
-    .legal-section p {
-        color: var(--text-secondary);
-        line-height: 1.8;
-        text-align: justify;
-    }
-
-/* --- BLOQUES DESTACADOS --- */
 .legal-highlight {
     background-color: var(--bg-secondary);
     padding: 1.5rem;

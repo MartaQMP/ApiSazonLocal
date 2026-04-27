@@ -19,11 +19,11 @@
 }
 
     .btn-volver:hover {
-        color: var(--primary-color);
+        color: var(--primary-text-light);
     }
 
 .btn-primary-custom {
-    background-color: var(--primary-color);
+    background-color: var(--primary-text-light);
     color: var(--white);
     text-decoration:none;
     border: none;
@@ -34,7 +34,7 @@
 }
 
     .btn-primary-custom:hover {
-        background-color: var(--primary-hover);
+        background-color: var(--primary-text);
         transform: translateY(-2px);
     }
 
@@ -74,7 +74,7 @@
 }
 
 .finca-disabled {
-    background-color: #f2f2f2;
+    background-color: var(--bg-secondary);
     border-style: dashed;
     opacity: 0.8;
 }
@@ -163,7 +163,7 @@
     font-size: 0.85rem;
     text-decoration: none;
     text-align: center;
-    color: var(--text-main);
+    color: var(--primary-text);
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
@@ -171,11 +171,23 @@
     font-weight: 600;
 }
 
-    .btn-finca-action.edit:hover {
-        background-color: var(--light-cream);
-        border-color: var(--primary-color);
-        color: var(--primary-color);
+    .btn-finca-action.edit {
+        background-color: var(--white);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-text);
+        text-decoration: none;
+        text-align: center;
+        padding: 8px;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        transition: var(--transition);
     }
+
+        .btn-finca-action.edit:hover {
+            background-color: var(--primary-text-light);
+            color: var(--white);
+        }
+
 
     .btn-finca-action.delete:hover {
         background-color: #fff5f5;
@@ -195,7 +207,7 @@
 }
 
     .btn-status-toggle.active {
-        background-color: var(--primary-soft);
+        background-color: var(--primary-text-light);
         color: var(--primary-active);
     }
 
@@ -209,22 +221,7 @@
         transform: scale(1.05);
     }
 
-.btn-finca-action.edit {
-    background-color: var(--white);
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    text-decoration: none;
-    text-align: center;
-    padding: 8px;
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    transition: var(--transition);
-}
 
-    .btn-finca-action.edit:hover {
-        background-color: var(--primary-color);
-        color: var(--white);
-    }
 
 /* --- ESTILOS DEL FORMULARIO Y MAPA --- */
 .card-form {

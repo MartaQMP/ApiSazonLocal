@@ -49,9 +49,38 @@
 .stat-value {
     font-size: 2rem;
     font-weight: 800;
-    color: var(--primary-hard);
+    color: var(--primary-text-light);
     display: block;
 }
+
+/* --- PESTAÑAS --- */
+.nav-link-gp {
+    background-color: transparent;
+    color: var(--text-olive);
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+    .nav-link-gp:hover {
+        color: var(--primary-text);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link-gp.active {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: var(--primary-text) !important;
+        font-weight: bold;
+        border-bottom: 3px solid #2ecc71;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+    }
+
+        .nav-link-gp.active .badge {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
 
 /* --- CABECERA COLAPSABLE --- */
 .ordermgr-header {
@@ -71,7 +100,7 @@
 
 .ordermgr-id {
     font-weight: 800;
-    color: var(--primary-hard);
+    color: var(--primary-text);
     font-size: 1.1rem;
 }
 
@@ -88,15 +117,17 @@
 }
 
     .ordermgr-table th {
-        color: var(--text-muted);
+        color: var(--primary-text);
         font-size: 0.8rem;
         text-transform: uppercase;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid var(--border-line);
+        font-weight: 700;
     }
 
 .ordermgr-item-row {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-line);
+    color: var(--text-main);
 }
 
     .ordermgr-item-row td {

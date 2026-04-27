@@ -52,19 +52,17 @@ namespace MvcSazonLocal.Services
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                Usuario user = new Usuario
+                Register user = new Register
                 {
                     Nombre = nombre,
                     Apellidos = apellidos,
                     Email = email,
-                    Imagen = imagen,
                     Telefono = telefono,
                     IdRol = idRol
                 };
                 string json = JsonConvert.SerializeObject(user);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(request, content);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -109,7 +107,7 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Usuarios/UpdatePerfil";
+                string request = "api/Usuarios/ActualizarPerfil/" + idUsuario;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
@@ -124,7 +122,6 @@ namespace MvcSazonLocal.Services
                 string json = JsonConvert.SerializeObject(user);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PutAsync(request, content);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -144,12 +141,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Usuarios/UpdateEstado/" + idUsuario;
+                string request = "api/Usuarios/ActualizarEstadoUsuario/" + idUsuario;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -176,7 +172,6 @@ namespace MvcSazonLocal.Services
                 string json = JsonConvert.SerializeObject(usuarioKeys);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PutAsync(request, content);
-                response.EnsureSuccessStatusCode();
             }
         }
         #endregion
@@ -202,7 +197,7 @@ namespace MvcSazonLocal.Services
 
         public async Task<List<Producto>> GetProductosUsuarioAsync(int idUsuario)
         {
-            string request = "api/Productos/Usuario/" + idUsuario;
+            string request = "api/Productos/GetProductos/Usuario/" + idUsuario;
             return await this.CallApiAsync<List<Producto>>(request) ?? new List<Producto>();
         }
 
@@ -236,7 +231,6 @@ namespace MvcSazonLocal.Services
                 string json = JsonConvert.SerializeObject(producto);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(request, content);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -244,12 +238,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Productos/ActualizarDatos/" + idProducto + "/" + nuevoPrecio.ToString(CultureInfo.InvariantCulture) + "/" + nuevoStock;
+                string request = "api/Productos/ActualizarDatosProductos/" + idProducto + "/" + nuevoPrecio.ToString(CultureInfo.InvariantCulture) + "/" + nuevoStock;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -257,18 +250,17 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Productos/CambiarEstado/" + idProducto;
+                string request = "api/Productos/CambiarEstadoProductos/" + idProducto;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
         public async Task<int> GetStockProductoAsync(int idProducto)
         {
-            string request = "api/Productos/GetStock/" + idProducto;
+            string request = "api/Productos/GetStockProducto/" + idProducto;
             return await this.CallApiAsync<int>(request);
         }
 
@@ -282,12 +274,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/UnidadMedida/Insertar/" + Uri.EscapeDataString(nombre);
+                string request = "api/UnidadMedida/" + Uri.EscapeDataString(nombre);
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -295,12 +286,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/UnidadMedida/CambiarEstado/" + idUnidad;
+                string request = "api/UnidadMedida/CambiarEstadoUnidadMedida/" + idUnidad;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
         #endregion
@@ -326,7 +316,7 @@ namespace MvcSazonLocal.Services
 
         public async Task<List<Finca>> GetFincasUsuarioAsync(int idUsuario)
         {
-            string request = "api/Fincas/GetFincasUsuario/" + idUsuario;
+            string request = "api/Fincas/GetFincas/Usuario/" + idUsuario;
             return await this.CallApiAsync<List<Finca>>(request) ?? new List<Finca>();
         }
 
@@ -340,12 +330,23 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Fincas?nombre=" + Uri.EscapeDataString(nombre) + "&direccion=" + Uri.EscapeDataString(direccion) + "&municipio=" + Uri.EscapeDataString(municipio) + "&provincia=" + Uri.EscapeDataString(provincia) + "&latitud=" + latitud.ToString(CultureInfo.InvariantCulture) + "&longitud=" + longitud.ToString(CultureInfo.InvariantCulture) + "&idUsuario=" + idUsuario;
+                string request = "api/Fincas";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                FincaDto finca = new FincaDto
+                {
+                    Nombre = nombre,
+                    Direccion = direccion,
+                    Municipio = municipio,
+                    Provincia = provincia,
+                    Latitud = latitud,
+                    Longitud = longitud,
+                    IdUsuario = idUsuario
+                };
+                string json = JsonConvert.SerializeObject(finca);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
 
@@ -353,12 +354,23 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Fincas/Actualizar/" + idFinca + "?nombre=" + Uri.EscapeDataString(nombre) + "&direccion=" + Uri.EscapeDataString(direccion) + "&municipio=" + Uri.EscapeDataString(municipio) + "&provincia=" + Uri.EscapeDataString(provincia) + "&latitud=" + latitud.ToString(CultureInfo.InvariantCulture) + "&longitud=" + longitud.ToString(CultureInfo.InvariantCulture) + "&idUsuario=" + idUsuario;
+                string request = "api/Fincas/Actualizar/" + idFinca;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                FincaDto finca = new FincaDto
+                {
+                    Nombre = nombre,
+                    Direccion = direccion,
+                    Municipio = municipio,
+                    Provincia = provincia,
+                    Latitud = latitud,
+                    Longitud = longitud,
+                    IdUsuario = idUsuario
+                };
+                string json = JsonConvert.SerializeObject(finca);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PutAsync(request, content);
             }
         }
 
@@ -371,7 +383,6 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -384,7 +395,6 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -415,7 +425,7 @@ namespace MvcSazonLocal.Services
 
         public async Task<List<Direccion>> GetDireccionesUsuarioAsync(int idUsuario)
         {
-            string request = "api/Direcciones/GetDireccionesUsuario/" + idUsuario;
+            string request = "api/Direcciones/GetDirecciones/Usuario/" + idUsuario;
             return await this.CallApiAsync<List<Direccion>>(request) ?? new List<Direccion>();
         }
 
@@ -423,12 +433,28 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Direcciones?idUsuario=" + idUsuario + "&etiqueta=" + Uri.EscapeDataString(etiqueta ?? "") + "&calleNumero=" + Uri.EscapeDataString(calleNumero) + "&piso=" + Uri.EscapeDataString(piso ?? "") + "&puerta=" + Uri.EscapeDataString(puerta ?? "") + "&cp=" + Uri.EscapeDataString(cp) + "&municipio=" + Uri.EscapeDataString(municipio) + "&provincia=" + Uri.EscapeDataString(provincia) + "&notasAdicionales=" + Uri.EscapeDataString(notasAdicionales ?? "") + "&latitud=" + latitud.ToString(CultureInfo.InvariantCulture) + "&longitud=" + longitud.ToString(CultureInfo.InvariantCulture) + "&esPrincipal=" + esPrincipal;
+                string request = "api/Direcciones";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                DireccionDto direccion = new DireccionDto
+                {
+                    IdUsuario = idUsuario,
+                    NombreEtiqueta = etiqueta,
+                    CalleNumero = calleNumero,
+                    Piso = piso,
+                    Puerta = puerta,
+                    CodigoPostal = cp,
+                    Municipio = municipio,
+                    Provincia = provincia,
+                    NotasAdicionales = notasAdicionales,
+                    Latitud = latitud,
+                    Longitud = longitud,
+                    EsPrincipal = esPrincipal
+                };
+                string json = JsonConvert.SerializeObject(direccion);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
 
@@ -436,12 +462,28 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Direcciones/" + idDireccion + "?etiqueta=" + Uri.EscapeDataString(etiqueta ?? "") + "&calleNumero=" + Uri.EscapeDataString(calleNumero) + "&piso=" + Uri.EscapeDataString(piso ?? "") + "&puerta=" + Uri.EscapeDataString(puerta ?? "") + "&cp=" + Uri.EscapeDataString(cp) + "&municipio=" + Uri.EscapeDataString(municipio) + "&provincia=" + Uri.EscapeDataString(provincia) + "&notasAdicionales=" + Uri.EscapeDataString(notasAdicionales ?? "") + "&latitud=" + latitud.ToString(CultureInfo.InvariantCulture) + "&longitud=" + longitud.ToString(CultureInfo.InvariantCulture) + "&esPrincipal=" + esPrincipal + "&idUsuario=" + idUsuario;
+                string request = "api/Direcciones/" + idDireccion;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                DireccionDto direccion = new DireccionDto
+                {
+                    IdUsuario = idUsuario,
+                    NombreEtiqueta = etiqueta,
+                    CalleNumero = calleNumero,
+                    Piso = piso,
+                    Puerta = puerta,
+                    CodigoPostal = cp,
+                    Municipio = municipio,
+                    Provincia = provincia,
+                    NotasAdicionales = notasAdicionales,
+                    Latitud = latitud,
+                    Longitud = longitud,
+                    EsPrincipal = esPrincipal
+                };
+                string json = JsonConvert.SerializeObject(direccion);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PutAsync(request, content);
             }
         }
 
@@ -454,7 +496,6 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.DeleteAsync(request);
-                response.EnsureSuccessStatusCode();
             }
         }
         #endregion
@@ -470,12 +511,18 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Categorias?nombre=" + Uri.EscapeDataString(nombre) + "&descripcion=" + Uri.EscapeDataString(descripcion);
+                string request = "api/Categorias";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                CategoriaDto categoria = new CategoriaDto
+                {
+                    Nombre = nombre,
+                    Descripcion = descripcion
+                };
+                string json = JsonConvert.SerializeObject(categoria);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
 
@@ -488,7 +535,6 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -500,13 +546,13 @@ namespace MvcSazonLocal.Services
 
         public async Task<List<Subcategoria>> GetSubcategoriasByCategoriaAsync(int idCategoria)
         {
-            string request = "api/Subcategorias/GetPorCategoria/" + idCategoria;
+            string request = "api/Subcategorias/GetSubcategoriaPorCategoria/" + idCategoria;
             return await this.CallApiAsync<List<Subcategoria>>(request) ?? new List<Subcategoria>();
         }
 
         public async Task<List<Subcategoria>> GetSubcategoriasConCategoriaAsync()
         {
-            string request = "api/Subcategorias/GetConCategoria";
+            string request = "api/Subcategorias/GetSubcategoriaConCategoria";
             return await this.CallApiAsync<List<Subcategoria>>(request) ?? new List<Subcategoria>();
         }
 
@@ -514,12 +560,20 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Subcategorias?nombre=" + Uri.EscapeDataString(nombre) + "&descripcion=" + Uri.EscapeDataString(descripcion) + "&imagen=" + Uri.EscapeDataString(imagen) + "&idCategoria=" + idCategoria;
+                string request = "api/Subcategorias";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                SubcategoriaDto subcategoria = new SubcategoriaDto
+                {
+                    Nombre = nombre,
+                    Descripcion = descripcion,
+                    Imagen = imagen,
+                    IdCategoria = idCategoria
+                };
+                string json = JsonConvert.SerializeObject(subcategoria);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
 
@@ -527,12 +581,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Subcategorias/CambiarEstado/" + idSubcategoria;
+                string request = "api/Subcategorias/CambiarEstadoSubcategoria/" + idSubcategoria;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
         #endregion
@@ -540,7 +593,7 @@ namespace MvcSazonLocal.Services
         #region Pedidos
         public async Task<List<Pedido>> GetPedidosUsuarioAsync(int idUsuario)
         {
-            string request = "api/Pedidos/GetPedidosUsuario/" + idUsuario;
+            string request = "api/Pedidos/GetPedidos/Usuario/" + idUsuario;
             return await this.CallApiAsync<List<Pedido>>(request) ?? new List<Pedido>();
         }
 
@@ -554,12 +607,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Pedidos/CambiarEstado/" + idPedido + "/" + Uri.EscapeDataString(nuevoEstado);
+                string request = "api/Pedidos/CambiarEstadoPedido/" + idPedido + "/" + Uri.EscapeDataString(nuevoEstado);
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -567,12 +619,18 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Pedidos?idUsuario=" + idUsuario + "&idDireccion=" + idDireccion;
+                string request = "api/Pedidos";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                PedidoDto pedido = new PedidoDto
+                {
+                    IdUsuario = idUsuario,
+                    IdDireccion = idDireccion
+                };
+                string json = JsonConvert.SerializeObject(pedido);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
 
                 using var contentStream = await response.Content.ReadAsStreamAsync();
                 using var document = await System.Text.Json.JsonDocument.ParseAsync(contentStream);
@@ -594,7 +652,7 @@ namespace MvcSazonLocal.Services
 
         public async Task<DetallePedido> GetDetallePedidoByIdAsync(int idDetalle)
         {
-            string request = "api/Pedidos/GetDetalle/" + idDetalle;
+            string request = "api/Pedidos/GetDetallePedido/" + idDetalle;
             return await this.CallApiAsync<DetallePedido>(request);
         }
 
@@ -602,18 +660,17 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Pedidos/CambiarEstadoDetalle/" + idDetalle;
+                string request = "api/Pedidos/CambiarEstadoDetallePedido/" + idDetalle;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
         public async Task<List<DetallePedido>> GetDetallePedidosByPedidoAsync(int idPedido)
         {
-            string request = "api/Pedidos/GetDetalles/" + idPedido;
+            string request = "api/Pedidos/GetDetallesPedido/" + idPedido;
             return await this.CallApiAsync<List<DetallePedido>>(request) ?? new List<DetallePedido>();
         }
         #endregion
@@ -623,12 +680,19 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Carrito?cantidad=" + cantidad + "&idUsuario=" + idUsuario + "&idProducto=" + idProducto;
+                string request = "api/Carrito";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                CarritoItemDto carrito = new CarritoItemDto
+                {
+                    Cantidad = cantidad,
+                    IdUsuario = idUsuario,
+                    IdProducto = idProducto
+                };
+                string json = JsonConvert.SerializeObject(carrito);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
 
@@ -640,7 +704,7 @@ namespace MvcSazonLocal.Services
 
         public async Task<List<CarritoItem>> GetCarritoUsuarioAsync(int idUsuario)
         {
-            string request = "api/Carrito/GetCarritoUsuario/" + idUsuario;
+            string request = "api/Carrito/GetCarrito/Usuario/" + idUsuario;
             return await this.CallApiAsync<List<CarritoItem>>(request) ?? new List<CarritoItem>();
         }
 
@@ -648,12 +712,19 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Carrito/ActualizarCantidad/" + idUsuario + "/" + idProducto + "/" + nuevaCantidad;
+                string request = "api/Carrito/ActualizarCantidad";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                CarritoItemDto carrito = new CarritoItemDto
+                {
+                    IdUsuario = idUsuario,
+                    IdProducto = idProducto,
+                    Cantidad = nuevaCantidad
+                };
+                string json = JsonConvert.SerializeObject(carrito);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PutAsync(request, content);
             }
         }
 
@@ -661,12 +732,11 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Carrito/EliminarProducto/" + idUsuario + "/" + idProducto;
+                string request = "api/Carrito/EliminarProductoCarrito/Usuario/" + idUsuario + "/" + idProducto;
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.DeleteAsync(request);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -679,13 +749,12 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.DeleteAsync(request);
-                response.EnsureSuccessStatusCode();
             }
         }
 
         public async Task<decimal> GetSubtotalCarrito(int idUsuario)
         {
-            string request = "api/Carrito/GetSubtotal/" + idUsuario;
+            string request = "api/Carrito/GetSubtotalCarrito/Usuario/" + idUsuario;
             var response = await this.CallApiAsync<dynamic>(request);
             return response["subtotal"];
         }
@@ -696,12 +765,22 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Pagos?idPedido=" + idPedido + "&pasarela=" + Uri.EscapeDataString(pasarela) + "&metodo=" + Uri.EscapeDataString(metodo) + "&ultimosDigitos=" + Uri.EscapeDataString(ultimosDigitos) + "&estado=" + Uri.EscapeDataString(estado) + "&transactionId=" + Uri.EscapeDataString(transactionId);
+                string request = "api/Pagos";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                PagoDto pago = new PagoDto
+                {
+                    IdPedido = idPedido,
+                    Pasarela = pasarela,
+                    MetodoPago = metodo,
+                    UltimosDigitosTarjeta = ultimosDigitos,
+                    EstadoPago = estado,
+                    TransactionId = transactionId
+                };
+                string json = JsonConvert.SerializeObject(pago);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
         #endregion
@@ -711,12 +790,22 @@ namespace MvcSazonLocal.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Mensajes?idUsuario=" + idUsuario + "&nombre=" + Uri.EscapeDataString(nombre) + "&email=" + Uri.EscapeDataString(email) + "&tipoConsulta=" + Uri.EscapeDataString(tipoConsulta) + "&asunto=" + Uri.EscapeDataString(asunto) + "&mensaje=" + Uri.EscapeDataString(mensaje);
+                string request = "api/Mensajes";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
-                HttpResponseMessage response = await client.PostAsync(request, null);
-                response.EnsureSuccessStatusCode();
+                MensajeDto mensajeObj = new MensajeDto
+                {
+                    IdUsuario = idUsuario,
+                    Nombre = nombre,
+                    Email = email,
+                    TipoConsulta = tipoConsulta,
+                    Asunto = asunto,
+                    Contenido = mensaje
+                };
+                string json = JsonConvert.SerializeObject(mensajeObj);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(request, content);
             }
         }
 
@@ -741,7 +830,6 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
 
@@ -754,7 +842,6 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 HttpResponseMessage response = await client.PutAsync(request, null);
-                response.EnsureSuccessStatusCode();
             }
         }
         #endregion

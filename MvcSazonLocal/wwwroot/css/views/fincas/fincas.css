@@ -3,7 +3,7 @@
     height: 600px;
     width: 100%;
     border-radius: 20px;
-    border: 2px solid #ddd;
+    border: 2px solid var(--border-line);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
     margin-bottom: 2rem;
     transition: all 0.3s ease;
@@ -59,7 +59,7 @@
 }
 
 .pin-trabajo {
-    color: #072E1B !important;
+    color: var(--accent-dark) !important;
 }
 
 .pin-finca {

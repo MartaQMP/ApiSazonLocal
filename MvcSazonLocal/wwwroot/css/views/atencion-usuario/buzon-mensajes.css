@@ -25,13 +25,17 @@
 }
 
 /* --- ELEMENTOS VISUALES --- */
+.title{
+    color: var(--primary-text-light);
+}
+
 .msgmgr-item {
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 1.5rem;
     align-items: center;
     padding: 1.25rem;
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid #e9ecef;
     border-radius: var(--radius-sm);
     transition: all 0.3s ease;
@@ -39,14 +43,14 @@
 }
 
     .msgmgr-item:hover {
-        border-color: var(--primary-color);
+        border-color: var(--primary-text-light);
         box-shadow: 0 4px 8px rgba(85, 107, 47, 0.1);
         transform: translateY(-2px);
     }
 
     .msgmgr-item.unread {
-        background-color: #fafbfc;
-        border-left: 4px solid var(--primary-color);
+        background-color: var(--light-cream);
+        border-left: 4px solid var(--primary-text-light);
         border-left-width: 4px;
     }
 
@@ -58,14 +62,14 @@
     width: 3rem;
     height: 3rem;
     border-radius: 50%;
-    background-color: var(--primary-color);
+    background-color: var(--primary-text-light);
     color: #ffffff;
     font-size: 1.5rem;
     flex-shrink: 0;
 }
 
 .msgmgr-item.unread .msgmgr-icon {
-    background-color: var(--primary-hard);
+    background-color: var(--primary-color);
 }
 
 /* ---*/
@@ -79,14 +83,14 @@
 .msgmgr-subject {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--primary-hard);
+    color: var(--primary-text-light);
     line-height: 1.4;
     word-break: break-word;
 }
 
 .msgmgr-item.unread .msgmgr-subject {
     font-weight: 700;
-    color: var(--primary-hard);
+    color: var(--primary-color);
 }
 
 .msgmgr-preview {

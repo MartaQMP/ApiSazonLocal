@@ -103,7 +103,7 @@
 
     .table-sazon th {
         padding: 1.5% 1%;
-        border-bottom: 2px solid var(--primary-soft);
+        border-bottom: 2px solid var(--primary-text);
         font-size: 0.8rem;
         color: var(--text-secondary);
     }
@@ -130,8 +130,8 @@
     padding-top: 2%;
     font-size: 1.2rem;
     font-weight: 800;
-    color: var(--primary-color);
-    border-top: 2px solid var(--primary-color) !important;
+    color: var(--primary-text);
+    border-top: 2px solid var(--primary-text) !important;
 }
 
 /* --- RESPONSIVE --- */

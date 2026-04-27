@@ -28,28 +28,28 @@
 }
 
     .card-seguridad .form-control:focus {
-        border-color: var(--primary-color);
+        border-color: var(--primary-text-light);
         box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.1);
     }
 
 /* --- ACCIONES Y BOTONES --- */
-.btn-custom {
+.btn-custom-ser {
     background-color: transparent;
-    color: var(--primary-color);
+    color: var(--primary-text-light);
     text-decoration: none;
-    border: 1px solid var(--primary-color);
+    border: 1px solid var(--primary-text-light);
     border-radius: var(--radius-md);
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5% 4%; /* Ajustado el padding lateral */
+    padding: 1.5% 4%;
 }
 
-    .btn-custom:hover {
-        background-color: var(--primary-color);
+    .btn-custom-ser:hover {
+        background-color: var(--primary-text);
         color: var(--white);
-        border-color: var(--primary-color);
+        border-color: var(--primary-text);
     }
 
 /* --- BARRA DE FORTALEZA DINÁMICA --- */

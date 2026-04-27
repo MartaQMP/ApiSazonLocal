@@ -44,7 +44,20 @@
 .pedido-body {
     padding: 15px 20px;
     flex-grow: 1;
+    background-color: var(--bg-main)
 }
+
+    .pedido-body table th {
+        background-color: var(--bg-main);
+        border-color: var(--border-line);
+        color: var(--text-hard)
+    }
+
+    .pedido-body table td {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-line);
+        color: var(--text-secondary)
+    }
 
 .bg-light-soft {
     background-color: #fafafa;
