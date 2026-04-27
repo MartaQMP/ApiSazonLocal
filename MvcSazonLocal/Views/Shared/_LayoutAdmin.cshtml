@@ -25,7 +25,7 @@
     <div class="d-flex wrapper-gestion">
         <nav class="sidebar-gestion border-end shadow-sm bg-white">
             <div class="p-4 border-bottom mb-2">
-                <h5 class="fw-bold text-olive mb-0"><i class="bi bi-person-badge me-2"></i>Mi Cuenta</h5>
+                <h5 class="fw-bold text-title mb-0"><i class="bi bi-person-badge me-2"></i>Mi Cuenta</h5>
                 <small class="text-muted">Centro de Gestión</small>
             </div>
 
@@ -51,11 +51,11 @@
         </nav>
 
         <main class="main-content-gestion bg-light-soft">
-            <header class="navbar navbar-expand navbar-light bg-white shadow-sm px-4 mb-4">
+            <header class="navbar-expand navbar-light bg-white shadow-sm px-2 py-2">
                 <button class="btn btn-link d-md-none me-3">
                     <i class="bi bi-list fs-3 text-olive"></i>
                 </button>
-                <span class="navbar-text fw-bold text-olive">Panel de Control</span>
+                <span class="navbar-text fw-bold text-title">Panel de Control</span>
             </header>
 
             <div class="container-fluid px-lg-5 pb-5" id="admin-content">
@@ -69,6 +69,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/mapas/js/leaflet.js"></script>
+    <script src="~/js/theme-toggle.js"></script>
     @RenderSection("Scripts", required: false)
     <script>
         document.addEventListener("DOMContentLoaded", function () {

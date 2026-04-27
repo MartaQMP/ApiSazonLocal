@@ -136,8 +136,21 @@ namespace ApiSazonLocal.Repositories
         public async Task ActualizarPassword(int idUsuario, byte[] salt, byte[] password)
         {
             KeysUsuario key = await this.GetKeysUsuarioAsync(idUsuario);
-            key.Salt = salt;
-            key.Password = password;
+            if (key == null)
+            {
+                key = new KeysUsuario
+                {
+                    IdUsuario = idUsuario,
+                    Salt = salt,
+                    Password = password
+                };
+                this.context.KeysUsuarios.Add(key);
+            }
+            else
+            {
+                key.Salt = salt;
+                key.Password = password;
+            }
             await this.context.SaveChangesAsync();
         }
         #endregion

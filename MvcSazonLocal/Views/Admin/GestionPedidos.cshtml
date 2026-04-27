@@ -7,14 +7,14 @@
 
 <div id="admin-content-partial">
     <div class="mb-4">
-        <h2 class="fw-bold" style="color: var(--primary-hard)">Gestión de Pedidos</h2>
+        <h2 class="fw-bold" style="color: var(--primary-text-light)">Gestión de Pedidos</h2>
         <p class="text-muted">Supervisa la preparación de los productos por parte de los agricultores.</p>
     </div>
 
     <div class="stats-container animate-fade-in">
         <div class="stat-card" style="border-top: 4px solid var(--primary-color)">
             <span class="stat-label"><i class="bi bi-graph-up-arrow me-2"></i>Ganancia Neta</span>
-            <span class="stat-value" style="color: var(--primary-color)">@ViewBag.TotalNeto.ToString("C")</span>
+            <span class="stat-value">@ViewBag.TotalNeto.ToString("C")</span>
         </div>
         <div class="stat-card">
             <span class="stat-label"><i class="bi bi-cash-stack me-2"></i>Ventas Brutas</span>
@@ -31,18 +31,18 @@
     </div>
 
     <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#pendientes">
+        <li class="nav-item-gp">
+            <a class="nav-link-gp active" data-bs-toggle="tab" href="#pendientes">
                 Pendientes <span class="badge bg-danger ms-1">@pendientes.Count</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#enCamino">
+        <li class="nav-item-gp">
+            <a class="nav-link-gp" data-bs-toggle="tab" href="#enCamino">
                 En Camino <span class="badge bg-warning ms-1">@enCamino.Count</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#entregados">
+        <li class="nav-item-gp">
+            <a class="nav-link-gp" data-bs-toggle="tab" href="#entregados">
                 Entregados <span class="badge bg-success ms-1">@entregados.Count</span>
             </a>
         </li>

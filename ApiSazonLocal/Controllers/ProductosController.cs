@@ -17,10 +17,17 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{posicion}")]
-        public async Task<ActionResult<ProductosPaginacion>> GetProductosBuscador(int posicion, [FromBody] ProductoBuscadorDto producto)
+        [Route("GetProductosFiltro")]
+        public async Task<ActionResult<ProductosPaginacion>> GetProductosFiltro(
+            int posicion,
+            [FromQuery] string? buscador,
+            [FromQuery] int? idCategoria,
+            [FromQuery] int? idSubcategoria,
+            [FromQuery] int? idFinca,
+            [FromQuery] decimal? precio)
         {
-            var result = await this.repo.GetProductosFiltroAsync(posicion, producto.Buscador, producto.IdCategoria, producto.IdSubcategoria, producto.IdFinca, producto.Precio);
+            var result = await this.repo.GetProductosFiltroAsync(
+                posicion, buscador, idCategoria, idSubcategoria, idFinca, precio);
             return Ok(result);
         }
 

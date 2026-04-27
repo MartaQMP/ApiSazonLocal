@@ -38,6 +38,11 @@
 
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item">
+                        <button id="theme-toggle" class="btn-theme-toggle" title="Cambiar tema">
+                            <i class="bi bi-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link nav-link-custom nav-cart" asp-controller="Compra" asp-action="Carrito">
                             <i class="bi bi-cart3 fs-5"></i>
                             @await Component.InvokeAsync("CantidadCarrito")

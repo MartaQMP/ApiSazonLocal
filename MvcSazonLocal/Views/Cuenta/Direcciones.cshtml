@@ -1,10 +1,10 @@
 ﻿@model List<Direccion>
 
 <div id="main-content-partial">
-    <div class="container-fluid animate-fade-in">
+    <div class="container-fluid-direccion animate-fade-in">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold mb-0 text-main">Mis Direcciones</h4>
-            <a asp-action="CrearDireccion" class="btn btn-primary-custom px-4 ajax-link">
+            <a asp-action="CrearDireccion" class="btn-custom-primary ajax-link">
                 <i class="bi bi-plus-circle me-2"></i>Añadir Nueva Dirección
             </a>
         </div>
@@ -155,22 +155,22 @@
                                         <div class="d-flex justify-content-end mt-4 pt-4 border-top gap-2">
                                             @if (!esModoEdicion)
                                             {
-                                                <a asp-action="Direcciones" asp-route-idEditar="@dir.IdDireccion" class="btn-custom ajax-link">
+                                                <a asp-action="Direcciones" asp-route-idEditar="@dir.IdDireccion" class="btn-custom-dir ajax-link">
                                                     <i class="bi bi-pencil-square me-2"></i>Modificar
                                                 </a>
                                                 <form asp-action="Eliminar" method="post" style="display:inline;" class="ajax-form">
                                                     <input type="hidden" name="idDireccion" value="@dir.IdDireccion" />
-                                                    <button type="submit" class="btn-custom">
+                                                    <button type="submit" class="btn-custom-dir">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
                                             }
                                             else
                                             {
-                                                <a asp-action="Direcciones" class="btn-custom ajax-link">
+                                                <a asp-action="Direcciones" class="btn-custom-dir ajax-link">
                                                     <i class="bi bi-x-circle me-2"></i>Cancelar
                                                 </a>
-                                                <button type="submit" class="btn-custom">
+                                                <button type="submit" class="btn-custom-dir">
                                                     <i class="bi bi-check2-circle me-2"></i>Guardar Cambios
                                                 </button>
                                             }

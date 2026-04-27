@@ -5,7 +5,7 @@ using MvcSazonLocal.Filters;
 using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
 using MvcSazonLocal.Services;
-using SazonLocalInterfaces.Services;
+using SazonLocalInterfaces.Interfaces;
 using Stripe;
 using System.Security.Claims;
 using System.Threading.Tasks;

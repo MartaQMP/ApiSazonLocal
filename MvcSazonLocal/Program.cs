@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MvcSazonLocal.Services;
 using SazonLocalHelpers.Helpers;
-using SazonLocalInterfaces.Services;
+using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Models;
 using Stripe;
 

@@ -4,7 +4,7 @@ using MvcSazonLocal.Filters;
 using SazonLocalModels.Models;
 using MvcSazonLocal.Services;
 using System.Security.Claims;
-using SazonLocalInterfaces.Services;
+using SazonLocalInterfaces.Interfaces;
 
 namespace MvcSazonLocal.Controllers
 {
