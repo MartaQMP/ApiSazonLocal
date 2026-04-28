@@ -1,6 +1,6 @@
 using ApiSazonLocal.Data;
+using ApiSazonLocal.Helpers;
 using ApiSazonLocal.Repositories;
-using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
@@ -20,8 +20,8 @@ SecretClient secretClient = builder.Services.BuildServiceProvider().GetService<S
 KeyVaultSecret azureconnection = await secretClient.GetSecretAsync("AzureConnection");
 KeyVaultSecret jwtToken = await secretClient.GetSecretAsync("JwtToken");
 
-
-
+/* ---TOKEN--- */
+HelperCifrado.Initialize(jwtToken.Value);
 
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
