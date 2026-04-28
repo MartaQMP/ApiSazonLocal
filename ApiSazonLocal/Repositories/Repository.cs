@@ -67,7 +67,7 @@ namespace ApiSazonLocal.Repositories
 
         public async Task<Usuario> LogInAsync(string email, string password)
         {
-            Usuario user = await this.context.Usuarios.Where(u => u.Email == email).Include(u => u.Keys).FirstOrDefaultAsync();
+            Usuario user = await this.context.Usuarios.Where(u => u.Email == email).Include(u => u.Keys).Include(u => u.Rol).FirstOrDefaultAsync();
 
             if (user != null)
             {

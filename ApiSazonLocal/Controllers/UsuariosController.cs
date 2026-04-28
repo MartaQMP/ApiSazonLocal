@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -17,6 +18,7 @@ namespace ApiSazonLocal.Controllers
             this.repo = repo;
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
         {
@@ -24,6 +26,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(usuarios);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Usuario>> GetUsuario(int id)
         {

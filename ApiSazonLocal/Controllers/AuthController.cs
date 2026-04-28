@@ -1,9 +1,14 @@
-﻿using ApiSazonLocal.Repositories;
+﻿using ApiSazonLocal.Helpers;
+using ApiSazonLocal.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
 using SazonLocalModels.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -12,10 +17,12 @@ namespace ApiSazonLocal.Controllers
     public class AuthController : ControllerBase
     {
         private IRepository repo;
+        private HelperActionOAuth helper;
 
-        public AuthController(IRepository repo)
+        public AuthController(IRepository repo, HelperActionOAuth helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [HttpPost]
@@ -26,10 +33,40 @@ namespace ApiSazonLocal.Controllers
 
             if (user == null)
             {
-                return Unauthorized("Credenciales inválidas.");
+                return Unauthorized();
             }
 
-            return Ok(user);
+            SigningCredentials credentials = new SigningCredentials(this.helper.GetTokenKey(), SecurityAlgorithms.HmacSha256);
+            UsuarioLogin usuarioLogin = new UsuarioLogin
+            {
+                IdUsuario = user.IdUsuario,
+                Nombre = user.Nombre,
+                Email = user.Email,
+                IdRol = user.IdRol
+            };
+
+            string jsonUsuario = JsonConvert.SerializeObject(usuarioLogin);
+            string jsonCifrado = HelperCifrado.CifrarString(jsonUsuario);
+            Claim[] informacion = new[]
+            {
+                    new Claim("UserData", jsonCifrado),
+                    new Claim(ClaimTypes.Role, user.Rol.Nombre)
+                };
+
+            JwtSecurityToken token = new JwtSecurityToken
+            (
+                claims: informacion,
+                issuer: this.helper.Issuer,
+                audience: this.helper.Audience,
+                signingCredentials: credentials,
+                expires: DateTime.UtcNow.AddMinutes(40),
+                notBefore: DateTime.UtcNow
+            );
+
+            return Ok(new
+            {
+                response = new JwtSecurityTokenHandler().WriteToken(token)
+            });
         }
 
         [HttpPost]

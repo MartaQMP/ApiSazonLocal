@@ -7,6 +7,7 @@ using Microsoft.Extensions.Azure;
 using SazonLocalHelpers.Helpers;
 using SazonLocalInterfaces.Interfaces;
 using Scalar.AspNetCore;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +24,19 @@ KeyVaultSecret jwtToken = await secretClient.GetSecretAsync("JwtToken");
 /* ---TOKEN--- */
 HelperCifrado.Initialize(jwtToken.Value);
 
+KeyVaultSecret jwtSecret = await secretClient.GetSecretAsync("Jwt--SecretKey");
+HelperActionOAuth helperOAuth = new HelperActionOAuth(
+    builder.Configuration.GetValue<string>("ApiOAuthToken:Issuer"),
+    builder.Configuration.GetValue<string>("ApiOAuthToken:Audience"),
+    jwtSecret.Value
+);
+
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
+builder.Services.AddSingleton<HelperActionOAuth>(helperOAuth);
+builder.Services.AddTransient<HelperToken>();
+builder.Services.AddAuthentication(helperOAuth.GetAuthenticationSchema()).AddJwtBearer(helperOAuth.GetJWtBearerOptions());
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IRepository, Repository>();
 builder.Services.AddDbContext<SazonContext>(options => options.UseSqlServer(azureconnection.Value));
 
