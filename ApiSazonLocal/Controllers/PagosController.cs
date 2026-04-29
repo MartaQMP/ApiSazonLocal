@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using ApiSazonLocal.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -16,6 +18,7 @@ namespace ApiSazonLocal.Controllers
             this.repo = repo;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] PagoDto pago)
         {

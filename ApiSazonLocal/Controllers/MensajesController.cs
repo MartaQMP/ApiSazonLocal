@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using Microsoft.AspNetCore.Authorization;
+using ApiSazonLocal.Helpers;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -12,23 +14,25 @@ namespace ApiSazonLocal.Controllers
     public class MensajesController : ControllerBase
     {
         private IRepository repo;
+        private HelperToken helper;
 
-        public MensajesController(IRepository repo)
+        public MensajesController(IRepository repo, HelperToken helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Mensaje>>> GetMensajes()
         {
-            var mensajes = await this.repo.GetMensajesAsync();
+            List<Mensaje> mensajes = await this.repo.GetMensajesAsync();
             return Ok(mensajes);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Mensaje>> GetMensaje(int id)
         {
-            var mensaje = await this.repo.GetMensajeByIdAsync(id);
+            Mensaje mensaje = await this.repo.GetMensajeByIdAsync(id);
             if (mensaje == null)
             {
                 return NotFound(new { mensaje = $"El mensaje con ID {id} no existe." });
@@ -36,12 +40,14 @@ namespace ApiSazonLocal.Controllers
             return Ok(mensaje);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] MensajeDto mensaje)
         {
+            UsuarioLogin usuario = this.helper.GetUsuario();
             try
             {
-                await this.repo.InsertarMensajeAsync(mensaje.IdUsuario, mensaje.Nombre, mensaje.Email, mensaje.TipoConsulta, mensaje.Asunto, mensaje.Contenido);
+                await this.repo.InsertarMensajeAsync(usuario.IdUsuario, usuario.Nombre, usuario.Email, mensaje.TipoConsulta, mensaje.Asunto, mensaje.Contenido);
                 return Ok(new { mensaje = "Mensaje enviado correctamente." });
             }
             catch (Exception)
@@ -50,6 +56,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> MarcarLeido(int id)
@@ -71,6 +78,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> MarcarRespondido(int id)

@@ -1,8 +1,9 @@
 using ApiSazonLocal.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
+using SazonLocalModels.Models;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -35,6 +36,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(unidad);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPost("{nombreUnidadMedida}")]
         public async Task<ActionResult> Post(string nombreUnidadMedida)
         {
@@ -49,6 +51,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> CambiarEstadoUnidadMedida(int id)

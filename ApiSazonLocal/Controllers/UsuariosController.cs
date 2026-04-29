@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ApiSazonLocal.Helpers;
+using SazonLocalModels.Dto;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -12,10 +14,12 @@ namespace ApiSazonLocal.Controllers
     public class UsuariosController : ControllerBase
     {
         private IRepository repo;
+        private HelperToken helper;
 
-        public UsuariosController(IRepository repo)
+        public UsuariosController(IRepository repo, HelperToken helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [Authorize(Roles = "ADMINISTRADOR")]
@@ -27,13 +31,13 @@ namespace ApiSazonLocal.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        [HttpGet]
+        public async Task<ActionResult<Usuario>> GetUsuario()
         {
-            var usuario = await this.repo.GetUsuarioByIdAsync(id);
+            UsuarioLogin usuario = this.helper.GetUsuario();
             if (usuario == null)
             {
-                return NotFound(new { mensaje = $"El usuario con ID {id} no existe." });
+                return NotFound();
             }
             return Ok(usuario);
         }
@@ -71,18 +75,21 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<KeysUsuario>> GetKeysUsuario(int idUsuario)
+        [Route("[action]")]
+        public async Task<ActionResult<KeysUsuario>> GetKeysUsuario()
         {
-            var keys = await this.repo.GetKeysUsuarioAsync(idUsuario);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var keys = await this.repo.GetKeysUsuarioAsync(usuario.IdUsuario);
             if (keys == null)
             {
-                return NotFound(new { mensaje = $"No se encontraron credenciales para el usuario {idUsuario}." });
+                return NotFound(new { mensaje = $"No se encontraron credenciales para el usuario." });
             }
             return Ok(keys);
         }
 
+        [Authorize]
         [HttpPut]
         [Route("[action]")]
         public async Task<ActionResult> ActualizarPasswordUsuario([FromBody] KeysUsuario keys)
@@ -101,10 +108,11 @@ namespace ApiSazonLocal.Controllers
         }
 
         [HttpPut]
-        [Route("[action]/{id}")]
-        public async Task<ActionResult> ActualizarPerfil(int id, [FromBody] Usuario user)
+        [Route("[action]")]
+        public async Task<ActionResult> ActualizarPerfil([FromBody] Usuario user)
         {
-            var usuarioExistente = await this.repo.GetUsuarioByIdAsync(id);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var usuarioExistente = await this.repo.GetUsuarioByIdAsync(usuario.IdUsuario);
             if (usuarioExistente == null)
             {
                 return NotFound(new { mensaje = "No se puede actualizar: Usuario no encontrado." });
@@ -113,7 +121,7 @@ namespace ApiSazonLocal.Controllers
             try
             {
                 await this.repo.UpdateUsuario(
-                    id,
+                    usuario.IdUsuario,
                     user.Nombre,
                     user.Apellidos,
                     user.Telefono,
@@ -127,6 +135,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> ActualizarEstadoUsuario(int id)

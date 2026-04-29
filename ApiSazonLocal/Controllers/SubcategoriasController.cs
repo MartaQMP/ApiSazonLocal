@@ -1,9 +1,10 @@
 using ApiSazonLocal.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using SazonLocalModels.Models;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -52,6 +53,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(subcategoria);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] SubcategoriaDto subcategoria)
         {
@@ -66,6 +68,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> CambiarEstadoSubcategoria(int id)

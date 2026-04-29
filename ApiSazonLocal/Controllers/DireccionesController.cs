@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using ApiSazonLocal.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -12,10 +15,12 @@ namespace ApiSazonLocal.Controllers
     public class DireccionesController : ControllerBase
     {
         private IRepository repo;
+        private HelperToken helper;
 
-        public DireccionesController(IRepository repo)
+        public DireccionesController(IRepository repo, HelperToken helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [HttpGet("{id}")]
@@ -29,21 +34,25 @@ namespace ApiSazonLocal.Controllers
             return Ok(direccion);
         }
 
+        [Authorize]
         [HttpGet]
-        [Route("[action]/Usuario/{idUsuario}")]
-        public async Task<ActionResult<List<Direccion>>> GetDirecciones(int idUsuario)
+        [Route("[action]/Usuario")]
+        public async Task<ActionResult<List<Direccion>>> GetDirecciones()
         {
-            var direcciones = await this.repo.GetDireccionesUsuarioAsync(idUsuario);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var direcciones = await this.repo.GetDireccionesUsuarioAsync(usuario.IdUsuario);
             return Ok(direcciones);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DireccionDto direccion)
         {
+            UsuarioLogin usuario = this.helper.GetUsuario();
             try
             {
                 await this.repo.InsertarDireccionAsync(
-                    direccion.IdUsuario, direccion.NombreEtiqueta, direccion.CalleNumero, direccion.Piso, direccion.Puerta, direccion.CodigoPostal,
+                    usuario.IdUsuario, direccion.NombreEtiqueta, direccion.CalleNumero, direccion.Piso, direccion.Puerta, direccion.CodigoPostal,
                     direccion.Municipio, direccion.Provincia, direccion.NotasAdicionales, direccion.Latitud, direccion.Longitud, direccion.EsPrincipal);
                 return Ok(new { mensaje = "Dirección creada correctamente." });
             }
@@ -53,9 +62,11 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> Actualizar(int id, [FromBody] DireccionDto direccion)
         {
+            UsuarioLogin usuario = this.helper.GetUsuario();
             var direccionId = await this.repo.GetDireccionByIdAsync(id);
             if (direccionId == null)
             {
@@ -66,7 +77,7 @@ namespace ApiSazonLocal.Controllers
             {
                 await this.repo.ActualizarDireccionAsync(
                     id, direccion.NombreEtiqueta, direccion.CalleNumero, direccion.Piso, direccion.Puerta, direccion.CodigoPostal,
-                    direccion.Municipio, direccion.Provincia, direccion.NotasAdicionales, direccion.Latitud, direccion.Longitud, direccion.EsPrincipal, direccion.IdUsuario);
+                    direccion.Municipio, direccion.Provincia, direccion.NotasAdicionales, direccion.Latitud, direccion.Longitud, direccion.EsPrincipal, usuario.IdUsuario);
                 return Ok(new { mensaje = "Dirección actualizada correctamente." });
             }
             catch (Exception)
@@ -75,6 +86,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Eliminar(int id)
         {

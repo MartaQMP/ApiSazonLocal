@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using ApiSazonLocal.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -10,10 +12,12 @@ namespace ApiSazonLocal.Controllers
     public class PedidosController : ControllerBase
     {
         private IRepository repo;
+        private HelperToken helper;
 
-        public PedidosController(IRepository repo)
+        public PedidosController(IRepository repo, HelperToken helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [HttpGet]
@@ -34,28 +38,34 @@ namespace ApiSazonLocal.Controllers
             return Ok(pedido);
         }
 
+        [Authorize]
         [HttpGet]
-        [Route("[action]/Usuario/{idUsuario}")]
-        public async Task<ActionResult<List<Pedido>>> GetPedidos(int idUsuario)
+        [Route("[action]")]
+        public async Task<ActionResult<List<Pedido>>> GetPedidosUsuario()
         {
-            var pedidos = await this.repo.GetPedidosUsuarioAsync(idUsuario);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var pedidos = await this.repo.GetPedidosUsuarioAsync(usuario.IdUsuario);
             return Ok(pedidos);
         }
 
+        [Authorize(Roles = "AGRICULTOR")]
         [HttpGet]
-        [Route("[action]/{idUsuario}")]
-        public async Task<ActionResult<List<Pedido>>> GetPedidosProductosPendientes(int idUsuario)
+        [Route("[action]")]
+        public async Task<ActionResult<List<Pedido>>> GetPedidosProductosPendientes()
         {
-            var pedidos = await this.repo.GetPedidosProductosPendientesAsync(idUsuario);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var pedidos = await this.repo.GetPedidosProductosPendientesAsync(usuario.IdUsuario);
             return Ok(pedidos);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] PedidoDto pedido)
         {
+            UsuarioLogin usuario = this.helper.GetUsuario();
             try
             {
-                int idPedido = await this.repo.CrearPedidoAsync(pedido.IdUsuario, pedido.IdDireccion);
+                int idPedido = await this.repo.CrearPedidoAsync(usuario.IdUsuario, pedido.IdDireccion);
                 return Ok(new { mensaje = "Pedido creado correctamente.", idPedido = idPedido });
             }
             catch (Exception)
@@ -64,6 +74,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}/{nuevoEstado}")]
         public async Task<ActionResult> CambiarEstadoPedido(int id, string nuevoEstado)
@@ -85,6 +96,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         [Route("[action]/{idPedido}")]
         public async Task<ActionResult<List<DetallePedido>>> GetDetallesPedido(int idPedido)
@@ -93,6 +105,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(detalles);
         }
 
+        [Authorize]
         [HttpGet]
         [Route("[action]/{idDetalle}")]
         public async Task<ActionResult<DetallePedido>> GetDetallePedido(int idDetalle)
@@ -105,6 +118,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(detalle);
         }
 
+        [Authorize(Roles = "AGRICULTOR")]
         [HttpPut]
         [Route("[action]/{idDetalle}")]
         public async Task<ActionResult> CambiarEstadoDetallePedido(int idDetalle)

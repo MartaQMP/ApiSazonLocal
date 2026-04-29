@@ -2,6 +2,8 @@
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using Microsoft.AspNetCore.Authorization;
+using ApiSazonLocal.Helpers;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -10,10 +12,12 @@ namespace ApiSazonLocal.Controllers
     public class ProductosController : ControllerBase
     {
         private IRepository repo;
+        private HelperToken helper;
 
-        public ProductosController(IRepository repo)
+        public ProductosController(IRepository repo, HelperToken helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [HttpGet]
@@ -31,11 +35,13 @@ namespace ApiSazonLocal.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpGet]
-        [Route("[action]/Usuario/{idUsuario}")]
-        public async Task<ActionResult<List<Producto>>> GetProductos(int idUsuario)
+        [Route("[action]")]
+        public async Task<ActionResult<List<Producto>>> GetProductosUsuario()
         {
-            var productos = await this.repo.GetProductosUsuarioAsync(idUsuario);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var productos = await this.repo.GetProductosUsuarioAsync(usuario.IdUsuario);
             return Ok(productos);
         }
 
@@ -47,6 +53,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(producto);
         }
 
+        [Authorize(Roles = "AGRICULTOR")]
         [HttpPost]
         public async Task<ActionResult> Post(ProductoDto producto)
         {
@@ -65,6 +72,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "AGRICULTOR")]
         [HttpPut]
         [Route("[action]/{id}/{precio}/{stock}")]
         public async Task<ActionResult> ActualizarDatosProducto(int id, decimal precio, int stock)
@@ -73,6 +81,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(new { mensaje = "Stock y precio actualizados" });
         }
 
+        [Authorize(Roles = "AGRICULTOR")]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> CambiarEstadoProducto(int id)

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using Microsoft.AspNetCore.Authorization;
+using ApiSazonLocal.Helpers;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -12,10 +14,12 @@ namespace ApiSazonLocal.Controllers
     public class FincasController : ControllerBase
     {
         private IRepository repo;
+        private HelperToken helper;
 
-        public FincasController(IRepository repo)
+        public FincasController(IRepository repo, HelperToken helper)
         {
             this.repo = repo;
+            this.helper = helper;
         }
 
         [HttpGet]
@@ -26,6 +30,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(fincas);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<Finca>>> GetFincasPendientes()
@@ -34,6 +39,7 @@ namespace ApiSazonLocal.Controllers
             return Ok(fincas);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
         [Route("[action]")]
         public async Task<ActionResult<List<Finca>>> GetFincasRechazadas()
@@ -42,11 +48,13 @@ namespace ApiSazonLocal.Controllers
             return Ok(fincas);
         }
 
+        [Authorize]
         [HttpGet]
-        [Route("[action]/Usuario/{idUsuario}")]
-        public async Task<ActionResult<List<Finca>>> GetFincas(int idUsuario)
+        [Route("[action]/Usuario")]
+        public async Task<ActionResult<List<Finca>>> GetFincas()
         {
-            var fincas = await this.repo.GetFincasUsuarioAsync(idUsuario);
+            UsuarioLogin usuario = this.helper.GetUsuario();
+            var fincas = await this.repo.GetFincasUsuarioAsync(usuario.IdUsuario);
             return Ok(fincas);
         }
 
@@ -69,12 +77,14 @@ namespace ApiSazonLocal.Controllers
             return Ok(fincas);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] FincaDto finca)
         {
+            UsuarioLogin usuario = this.helper.GetUsuario();
             try
             {
-                await this.repo.InsertarFincaAsync(finca.Nombre, finca.Direccion, finca.Municipio, finca.Provincia, finca.Latitud, finca.Longitud, finca.IdUsuario);
+                await this.repo.InsertarFincaAsync(finca.Nombre, finca.Direccion, finca.Municipio, finca.Provincia, finca.Latitud, finca.Longitud, usuario.IdUsuario);
                 return Ok(new { mensaje = "Finca creada correctamente." });
             }
             catch (Exception)
@@ -83,10 +93,12 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> Actualizar(int id, [FromBody] FincaDto finca)
         {
+            UsuarioLogin usuario = this.helper.GetUsuario();
             var fincaId = await this.repo.GetFincaByIdAsync(id);
             if (fincaId == null)
             {
@@ -95,7 +107,7 @@ namespace ApiSazonLocal.Controllers
 
             try
             {
-                await this.repo.ActualizarFincaAsync(id, finca.Nombre, finca.Direccion, finca.Municipio, finca.Provincia, finca.Latitud, finca.Longitud, finca.IdUsuario);
+                await this.repo.ActualizarFincaAsync(id, finca.Nombre, finca.Direccion, finca.Municipio, finca.Provincia, finca.Latitud, finca.Longitud, usuario.IdUsuario);
                 return Ok(new { mensaje = "Finca actualizada correctamente." });
             }
             catch (Exception)
@@ -104,6 +116,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         [Route("[action]/{id}")]
         public async Task<ActionResult> CambiarEstado(int id)
@@ -125,6 +138,7 @@ namespace ApiSazonLocal.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}/{nuevoEstado}")]
         public async Task<ActionResult> CambiarEstadoValidacion(int id, int nuevoEstado)

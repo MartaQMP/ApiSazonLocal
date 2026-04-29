@@ -11,11 +11,13 @@ namespace MvcSazonLocal.Services
     {
         private string ApiUrl;
         private MediaTypeWithQualityHeaderValue header;
+        private IHttpContextAccessor accessor;
 
-        public SazonApiService(IConfiguration configuration)
+        public SazonApiService(IConfiguration configuration, IHttpContextAccessor accessor)
         {
             this.ApiUrl = configuration.GetValue<string>("ApiUrls:ApiSazon");
             this.header = new MediaTypeWithQualityHeaderValue("application/json");
+            this.accessor = accessor;
         }
 
         private async Task<T> CallApiAsync<T>(string request)
@@ -25,6 +27,26 @@ namespace MvcSazonLocal.Services
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
+                HttpResponseMessage response = await client.GetAsync(request);
+                if (response.IsSuccessStatusCode == true)
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
+        }
+
+        private async Task<T> CallApiAsync<T>(string request, string token)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+                client.DefaultRequestHeaders.Add("Authorization", "bearer " + token);
                 HttpResponseMessage response = await client.GetAsync(request);
                 if (response.IsSuccessStatusCode == true)
                 {
@@ -97,23 +119,22 @@ namespace MvcSazonLocal.Services
             return await this.CallApiAsync<List<Usuario>>(request) ?? new List<Usuario>();
         }
 
-        public async Task<Usuario> GetUsuarioByIdAsync(int idUsuario)
+        public async Task<Usuario> GetUsuarioByIdAsync()
         {
-            string request = "api/Usuarios/" + idUsuario;
+            string request = "api/Usuarios";
             return await this.CallApiAsync<Usuario>(request);
         }
 
-        public async Task UpdateUsuario(int idUsuario, string nombre, string apellidos, string telefono, string imagen)
+        public async Task UpdateUsuario(string nombre, string apellidos, string telefono, string imagen)
         {
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Usuarios/ActualizarPerfil/" + idUsuario;
+                string request = "api/Usuarios/ActualizarPerfil";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 Usuario user = new Usuario
                 {
-                    IdUsuario = idUsuario,
                     Nombre = nombre,
                     Apellidos = apellidos,
                     Telefono = telefono,
@@ -678,12 +699,14 @@ namespace MvcSazonLocal.Services
         #region Carrito
         public async Task InsertarProductoCarritoAsync(int cantidad, int idUsuario, int idProducto)
         {
+            string token = this.accessor.HttpContext.User.FindFirst(x => x.Type == "TOKEN").Value;
             using (HttpClient client = new HttpClient())
             {
                 string request = "api/Carrito";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 CarritoItemDto carrito = new CarritoItemDto
                 {
                     Cantidad = cantidad,
@@ -698,27 +721,30 @@ namespace MvcSazonLocal.Services
 
         public async Task<CarritoItem> GetProductoCarritoAsync(int idUsuario, int idProducto)
         {
+            string token = this.accessor.HttpContext.User.FindFirst(x => x.Type == "TOKEN").Value;
             string request = "api/Carrito/GetProductoCarrito/" + idUsuario + "/" + idProducto;
-            return await this.CallApiAsync<CarritoItem>(request);
+            return await this.CallApiAsync<CarritoItem>(request, token);
         }
 
         public async Task<List<CarritoItem>> GetCarritoUsuarioAsync(int idUsuario)
         {
+            string token = this.accessor.HttpContext.User.FindFirst(x => x.Type == "TOKEN").Value;
             string request = "api/Carrito/GetCarrito/Usuario/" + idUsuario;
-            return await this.CallApiAsync<List<CarritoItem>>(request) ?? new List<CarritoItem>();
+            return await this.CallApiAsync<List<CarritoItem>>(request, token) ?? new List<CarritoItem>();
         }
 
-        public async Task ActualizarCantidadCarritoAsync(int idUsuario, int idProducto, int nuevaCantidad)
+        public async Task ActualizarCantidadCarritoAsync(int idProducto, int nuevaCantidad)
         {
+            string token = this.accessor.HttpContext.User.FindFirst(x => x.Type == "TOKEN").Value;
             using (HttpClient client = new HttpClient())
             {
                 string request = "api/Carrito/ActualizarCantidad";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 CarritoItemDto carrito = new CarritoItemDto
                 {
-                    IdUsuario = idUsuario,
                     IdProducto = idProducto,
                     Cantidad = nuevaCantidad
                 };

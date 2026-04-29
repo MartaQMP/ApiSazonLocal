@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -36,39 +37,21 @@ namespace ApiSazonLocal.Controllers
             return Ok(categoria);
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CategoriaDto categoria)
         {
-            try
-            {
-                await this.repo.InsertarCategoriaAsync(categoria.Nombre, categoria.Descripcion);
-                return Ok(new { mensaje = "Categoría creada correctamente." });
-            }
-            catch (Exception)
-            {
-                return BadRequest("Error al insertar la categoría.");
-            }
+            await this.repo.InsertarCategoriaAsync(categoria.Nombre, categoria.Descripcion);
+            return Ok(new { mensaje = "Categoría creada correctamente." });
         }
 
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut]
         [Route("[action]/{id}")]
-        public async Task<ActionResult> CambiarEstado(int id)
+        public async Task<ActionResult> CambiarEstadoCategoria(int id)
         {
-            var categoria = await this.repo.GetCategoriaByIdAsync(id);
-            if (categoria == null)
-            {
-                return NotFound(new { mensaje = "Categoría no encontrada." });
-            }
-
-            try
-            {
-                await this.repo.CambiarEstadoCategoriaAsync(id);
-                return Ok(new { mensaje = "Estado de la categoría actualizado." });
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Error al cambiar el estado.");
-            }
+            await this.repo.CambiarEstadoCategoriaAsync(id);
+            return Ok(new { mensaje = "Estado de la categoría actualizado." });
         }
     }
 }
