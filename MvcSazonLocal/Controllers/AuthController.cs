@@ -7,6 +7,7 @@ using SazonLocalModels.Models;
 using MvcSazonLocal.Services;
 using System.Security.Claims;
 using SazonLocalInterfaces.Interfaces;
+using System.Diagnostics;
 
 namespace MvcSazonLocal.Controllers
 {
@@ -51,11 +52,6 @@ namespace MvcSazonLocal.Controllers
         public async Task<IActionResult> LogIn(bool estaComprando = false)
         {
             ViewBag.Comprando = estaComprando;
-            int usuariosSinHash = await this.serviceApi.UsuariosSinHashAsync();
-            if (usuariosSinHash > 0)
-            {
-                ViewBag.PendientesHash = usuariosSinHash;
-            }
             ViewBag.Mensaje = TempData["Mensaje"];
             return View();
         }
@@ -63,14 +59,15 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> LogIn(string email, string password, bool estaComprando)
         {
-            Usuario user = await this.serviceApi.LogInAsync(email, password);
-            if (user == null)
+            string token = await this.serviceApi.LogInAsync(email, password);
+            if (token == null)
             {
                 ViewBag.MensajeError = "Usuario o contraseña incorrectos";
-                ViewBag.PendientesHash = 0;
                 ViewBag.Comprando = estaComprando;
                 return View();
             }
+            Usuario user = await this.serviceApi.GetUsuarioByIdAsync(token);
+
             if (user.EstaActivo == false)
             {
                 return RedirectToAction("UsuarioBloqueado");
@@ -82,6 +79,7 @@ namespace MvcSazonLocal.Controllers
             string nombreRol = user.IdRol == 1 ? "ADMINISTRADOR" : (user.IdRol == 2 ? "AGRICULTOR" : "CLIENTE");
             identity.AddClaim(new Claim(ClaimTypes.Role, nombreRol));
             identity.AddClaim(new Claim("ID_ROL", user.IdRol.ToString()));
+            identity.AddClaim(new Claim("TOKEN", token));
 
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
@@ -91,20 +89,6 @@ namespace MvcSazonLocal.Controllers
             await MigrarCarritoSessionABBDD(user.IdUsuario);
             
             return RedirectToAction(action, controller);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ActualizarPassword()
-        {
-            var usuarios = await this.serviceApi.GetUsuariosSinHashAsync();
-            foreach (var u in usuarios)
-            {
-                byte[] salt = HelperAuth.GenerarSalt();
-                byte[] pass = HelperAuth.EncryptPassword("12345", salt);
-
-                await this.serviceApi.ActualizarPassword(u.IdUsuario, salt, pass, "12345");
-            }
-            return RedirectToAction("LogIn");
         }
 
         public async Task<IActionResult> LogOut()
@@ -190,7 +174,7 @@ namespace MvcSazonLocal.Controllers
 
             if (usuario != null)
             {
-                var keysAntiguas = await this.serviceApi.GetKeysUsuarioAsync(usuario.IdUsuario);
+                var keysAntiguas = await this.serviceApi.GetKeysUsuarioAsync();
                 byte[] hashParaComparar = HelperAuth.EncryptPassword(password, keysAntiguas.Salt);
 
                 if (HelperAuth.CompararPasswords(hashParaComparar, keysAntiguas.Password))
@@ -224,7 +208,7 @@ namespace MvcSazonLocal.Controllers
             {
                 foreach (var item in carritoSession)
                 {
-                    await this.serviceApi.InsertarProductoCarritoAsync(item.Value, idUsuario, item.Key);
+                    await this.serviceApi.InsertarProductoCarritoAsync(item.Value, item.Key);
                 }
                 HttpContext.Session.Remove("CARRITO");
             }

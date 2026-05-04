@@ -11,7 +11,6 @@ namespace MvcSazonLocal.Controllers
     {
         private SazonApiService serviceApi;
         private HelperPath helper;
-        private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
 
         public AdminController(SazonApiService serviceApi, HelperPath helper)
         {
@@ -53,22 +52,7 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> CrearSubcategoria(string nombre, string descripcion, IFormFile imagen, int idCategoria)
         {
-            string? urlImagen = null;
-            if (imagen != null)
-            {
-                string extension = Path.GetExtension(imagen.FileName).ToLower();
-                if (extensionesValidas.Contains(extension))
-                {
-                    string nombreLimpio = HelperTextCleaner.LimpiarTexto(nombre);
-                    urlImagen = nombreLimpio + extension;
-                    string path = this.helper.MapPath(urlImagen, Folders.Subcategorias);
-                    using (Stream stream = new FileStream(path, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(stream);
-                    }
-                }
-            }
-            await this.serviceApi.InsertarSubcategoriaAsync(nombre, descripcion, urlImagen, idCategoria);
+            await this.serviceApi.InsertarSubcategoriaAsync(nombre, descripcion, imagen, idCategoria);
             return AjaxOkOrRedirect("GestionModelos");
         }
 

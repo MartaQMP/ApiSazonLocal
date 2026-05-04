@@ -37,7 +37,7 @@ namespace MvcSazonLocal.Controllers
         {
             ViewData["PaginaActiva"] = "Perfil";
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            Usuario usuario = await this.serviceApi.GetUsuarioByIdAsync(idUsuario);
+            Usuario usuario = await this.serviceApi.GetUsuarioByIdAsync();
             if(usuario.Imagen != null)
             {
                 usuario.Imagen = this.helper.MapUrlPath(usuario.Imagen, Folders.Usuarios);
@@ -53,7 +53,7 @@ namespace MvcSazonLocal.Controllers
         public async Task<IActionResult> ActualizarPerfil(string nombre, string apellidos, string telefono, IFormFile imagen)
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            Usuario usuarioActual = await this.serviceApi.GetUsuarioByIdAsync(idUsuario);
+            Usuario usuarioActual = await this.serviceApi.GetUsuarioByIdAsync();
             string nombreImagenFinal = usuarioActual.Imagen;
 
             if (imagen != null && imagen.Length > 0)
@@ -84,7 +84,7 @@ namespace MvcSazonLocal.Controllers
                     ViewBag.ErrorMensaje = "El archivo pasado no es una imagen, tiene q tener extension: .jpg, .jpeg o .png.";
                 }
             }
-            await this.serviceApi.UpdateUsuario(idUsuario, nombre, apellidos, telefono, nombreImagenFinal);
+            await this.serviceApi.UpdateUsuario(nombre, apellidos, telefono, nombreImagenFinal);
 
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()));
@@ -106,7 +106,7 @@ namespace MvcSazonLocal.Controllers
         {
             ViewData["PaginaActiva"] = "Direcciones";
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var direcciones = await this.serviceApi.GetDireccionesUsuarioAsync(idUsuario);
+            List<Direccion> direcciones = await this.serviceApi.GetDireccionesUsuarioAsync();
             if(direcciones == null)
             {
                 ViewBag.SinDirecciones = "No tienes ninguna direccion añadida";
@@ -131,7 +131,7 @@ namespace MvcSazonLocal.Controllers
                 TempData["ErrorMensaje"] = "Ha habido un error actualizando la direccion.";
                 return RedirectToAction("Direcciones");
             }
-            await this.serviceApi.ActualizarDireccionAsync(idDireccion, nombreEtiqueta, calleNumero, piso, puerta, cp, municipio, provincia, notasAdicionales, coordenadas.latitud, coordenadas.longitud, esPrincipal, idUsuario);
+            await this.serviceApi.ActualizarDireccionAsync(idDireccion, nombreEtiqueta, calleNumero, piso, puerta, cp, municipio, provincia, notasAdicionales, coordenadas.latitud, coordenadas.longitud, esPrincipal);
             return AjaxOkOrRedirect("Direcciones");
         }
 
@@ -150,7 +150,7 @@ namespace MvcSazonLocal.Controllers
                 TempData["ErrorMensaje"] = "Ha habido un error calculando las coordenadas revisa la direccion.";
                 return RedirectToAction("Direcciones");
             }
-            await this.serviceApi.InsertarDireccionAsync(idUsuario, nombreEtiqueta, calleNumero, piso, puerta, cp, municipio, provincia, notasAdicionales, coordenadas.latitud, coordenadas.longitud, esPrincipal);
+            await this.serviceApi.InsertarDireccionAsync(nombreEtiqueta, calleNumero, piso, puerta, cp, municipio, provincia, notasAdicionales, coordenadas.latitud, coordenadas.longitud, esPrincipal);
             return RedirectToAction("Direcciones");
         }
 
@@ -158,7 +158,7 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> Eliminar(int idDireccion)
         {
-            var direccion = await this.serviceApi.GetDireccionByIdAsync(idDireccion);
+            Direccion direccion = await this.serviceApi.GetDireccionByIdAsync(idDireccion);
             if (direccion != null)
             {
                 await this.serviceApi.EliminarDireccionAsync(idDireccion);
@@ -173,7 +173,7 @@ namespace MvcSazonLocal.Controllers
         public async Task<IActionResult> Pedidos()
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var pedidos = await this.serviceApi.GetPedidosUsuarioAsync(idUsuario);
+            List<Pedido> pedidos = await this.serviceApi.GetPedidosUsuarioAsync();
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView(pedidos);
@@ -212,8 +212,8 @@ namespace MvcSazonLocal.Controllers
             }
 
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var usuario = await this.serviceApi.GetUsuarioByIdAsync(idUsuario);
-            var registroKey = await this.serviceApi.GetKeysUsuarioAsync(idUsuario);
+            Usuario usuario = await this.serviceApi.GetUsuarioByIdAsync();
+            KeysUsuario registroKey = await this.serviceApi.GetKeysUsuarioAsync();
             if (registroKey == null) return NotFound();
 
             byte[] saltAntiguo = registroKey.Salt; 
@@ -242,7 +242,7 @@ namespace MvcSazonLocal.Controllers
         {
             ViewBag.IdEditando = idEditando;
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var productos = await this.serviceApi.GetProductosUsuarioAsync(idUsuario);
+            List<Producto> productos = await this.serviceApi.GetProductosUsuarioAsync();
             foreach (var producto in productos)
             {
                 if (!string.IsNullOrEmpty(producto.Imagen))
@@ -266,7 +266,7 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> ActualizarProducto(int idProducto, string nuevoPrecio, string nuevoStock)
         {
-            var producto = await this.serviceApi.GetProductoByIdAsync(idProducto);
+            Producto producto = await this.serviceApi.GetProductoByIdAsync(idProducto);
             if (producto != null)
             {
                 var culture = CultureInfo.InvariantCulture;
@@ -283,7 +283,7 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> CambiarEstado(int idProducto)
         {
-            var producto = await this.serviceApi.GetProductoByIdAsync(idProducto);
+            Producto producto = await this.serviceApi.GetProductoByIdAsync(idProducto);
             if (producto != null)
             {
                 await this.serviceApi.CambiarEstadoProductoAsync(idProducto);
@@ -294,14 +294,14 @@ namespace MvcSazonLocal.Controllers
         [HttpGet]
         public async Task<JsonResult> GetSubcategorias(int idCategoria)
         {
-            var subcategorias = await this.serviceApi.GetSubcategoriasByCategoriaAsync(idCategoria);
+            List<Subcategoria> subcategorias = await this.serviceApi.GetSubcategoriasByCategoriaAsync(idCategoria);
             return Json(subcategorias);
         }
 
         public async Task<IActionResult> CrearProducto()
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            ViewBag.Fincas = (await this.serviceApi.GetFincasUsuarioAsync(idUsuario)).Where(f =>f.EstaActiva).ToList();
+            ViewBag.Fincas = (await this.serviceApi.GetFincasUsuarioAsync()).Where(f =>f.EstaActiva).ToList();
             ViewBag.Categorias = (await this.serviceApi.GetCategoriasAsync()).Where(c => c.EstaActiva).ToList();
             ViewBag.Subcategorias = (await this.serviceApi.GetSubcategoriasAsync()).Where(s => s.EstaActiva).ToList();
             ViewBag.UnidadesMedida = (await this.serviceApi.GetUnidadesMedidaAsync()).Where(u =>u.EstaActiva).ToList();
@@ -329,7 +329,7 @@ namespace MvcSazonLocal.Controllers
                 else
                 {
                     ViewBag.ErrorMensaje = "El archivo pasado no es una imagen, tiene q tener extension: .jpg, .jpeg o .png."; 
-                    ViewBag.Fincas = await this.serviceApi.GetFincasUsuarioAsync(idUsuario);
+                    ViewBag.Fincas = await this.serviceApi.GetFincasUsuarioAsync();
                     ViewBag.Categorias = await this.serviceApi.GetCategoriasAsync();
                     ViewBag.Subcategorias = await this.serviceApi.GetSubcategoriasAsync();
                     return View();
@@ -352,7 +352,7 @@ namespace MvcSazonLocal.Controllers
         public async Task<IActionResult> PedidosPendientes()
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var pedidos = await this.serviceApi.GetPedidosProductosPendientesAsync(idUsuario);
+            List<Pedido> pedidos = await this.serviceApi.GetPedidosProductosPendientesAsync();
             ViewBag.IdUsuario = idUsuario;
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -382,7 +382,7 @@ namespace MvcSazonLocal.Controllers
         public async Task<IActionResult> MisFincas()
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            List<Finca> fincas = await this.serviceApi.GetFincasUsuarioAsync(idUsuario);
+            List<Finca> fincas = await this.serviceApi.GetFincasUsuarioAsync();
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView(fincas);
@@ -398,7 +398,7 @@ namespace MvcSazonLocal.Controllers
         [HttpGet]
         public async Task<IActionResult> EditarFinca(int id)
         {
-            var finca = await this.serviceApi.GetFincaByIdAsync(id);
+            Finca finca = await this.serviceApi.GetFincaByIdAsync(id);
 
             if (finca == null)
             {
@@ -416,12 +416,12 @@ namespace MvcSazonLocal.Controllers
 
             if (idFinca == 0)
             {
-                await this.serviceApi.InsertarFincaAsync(idFinca, nombre, direccion, municipio, provincia, latitud, longitud, idUsuario);
+                await this.serviceApi.InsertarFincaAsync(nombre, direccion, municipio, provincia, latitud, longitud);
                 TempData["Mensaje"] = "¡Finca registrada con éxito!";
             }
             else
             {
-                await this.serviceApi.ActualizarFincaAsync(idFinca, nombre, direccion, municipio, provincia, latitud, longitud, idUsuario);
+                await this.serviceApi.ActualizarFincaAsync(idFinca, nombre, direccion, municipio, provincia, latitud, longitud);
                 TempData["Mensaje"] = "Finca actualizada correctamente.";
             }
 
@@ -431,7 +431,7 @@ namespace MvcSazonLocal.Controllers
         [HttpPost]
         public async Task<IActionResult> CambiarEstadoFinca(int idFinca)
         {
-            var finca = await this.serviceApi.GetFincaByIdAsync(idFinca);
+            Finca finca = await this.serviceApi.GetFincaByIdAsync(idFinca);
             if(finca.EstaValidada != 1)
             {
                 await this.serviceApi.CambiarEstadoFincaAsync(idFinca);

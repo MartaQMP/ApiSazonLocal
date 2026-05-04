@@ -35,7 +35,7 @@ namespace MvcSazonLocal.ViewComponents
             }
             else
             {
-                List<CarritoItem> carrito = await this.service.GetCarritoUsuarioAsync(idUsuario.Value);
+                List<CarritoItem> carrito = await this.service.GetCarritoUsuarioAsync();
                 if (carrito != null)
                 {
                     totalProductos = carrito.Sum(c => c.Cantidad);

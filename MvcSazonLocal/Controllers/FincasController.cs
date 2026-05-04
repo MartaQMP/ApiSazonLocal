@@ -18,20 +18,19 @@ namespace MvcSazonLocal.Controllers
         #region FINCAS
         public async Task<IActionResult> Fincas()
         {
-            string claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int? idUsuario = null;
-            if (claimId != null)
-            {
-                idUsuario = int.Parse(claimId);
-            }
-            var direcciones = (idUsuario != null)
-                    ? await this.serviceApi.GetDireccionesUsuarioAsync(idUsuario.Value)
-                    : new List<Direccion>();
-
-            ViewBag.Direcciones = direcciones;
+            ViewBag.Direcciones = await this.serviceApi.GetDireccionesUsuarioAsync() ?? new List<Direccion>();
             ViewBag.Fincas = await this.serviceApi.GetFincasActivasAsync();
-            ViewBag.FincasPendiente = await this.serviceApi.GetFincasPendientesAsync();
-            ViewBag.FincasRechazadas = await this.serviceApi.GetFincasRechazadasAsync();
+
+            if (User.Identity.IsAuthenticated && User.IsInRole("ADMINISTRADOR"))
+            {
+                ViewBag.FincasPendiente = await this.serviceApi.GetFincasPendientesAsync();
+                ViewBag.FincasRechazadas = await this.serviceApi.GetFincasRechazadasAsync();
+            }
+            else
+            {
+                ViewBag.FincasPendiente = new List<Finca>();
+                ViewBag.FincasRechazadas = new List<Finca>();
+            }
             return View();
         }
         #endregion

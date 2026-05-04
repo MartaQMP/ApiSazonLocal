@@ -55,7 +55,7 @@ namespace MvcSazonLocal.Controllers
             }
             else
             {
-                listaCarrito = await this.serviceApi.GetCarritoUsuarioAsync(idUsuario.Value);
+                listaCarrito = await this.serviceApi.GetCarritoUsuarioAsync();
             }
 
             foreach (CarritoItem item in listaCarrito)
@@ -100,7 +100,7 @@ namespace MvcSazonLocal.Controllers
             }
             else
             {
-                await this.serviceApi.EliminarProductoCarritoAsync(idUsuario.Value, idProducto);
+                await this.serviceApi.EliminarProductoCarritoAsync(idProducto);
             }
 
             List<CarritoItem> disponibles = await CargarCarritoAsync();
@@ -127,7 +127,7 @@ namespace MvcSazonLocal.Controllers
             }
             else
             {
-                await this.serviceApi.ActualizarCantidadCarritoAsync(idUsuario.Value, idProducto, cantidad);
+                await this.serviceApi.ActualizarCantidadCarritoAsync(idProducto, cantidad);
             }
             List<CarritoItem> disponibles = await CargarCarritoAsync();
             return PartialView("_PartialCarrito", disponibles);
@@ -140,8 +140,8 @@ namespace MvcSazonLocal.Controllers
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             List<CarritoItem> items = await this.CargarCarritoAsync();
-            List<Direccion> direcciones = await this.serviceApi.GetDireccionesUsuarioAsync(idUsuario);
-            decimal subtotal = await this.serviceApi.GetSubtotalCarrito(idUsuario);
+            List<Direccion> direcciones = await this.serviceApi.GetDireccionesUsuarioAsync();
+            decimal subtotal = await this.serviceApi.GetSubtotalCarrito();
             decimal envio = subtotal >= 50 ? 0 : 3.99m;
             decimal tasaGestion = subtotal * 0.05m;
             decimal total = subtotal + tasaGestion + envio;
@@ -197,7 +197,7 @@ namespace MvcSazonLocal.Controllers
         public async Task<IActionResult> ProcesarPedido(int idDireccion, string metodoPago, string transactionId, string ultimosDigitos, string estadoPago)
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            List<CarritoItem> items = await this.serviceApi.GetCarritoUsuarioAsync(idUsuario);
+            List<CarritoItem> items = await this.serviceApi.GetCarritoUsuarioAsync();
             var (totalPedido, erroresStock) = await ValidarStockYCalcularTotal(items);
 
             if (erroresStock.Count > 0)
@@ -235,7 +235,7 @@ namespace MvcSazonLocal.Controllers
                 }
             }
 
-            int idPedido = await this.serviceApi.CrearPedidoAsync(idUsuario, idDireccion);
+            int idPedido = await this.serviceApi.CrearPedidoAsync(idDireccion);
             if (idPedido <= 0)
             {
                 TempData["ErrorMensaje"] = "No se ha podido registrar el pedido en el sistema. Inténtalo de nuevo.";
@@ -245,7 +245,7 @@ namespace MvcSazonLocal.Controllers
             {
                 await this.serviceApi.InsertarPagoUsuarioAsync(idPedido, "STRIPE", "TARJETA", ultimosDigitos, estadoPago, transactionId);
             }
-            await this.serviceApi.EliminarCarritoUsuarioAsync(idUsuario);
+            await this.serviceApi.EliminarCarritoUsuarioAsync();
             return RedirectToAction("Confirmacion", new { idPedido = idPedido });
         }
 
@@ -258,7 +258,7 @@ namespace MvcSazonLocal.Controllers
             {
                 TempData["ErrorMensaje"] = "Ha habido un error calculando las coordenadas revisa la direccion.";
             }
-            await this.serviceApi.InsertarDireccionAsync(idUsuario, nombreEtiqueta, calleNumero, piso, puerta, codigoPostal, municipio, provincia, notasAdicionales, coordenadas.latitud, coordenadas.longitud, esPrincipal);
+            await this.serviceApi.InsertarDireccionAsync(nombreEtiqueta, calleNumero, piso, puerta, codigoPostal, municipio, provincia, notasAdicionales, coordenadas.latitud, coordenadas.longitud, esPrincipal);
             return RedirectToAction("Checkout");
         }
         #endregion

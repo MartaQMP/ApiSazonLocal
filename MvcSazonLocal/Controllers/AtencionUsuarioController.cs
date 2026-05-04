@@ -40,11 +40,11 @@ namespace MvcSazonLocal.Controllers
                 }
                 if (idUsuario != null)
                 {
-                    await this.serviceApi.InsertarMensajeAsync(idUsuario, nombre, email, tipoConsulta, asunto, mensaje);
+                    await this.serviceApi.InsertarMensajeUsuarioAsync(nombre, email, tipoConsulta, asunto, mensaje);
                 }
                 else
                 {
-                    await this.serviceApi.InsertarMensajeAsync(null, nombre, email, tipoConsulta, asunto, mensaje);
+                    await this.serviceApi.InsertarMensajeAsync(nombre, email, tipoConsulta, asunto, mensaje);
                 }
                 TempData["Mensaje"] = "¡Gracias! Tu mensaje ha llegado a la huerta correctamente.";
                 return RedirectToAction("Contacto");

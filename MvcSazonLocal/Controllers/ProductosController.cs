@@ -27,7 +27,7 @@ namespace MvcSazonLocal.Controllers
             {
                 idUsuario = int.Parse(claimId);
             }
-            var cantidadesEnCarrito = new Dictionary<int, int>();
+            Dictionary<int, int> cantidadesEnCarrito = new Dictionary<int, int>();
 
             if (idUsuario == null)
             {
@@ -35,12 +35,12 @@ namespace MvcSazonLocal.Controllers
             }
             else
             {
-                List<CarritoItem> carritoItems = await this.serviceApi.GetCarritoUsuarioAsync(idUsuario.Value);
+                List<CarritoItem> carritoItems = await this.serviceApi.GetCarritoUsuarioAsync();
                 cantidadesEnCarrito = carritoItems.GroupBy(c => c.IdProducto).ToDictionary(g => g.Key, g => g.Sum(c => c.Cantidad));
             }
             ViewBag.CantidadesCarrito = cantidadesEnCarrito;
 
-            var productosPaginacion = await this.serviceApi.GetProductosFiltroAsync(posicion, buscador, idCategoria, idSubcategoria, idFinca, precio)
+            ProductosPaginacion productosPaginacion = await this.serviceApi.GetProductosFiltroAsync(posicion, buscador, idCategoria, idSubcategoria, idFinca, precio)
                 ?? new ProductosPaginacion();
             productosPaginacion.Productos ??= new List<Producto>();
 
@@ -100,14 +100,14 @@ namespace MvcSazonLocal.Controllers
             }
             else
             {
-                CarritoItem existeProducto = await this.serviceApi.GetProductoCarritoAsync(idUsuario.Value, idProducto);
+                CarritoItem existeProducto = await this.serviceApi.GetProductoCarritoAsync(idProducto);
                 if (existeProducto != null)
                 {
-                    await this.serviceApi.ActualizarCantidadCarritoAsync(idUsuario.Value, idProducto, cantidad);
+                    await this.serviceApi.ActualizarCantidadCarritoAsync(idProducto, cantidad);
                 }
                 else
                 {
-                    await this.serviceApi.InsertarProductoCarritoAsync(cantidad, idUsuario.Value, idProducto);
+                    await this.serviceApi.InsertarProductoCarritoAsync(cantidad, idProducto);
                 }
             }
             if (esCarrito)
@@ -124,7 +124,7 @@ namespace MvcSazonLocal.Controllers
                 }
                 else
                 {
-                    var carritoItems = await this.serviceApi.GetCarritoUsuarioAsync(idUsuario.Value);
+                    var carritoItems = await this.serviceApi.GetCarritoUsuarioAsync();
                     nuevoTotal = carritoItems.Sum(c => c.Cantidad);
                 }
 

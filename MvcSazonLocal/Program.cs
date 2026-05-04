@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
 builder.Services.AddTransient<SazonApiService>();
+builder.Services.AddHttpContextAccessor();
 
 string connection = builder.Configuration.GetConnectionString("ApiSazon");
 

@@ -17,18 +17,6 @@
                 </div>
             }
 
-
-            @if (ViewBag.PendientesHash > 0)
-            {
-                <div class="mantenimiento-wrapper">
-                    <form asp-action="ActualizarPassword" method="post">
-                        <button type="submit" class="btn-outline-warning">
-                            <i class="bi bi-shield-lock"></i>
-                            Segurizar (@ViewBag.PendientesHash)
-                        </button>
-                    </form>
-                </div>
-            }
             @if (ViewBag.MensajeError != null)
             {
                 <div class="alert alert-danger alert-dismissible fade show mb-4 alert-auth" role="alert">
