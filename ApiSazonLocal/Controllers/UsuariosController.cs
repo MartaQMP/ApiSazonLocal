@@ -1,11 +1,15 @@
-﻿using ApiSazonLocal.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SazonLocalModels.Models;
-using SazonLocalInterfaces.Interfaces;
+﻿using ApiSazonLocal.Helpers;
+using ApiSazonLocal.Repositories;
+using ApiSazonLocal.Services;
 using Microsoft.AspNetCore.Authorization;
-using ApiSazonLocal.Helpers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using SazonLocalHelpers.Helpers;
+using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
+using SazonLocalModels.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -15,29 +19,47 @@ namespace ApiSazonLocal.Controllers
     {
         private IRepository repo;
         private HelperToken helper;
+        private BlobService service;
+        private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
+        private string containerName = "usuarios-sl";
 
-        public UsuariosController(IRepository repo, HelperToken helper)
+        public UsuariosController(IRepository repo, HelperToken helper, BlobService service)
         {
             this.repo = repo;
             this.helper = helper;
+            this.service = service;
         }
 
         [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
+        [Route("[action]")]
         public async Task<ActionResult<List<Usuario>>> GetUsuarios()
         {
-            var usuarios = await this.repo.GetUsuariosAsync();
+            List<Usuario> usuarios = await this.repo.GetUsuariosAsync();
+            foreach (Usuario usuario in usuarios)
+            {
+                if (!string.IsNullOrEmpty(usuario.Imagen))
+                {
+                    usuario.Imagen = this.service.GetBlobSasUrl(containerName, usuario.Imagen);
+                }
+            }
             return Ok(usuarios);
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<Usuario>> GetUsuario()
+        [Route("[action]")]
+        public async Task<ActionResult<Usuario>> GetUsuarioById()
         {
-            UsuarioLogin usuario = this.helper.GetUsuario();
+            UsuarioLogin usuarioLogin = this.helper.GetUsuario();
+            Usuario usuario = await this.repo.GetUsuarioByIdAsync(usuarioLogin.IdUsuario);
             if (usuario == null)
             {
                 return NotFound();
+            }
+            if (!string.IsNullOrEmpty(usuario.Imagen))
+            {
+                usuario.Imagen = this.service.GetBlobSasUrl(containerName, usuario.Imagen);
             }
             return Ok(usuario);
         }
@@ -46,33 +68,16 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]/{email}")]
         public async Task<ActionResult<Usuario>> GetUsuarioByEmail(string email)
         {
-            var usuario = await this.repo.GetUsuarioByEmailAsync(email);
+            Usuario usuario = await this.repo.GetUsuarioByEmailAsync(email);
             if (usuario == null)
             {
                 return NotFound(new { mensaje = $"No hay ningún usuario con el email {email}." });
             }
+            if (!string.IsNullOrEmpty(usuario.Imagen))
+            {
+                usuario.Imagen = this.service.GetBlobSasUrl(containerName, usuario.Imagen);
+            }
             return Ok(usuario);
-        }
-
-        [HttpGet]
-        [Route("[action]")]
-        public async Task<ActionResult<List<Usuario>>> UsuariosSinHash()
-        {
-            try
-            {
-                var usuarios = await this.repo.GetUsuariosSinHashAsync();
-
-                if (usuarios == null || usuarios.Count == 0)
-                {
-                    return NoContent();
-                }
-
-                return Ok(usuarios);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Error al consultar los usuarios sin credenciales.");
-            }
         }
 
         [Authorize]
@@ -81,7 +86,7 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult<KeysUsuario>> GetKeysUsuario()
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var keys = await this.repo.GetKeysUsuarioAsync(usuario.IdUsuario);
+            KeysUsuario keys = await this.repo.GetKeysUsuarioAsync(usuario.IdUsuario);
             if (keys == null)
             {
                 return NotFound(new { mensaje = $"No se encontraron credenciales para el usuario." });
@@ -94,7 +99,7 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]")]
         public async Task<ActionResult> ActualizarPasswordUsuario([FromBody] KeysUsuario keys)
         {
-            var usuario = await this.repo.GetUsuarioByIdAsync(keys.IdUsuario);
+            Usuario usuario = await this.repo.GetUsuarioByIdAsync(keys.IdUsuario);
             if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado." });
@@ -107,12 +112,13 @@ namespace ApiSazonLocal.Controllers
             return Ok(new { mensaje = "Contraseña actualizada correctamente." });
         }
 
+        [Authorize]
         [HttpPut]
         [Route("[action]")]
-        public async Task<ActionResult> ActualizarPerfil([FromBody] Usuario user)
+        public async Task<ActionResult> ActualizarPerfil([FromForm] UsuarioDto user, IFormFile imagen)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var usuarioExistente = await this.repo.GetUsuarioByIdAsync(usuario.IdUsuario);
+            Usuario usuarioExistente = await this.repo.GetUsuarioByIdAsync(usuario.IdUsuario);
             if (usuarioExistente == null)
             {
                 return NotFound(new { mensaje = "No se puede actualizar: Usuario no encontrado." });
@@ -120,12 +126,29 @@ namespace ApiSazonLocal.Controllers
 
             try
             {
+                string? urlImagen = null;
+                string nombreImagenFinal = usuarioExistente.Imagen;
+                if (imagen != null)
+                {
+                    string extension = Path.GetExtension(imagen.FileName).ToLower();
+                    if (extensionesValidas.Contains(extension))
+                    {
+                        string nombreLimpio = HelperTextCleaner.LimpiarTexto(user.Nombre);
+                        string apellidoLimpio = HelperTextCleaner.LimpiarTexto(user.Apellidos);
+                        nombreImagenFinal = $"{usuario.IdUsuario}_{nombreLimpio}_{apellidoLimpio}_{DateTime.Now.Ticks}{extension}";
+
+                        using (var stream = imagen.OpenReadStream())
+                        {
+                            await service.UploadBlobAsync(containerName, nombreImagenFinal, stream);
+                        }
+                    }
+                }
                 await this.repo.UpdateUsuario(
                     usuario.IdUsuario,
                     user.Nombre,
                     user.Apellidos,
                     user.Telefono,
-                    user.Imagen
+                    nombreImagenFinal
                 );
                 return Ok(new { mensaje = "Perfil actualizado correctamente." });
             }
@@ -140,7 +163,7 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]/{id}")]
         public async Task<ActionResult> ActualizarEstadoUsuario(int id)
         {
-            var usuario = await this.repo.GetUsuarioByIdAsync(id);
+            Usuario usuario = await this.repo.GetUsuarioByIdAsync(id);
             if (usuario == null)
             {
                 return NotFound(new { mensaje = "Usuario no encontrado para cambiar estado." });

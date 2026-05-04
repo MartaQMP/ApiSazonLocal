@@ -5,6 +5,7 @@ using SazonLocalHelpers.Helpers;
 using SazonLocalModels.Models;
 using SazonLocalInterfaces.Interfaces;
 using System.Data;
+using System.Diagnostics;
 
 namespace ApiSazonLocal.Repositories
 {
@@ -288,7 +289,7 @@ namespace ApiSazonLocal.Repositories
 
         public async Task ActualizarProductoAsync(int idProducto, decimal nuevoPrecio, int nuevoStock)
         {
-            Producto pro = await this.GetProductoByIdAsync(idProducto);
+            Producto pro = await this.context.Productos.FirstOrDefaultAsync(p => p.IdProducto == idProducto);
             pro.PrecioUnidad = nuevoPrecio;
             pro.Stock = nuevoStock;
             if(pro.Stock == 0){
@@ -299,14 +300,14 @@ namespace ApiSazonLocal.Repositories
 
         public async Task CambiarEstadoProductoAsync(int idProducto)
         {
-            Producto pro = await this.GetProductoByIdAsync(idProducto);
+            Producto pro = await this.context.Productos.FirstOrDefaultAsync(p => p.IdProducto == idProducto);
             pro.EstaActivo = !pro.EstaActivo;
             await this.context.SaveChangesAsync();
         }
 
         public async Task ActualizarStockCompraAsync(int idProducto, int cantidadComprada)
         {
-            Producto producto = await this.GetProductoByIdAsync(idProducto);
+            Producto producto = await this.context.Productos.FirstOrDefaultAsync(p => p.IdProducto == idProducto);
             if (producto != null)
             {
                 producto.Stock -= cantidadComprada;

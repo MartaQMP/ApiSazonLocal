@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SazonLocalModels.Models;
+﻿using ApiSazonLocal.Helpers;
+using ApiSazonLocal.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SazonLocalHelpers.Helpers;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
-using Microsoft.AspNetCore.Authorization;
-using ApiSazonLocal.Helpers;
+using SazonLocalModels.Models;
 
 namespace ApiSazonLocal.Controllers
 {
@@ -13,11 +15,15 @@ namespace ApiSazonLocal.Controllers
     {
         private IRepository repo;
         private HelperToken helper;
+        private BlobService service;
+        private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
+        private string containerName = "productos-sl";
 
-        public ProductosController(IRepository repo, HelperToken helper)
+        public ProductosController(IRepository repo, HelperToken helper, BlobService service)
         {
             this.repo = repo;
             this.helper = helper;
+            this.service = service;
         }
 
         [HttpGet]
@@ -30,8 +36,14 @@ namespace ApiSazonLocal.Controllers
             [FromQuery] int? idFinca,
             [FromQuery] decimal? precio)
         {
-            var result = await this.repo.GetProductosFiltroAsync(
-                posicion, buscador, idCategoria, idSubcategoria, idFinca, precio);
+            ProductosPaginacion result = await this.repo.GetProductosFiltroAsync(posicion, buscador, idCategoria, idSubcategoria, idFinca, precio);
+            foreach (Producto producto in result.Productos)
+            {
+                if (!string.IsNullOrEmpty(producto.Imagen))
+                {
+                    producto.Imagen = this.service.GetBlobSasUrl(containerName, producto.Imagen);
+                }
+            }
             return Ok(result);
         }
 
@@ -41,26 +53,52 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult<List<Producto>>> GetProductosUsuario()
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var productos = await this.repo.GetProductosUsuarioAsync(usuario.IdUsuario);
+            List<Producto> productos = await this.repo.GetProductosUsuarioAsync(usuario.IdUsuario);
+            foreach (Producto producto in productos)
+            {
+                if (!string.IsNullOrEmpty(producto.Imagen))
+                {
+                    producto.Imagen = this.service.GetBlobSasUrl(containerName, producto.Imagen);
+                }
+            }
             return Ok(productos);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> FindProducto(int id)
         {
-            var producto = await this.repo.GetProductoByIdAsync(id);
+            Producto producto = await this.repo.GetProductoByIdAsync(id);
             if (producto == null) return NotFound();
+            if (!string.IsNullOrEmpty(producto.Imagen))
+            {
+                producto.Imagen = this.service.GetBlobSasUrl(containerName, producto.Imagen);
+            }
             return Ok(producto);
         }
 
         [Authorize(Roles = "AGRICULTOR")]
         [HttpPost]
-        public async Task<ActionResult> Post(ProductoDto producto)
+        public async Task<ActionResult> Post([FromForm] ProductoDto producto, IFormFile imagen)
         {
+            UsuarioLogin usuarioLogin = this.helper.GetUsuario();
             try
             {
+                string? urlImagen = null;
+                if (imagen != null)
+                {
+                    string extension = Path.GetExtension(imagen.FileName).ToLower();
+                    if (extensionesValidas.Contains(extension))
+                    {
+                        string nombreLimpio = HelperTextCleaner.LimpiarTexto(producto.Nombre);
+                        urlImagen = usuarioLogin.IdUsuario + "_" + nombreLimpio + "_" + producto.IdFinca + extension;
+                        using (var stream = imagen.OpenReadStream())
+                        {
+                            await service.UploadBlobAsync(containerName, urlImagen, stream);
+                        }
+                    }
+                }
                 await this.repo.InsertarProductoAsync(
-                    producto.Nombre, producto.Descripcion, producto.Imagen,
+                    producto.Nombre, producto.Descripcion, urlImagen,
                     producto.PrecioUnidad, producto.IdUnidadMedida, producto.Stock,
                     producto.EstaActivo, producto.IdFinca, producto.IdCategoria,
                     producto.IdSubcategoria);

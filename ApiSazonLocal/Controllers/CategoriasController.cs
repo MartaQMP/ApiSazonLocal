@@ -22,14 +22,14 @@ namespace ApiSazonLocal.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Categoria>>> GetCategorias()
         {
-            var categorias = await this.repo.GetCategoriasAsync();
+            List<Categoria> categorias = await this.repo.GetCategoriasAsync();
             return Ok(categorias);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria>> GetCategoria(int id)
         {
-            var categoria = await this.repo.GetCategoriaByIdAsync(id);
+            Categoria categoria = await this.repo.GetCategoriaByIdAsync(id);
             if (categoria == null)
             {
                 return NotFound(new { mensaje = $"La categoría con ID {id} no existe." });

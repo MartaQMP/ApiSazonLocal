@@ -42,12 +42,28 @@ namespace ApiSazonLocal.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] MensajeDto mensaje)
+        [Route("[action]")]
+        public async Task<ActionResult> InsertarMensajeUsuario([FromBody] MensajeDto mensaje)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
             try
             {
-                await this.repo.InsertarMensajeAsync(usuario.IdUsuario, usuario.Nombre, usuario.Email, mensaje.TipoConsulta, mensaje.Asunto, mensaje.Contenido);
+                await this.repo.InsertarMensajeAsync(usuario.IdUsuario, mensaje.Nombre, mensaje.Email, mensaje.TipoConsulta, mensaje.Asunto, mensaje.Contenido);
+                return Ok(new { mensaje = "Mensaje enviado correctamente." });
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error al enviar el mensaje.");
+            }
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<ActionResult> InsertarMensaje([FromBody] MensajeDto mensaje)
+        {
+            try
+            {
+                await this.repo.InsertarMensajeAsync(null, mensaje.Nombre, mensaje.Email, mensaje.TipoConsulta, mensaje.Asunto, mensaje.Contenido);
                 return Ok(new { mensaje = "Mensaje enviado correctamente." });
             }
             catch (Exception)

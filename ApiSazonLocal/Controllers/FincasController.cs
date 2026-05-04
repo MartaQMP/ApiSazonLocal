@@ -26,7 +26,7 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]")]
         public async Task<ActionResult<List<Finca>>> GetFincasActivas()
         {
-            var fincas = await this.repo.GetFincasActivasAsync();
+            List<Finca> fincas = await this.repo.GetFincasActivasAsync();
             return Ok(fincas);
         }
 
@@ -35,7 +35,7 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]")]
         public async Task<ActionResult<List<Finca>>> GetFincasPendientes()
         {
-            var fincas = await this.repo.GetFincasPendientesAsync();
+            List<Finca> fincas = await this.repo.GetFincasPendientesAsync();
             return Ok(fincas);
         }
 
@@ -44,7 +44,7 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]")]
         public async Task<ActionResult<List<Finca>>> GetFincasRechazadas()
         {
-            var fincas = await this.repo.GetFincasRechazadasAsync();
+            List<Finca> fincas = await this.repo.GetFincasRechazadasAsync();
             return Ok(fincas);
         }
 
@@ -54,14 +54,14 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult<List<Finca>>> GetFincas()
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var fincas = await this.repo.GetFincasUsuarioAsync(usuario.IdUsuario);
+            List<Finca> fincas = await this.repo.GetFincasUsuarioAsync(usuario.IdUsuario);
             return Ok(fincas);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Finca>> GetFinca(int id)
         {
-            var finca = await this.repo.GetFincaByIdAsync(id);
+            Finca finca = await this.repo.GetFincaByIdAsync(id);
             if (finca == null)
             {
                 return NotFound(new { mensaje = $"La finca con ID {id} no existe." });
@@ -73,7 +73,7 @@ namespace ApiSazonLocal.Controllers
         [Route("[action]/{estado}")]
         public async Task<ActionResult<List<Finca>>> GetFincasAdmin(int? estado)
         {
-            var fincas = await this.repo.GetFincasAdminAsync(estado);
+            List<Finca> fincas = await this.repo.GetFincasAdminAsync(estado);
             return Ok(fincas);
         }
 
@@ -99,7 +99,7 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult> Actualizar(int id, [FromBody] FincaDto finca)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var fincaId = await this.repo.GetFincaByIdAsync(id);
+            Finca fincaId = await this.repo.GetFincaByIdAsync(id);
             if (fincaId == null)
             {
                 return NotFound(new { mensaje = "Finca no encontrada." });

@@ -79,7 +79,7 @@ namespace ApiSazonLocal.Controllers
             {
                 rolFinal = 2;
             }
-            var existente = await this.repo.GetUsuarioByEmailAsync(model.Email);
+            Usuario existente = await this.repo.GetUsuarioByEmailAsync(model.Email);
             if (existente != null)
             {
                 return BadRequest("Ese correo electrónico ya está en uso.");

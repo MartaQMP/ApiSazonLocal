@@ -26,7 +26,7 @@ namespace ApiSazonLocal.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Direccion>> GetDireccion(int id)
         {
-            var direccion = await this.repo.GetDireccionByIdAsync(id);
+            Direccion direccion = await this.repo.GetDireccionByIdAsync(id);
             if (direccion == null)
             {
                 return NotFound(new { mensaje = $"La dirección con ID {id} no existe." });
@@ -40,7 +40,7 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult<List<Direccion>>> GetDirecciones()
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var direcciones = await this.repo.GetDireccionesUsuarioAsync(usuario.IdUsuario);
+            List<Direccion> direcciones = await this.repo.GetDireccionesUsuarioAsync(usuario.IdUsuario);
             return Ok(direcciones);
         }
 
@@ -67,7 +67,7 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult> Actualizar(int id, [FromBody] DireccionDto direccion)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var direccionId = await this.repo.GetDireccionByIdAsync(id);
+            Direccion direccionId = await this.repo.GetDireccionByIdAsync(id);
             if (direccionId == null)
             {
                 return NotFound(new { mensaje = "Dirección no encontrada." });
@@ -90,7 +90,7 @@ namespace ApiSazonLocal.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Eliminar(int id)
         {
-            var direccion = await this.repo.GetDireccionByIdAsync(id);
+            Direccion direccion = await this.repo.GetDireccionByIdAsync(id);
             if (direccion == null)
             {
                 return NotFound(new { mensaje = "Dirección no encontrada." });

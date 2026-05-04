@@ -38,7 +38,7 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult<CarritoItem>> GetProductoCarritoUsuario(int idProducto)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var item = await this.repo.GetProductoCarritoAsync(usuario.IdUsuario, idProducto);
+            CarritoItem item = await this.repo.GetProductoCarritoAsync(usuario.IdUsuario, idProducto);
             if (item == null)
             {
                 return NotFound(new { mensaje = "Producto no encontrado en el carrito." });
@@ -94,7 +94,7 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult> EliminarProductoCarrito(int idProducto)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var item = await this.repo.GetProductoCarritoAsync(usuario.IdUsuario, idProducto);
+            CarritoItem item = await this.repo.GetProductoCarritoAsync(usuario.IdUsuario, idProducto);
             if (item == null)
             {
                 return NotFound(new { mensaje = "Producto no encontrado en el carrito." });

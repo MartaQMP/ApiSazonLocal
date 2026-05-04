@@ -1,7 +1,9 @@
 using ApiSazonLocal.Data;
 using ApiSazonLocal.Helpers;
 using ApiSazonLocal.Repositories;
+using ApiSazonLocal.Services;
 using Azure.Security.KeyVault.Secrets;
+using Azure.Storage.Blobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using SazonLocalHelpers.Helpers;
@@ -30,6 +32,12 @@ HelperActionOAuth helperOAuth = new HelperActionOAuth(
     builder.Configuration.GetValue<string>("ApiOAuthToken:Audience"),
     jwtSecret.Value
 );
+
+/* ---BLOB--- */
+KeyVaultSecret storageAccount = await secretClient.GetSecretAsync("BlobStorage");
+BlobServiceClient blobServiceClient = new BlobServiceClient(storageAccount.Value);
+builder.Services.AddTransient<BlobServiceClient>(x => blobServiceClient);
+builder.Services.AddTransient<BlobService>();
 
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
