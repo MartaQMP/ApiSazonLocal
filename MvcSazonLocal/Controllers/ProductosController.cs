@@ -10,12 +10,10 @@ namespace MvcSazonLocal.Controllers
     public class ProductosController : Controller
     {
         private readonly SazonApiService serviceApi;
-        private readonly HelperPath helper;
 
-        public ProductosController(SazonApiService serviceApi, HelperPath helper)
+        public ProductosController(SazonApiService serviceApi)
         {
             this.serviceApi = serviceApi;
-            this.helper = helper;
         }
 
         #region PRODUCTOS
@@ -59,18 +57,6 @@ namespace MvcSazonLocal.Controllers
             ViewBag.Anterior = posicion - salto;
             ViewBag.Primero = 0;
             ViewBag.Ultimo = productosPaginacion.NumeroRegistros > 0 ? (productosPaginacion.NumeroRegistros - 1) * salto : 0;
-
-            foreach (var producto in productosPaginacion.Productos)
-            {
-                if (!string.IsNullOrEmpty(producto.Imagen))
-                {
-                    producto.Imagen = this.helper.MapUrlPath(producto.Imagen, Folders.Productos);
-                }
-                else
-                {
-                    producto.Imagen = this.helper.MapUrlPath(producto.Subcategoria.Imagen, Folders.Subcategorias);
-                }
-            }
 
             return View(productosPaginacion.Productos);
         }

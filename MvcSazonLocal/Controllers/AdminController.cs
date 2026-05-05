@@ -10,12 +10,10 @@ namespace MvcSazonLocal.Controllers
     public class AdminController : Controller
     {
         private SazonApiService serviceApi;
-        private HelperPath helper;
 
-        public AdminController(SazonApiService serviceApi, HelperPath helper)
+        public AdminController(SazonApiService serviceApi)
         {
             this.serviceApi = serviceApi;
-            this.helper = helper;
         }
 
         private IActionResult AjaxOkOrRedirect(string action)

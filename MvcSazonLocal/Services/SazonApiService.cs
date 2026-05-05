@@ -122,7 +122,6 @@ namespace MvcSazonLocal.Services
             return await this.CallApiAsync<Usuario>(request);
         }
 
-        // TOKEN
         public async Task<Usuario> GetUsuarioByIdAsync(string token = null)
         {
             string request = "api/Usuarios/GetUsuarioById";
@@ -163,7 +162,7 @@ namespace MvcSazonLocal.Services
             }
         }
 
-        public async Task UpdateUsuario(string nombre, string apellidos, string telefono, string imagen)
+        public async Task UpdateUsuario(string nombre, string email, string apellidos, string telefono, int idRol, IFormFile imagen)
         {
             string token = this.GetToken();
             using (HttpClient client = new HttpClient())
@@ -173,20 +172,24 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                Usuario user = new Usuario
+                using (var content = new MultipartFormDataContent())
                 {
-                    Nombre = nombre,
-                    Apellidos = apellidos,
-                    Telefono = telefono,
-                    Imagen = imagen
-                };
-                string json = JsonConvert.SerializeObject(user);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                await client.PutAsync(request, content);
+                    content.Add(new StringContent(nombre), "Nombre");
+                    content.Add(new StringContent(apellidos), "Apellidos");
+                    content.Add(new StringContent(telefono), "Telefono");
+                    content.Add(new StringContent(email), "Email");
+                    content.Add(new StringContent(idRol.ToString()), "IdRol");
+
+                    if (imagen != null)
+                    {
+                        var streamContent = new StreamContent(imagen.OpenReadStream());
+                        content.Add(streamContent, "imagen", imagen.FileName);
+                    }
+                    await client.PutAsync(request, content);
+                }
             }
         }
 
-        // ADMINISTRADOR
         public async Task<List<Usuario>> GetUsuariosAsync()
         {
             string token = this.GetToken();
@@ -239,7 +242,6 @@ namespace MvcSazonLocal.Services
             return await this.CallApiAsync<int>(request);
         }
         
-        // TOKEN
         public async Task<List<Producto>> GetProductosUsuarioAsync()
         {
             string token = this.GetToken();
@@ -247,8 +249,7 @@ namespace MvcSazonLocal.Services
             return await this.CallApiAsync<List<Producto>>(request, token) ?? new List<Producto>();
         }
 
-        // AGRICULTOR
-        public async Task InsertarProductoAsync(string nombre, string? descripcion, string? imagen, decimal precioUnidad, int unidadMedida, int stock, bool estaActivo, int idFinca, int idCategoria, int idSubcategoria)
+        public async Task InsertarProductoAsync(string nombre, string? descripcion, IFormFile imagen, decimal precioUnidad, int unidadMedida, int stock, bool estaActivo, int idFinca, int idCategoria, int idSubcategoria)
         {
             string token = this.GetToken();
             using (HttpClient client = new HttpClient())
@@ -258,22 +259,26 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                ProductoDto producto = new ProductoDto
+                using (var content = new MultipartFormDataContent())
                 {
-                    Nombre = nombre,
-                    Descripcion = descripcion,
-                    Imagen = imagen,
-                    PrecioUnidad = precioUnidad,
-                    IdUnidadMedida = unidadMedida,
-                    Stock = stock,
-                    EstaActivo = estaActivo,
-                    IdFinca = idFinca,
-                    IdCategoria = idCategoria,
-                    IdSubcategoria = idSubcategoria
-                };
-                string json = JsonConvert.SerializeObject(producto);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                await client.PostAsync(request, content);
+                    content.Add(new StringContent(nombre), "Nombre");
+                    content.Add(new StringContent(descripcion ?? ""), "Descripcion");
+                    content.Add(new StringContent(precioUnidad.ToString()), "PrecioUnidad");
+                    content.Add(new StringContent(unidadMedida.ToString()), "IdUnidadMedida");
+                    content.Add(new StringContent(stock.ToString()), "Stock");
+                    content.Add(new StringContent(estaActivo.ToString().ToLower()), "EstaActivo");
+                    content.Add(new StringContent(idFinca.ToString()), "IdFinca");
+                    content.Add(new StringContent(idCategoria.ToString()), "IdCategoria");
+                    content.Add(new StringContent(idSubcategoria.ToString()), "IdSubcategoria");
+
+                    if (imagen != null && imagen.Length > 0)
+                    {
+                        var streamContent = new StreamContent(imagen.OpenReadStream());
+                        content.Add(streamContent, "imagen", imagen.FileName);
+                    }
+
+                    await client.PostAsync(request, content);
+                }
             }
         }
 
@@ -615,7 +620,7 @@ namespace MvcSazonLocal.Services
             return await this.CallApiAsync<List<Subcategoria>>(request) ?? new List<Subcategoria>();
         }
 
-        public async Task InsertarSubcategoriaAsync(string nombre, string descripcion, string imagen, int idCategoria)
+        public async Task InsertarSubcategoriaAsync(string nombre, string descripcion, IFormFile imagen, int idCategoria)
         {
             string token = this.GetToken();
             using (HttpClient client = new HttpClient())
@@ -625,16 +630,20 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                SubcategoriaDto subcategoria = new SubcategoriaDto
+                using (var content = new MultipartFormDataContent())
                 {
-                    Nombre = nombre,
-                    Descripcion = descripcion,
-                    Imagen = imagen,
-                    IdCategoria = idCategoria
-                };
-                string json = JsonConvert.SerializeObject(subcategoria);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                await client.PostAsync(request, content);
+                    content.Add(new StringContent(nombre), "Nombre");
+                    content.Add(new StringContent(descripcion ?? ""), "Descripcion");
+                    content.Add(new StringContent(idCategoria.ToString()), "IdCategoria");
+
+                    if (imagen != null && imagen.Length > 0)
+                    {
+                        var streamContent = new StreamContent(imagen.OpenReadStream());
+                        content.Add(streamContent, "imagen", imagen.FileName);
+                    }
+
+                    await client.PostAsync(request, content);
+                }
             }
         }
 
@@ -940,6 +949,14 @@ namespace MvcSazonLocal.Services
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 await client.PutAsync(request, null);
             }
+        }
+        #endregion
+
+        #region IMAGENES
+        public async Task<string> GetLogoUrlAsync()
+        {
+            string request = "api/Imagenes";
+            return await this.CallApiAsync<string>(request) ?? null;
         }
         #endregion
     }

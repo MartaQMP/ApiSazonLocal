@@ -14,13 +14,11 @@ namespace MvcSazonLocal.Controllers
     public class CuentaController : Controller
     {
         private SazonApiService serviceApi;
-        private HelperPath helper;
         private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
 
-        public CuentaController(SazonApiService serviceApi, HelperPath helper)
+        public CuentaController(SazonApiService serviceApi)
         {
             this.serviceApi = serviceApi;
-            this.helper = helper;
         }
 
         private IActionResult AjaxOkOrRedirect(string action)
@@ -38,10 +36,6 @@ namespace MvcSazonLocal.Controllers
             ViewData["PaginaActiva"] = "Perfil";
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Usuario usuario = await this.serviceApi.GetUsuarioByIdAsync();
-            if(usuario.Imagen != null)
-            {
-                usuario.Imagen = this.helper.MapUrlPath(usuario.Imagen, Folders.Usuarios);
-            }
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView(usuario);
@@ -50,51 +44,33 @@ namespace MvcSazonLocal.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActualizarPerfil(string nombre, string apellidos, string telefono, IFormFile imagen)
+        public async Task<IActionResult> ActualizarPerfil(string nombre, string apellidos, string telefono, IFormFile? imagen)
         {
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Usuario usuarioActual = await this.serviceApi.GetUsuarioByIdAsync();
-            string nombreImagenFinal = usuarioActual.Imagen;
 
             if (imagen != null && imagen.Length > 0)
             {
                 string extension = Path.GetExtension(imagen.FileName).ToLower();
 
-                if (extensionesValidas.Contains(extension))
-                {
-                    string pathAntiguo = this.helper.MapPath(nombreImagenFinal, Folders.Usuarios);
-                    if (System.IO.File.Exists(pathAntiguo))
-                    {
-                        System.IO.File.Delete(pathAntiguo);
-                    }
-
-                    string nombreLimpio = HelperTextCleaner.LimpiarTexto(nombre);
-                    string apellidoLimpio = HelperTextCleaner.LimpiarTexto(apellidos);
-                    nombreImagenFinal = $"{idUsuario}_{nombreLimpio}_{apellidoLimpio}_{DateTime.Now.Ticks}{extension}";
-
-                    string path = this.helper.MapPath(nombreImagenFinal, Folders.Usuarios);
-                    
-                    using (Stream stream = new FileStream(path, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(stream);
-                    }
-                }
-                else
+                if (!extensionesValidas.Contains(extension))
                 {
                     ViewBag.ErrorMensaje = "El archivo pasado no es una imagen, tiene q tener extension: .jpg, .jpeg o .png.";
                 }
             }
-            await this.serviceApi.UpdateUsuario(nombre, apellidos, telefono, nombreImagenFinal);
+            await this.serviceApi.UpdateUsuario(nombre, usuarioActual.Email, apellidos, telefono, usuarioActual.IdRol, imagen);
 
-            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()));
-            identity.AddClaim(new Claim(ClaimTypes.Name, nombre));
-            string nombreRol = usuarioActual.IdRol == 1 ? "ADMINISTRADOR" : (usuarioActual.IdRol == 2 ? "AGRICULTOR" : "CLIENTE");
-            identity.AddClaim(new Claim(ClaimTypes.Role, nombreRol));
-            identity.AddClaim(new Claim("ID_ROL", usuarioActual.IdRol.ToString()));
+            var claims = User.Claims.ToList();
+            var claimNombre = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+            if (claimNombre != null)
+            {
+                claims.Remove(claimNombre);
+            }
+            claims.Add(new Claim(ClaimTypes.Name, nombre));
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-            
+
             return AjaxOkOrRedirect("Perfil");
         }
         #endregion
@@ -243,17 +219,6 @@ namespace MvcSazonLocal.Controllers
             ViewBag.IdEditando = idEditando;
             int idUsuario = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             List<Producto> productos = await this.serviceApi.GetProductosUsuarioAsync();
-            foreach (var producto in productos)
-            {
-                if (!string.IsNullOrEmpty(producto.Imagen))
-                {
-                    producto.Imagen = this.helper.MapUrlPath(producto.Imagen, Folders.Productos); ;
-                }
-                else
-                {
-                    producto.Imagen = this.helper.MapUrlPath(producto.Subcategoria.Imagen, Folders.Subcategorias); ;
-                }
-            }
             var productosAgrupados = productos.GroupBy(p => p.Finca.Nombre);
             ViewBag.Mensaje = TempData["Mensaje"];
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -316,19 +281,9 @@ namespace MvcSazonLocal.Controllers
             if (imagen != null)
             {
                 string extension = Path.GetExtension(imagen.FileName).ToLower();
-                if (extensionesValidas.Contains(extension))
+                if (!extensionesValidas.Contains(extension))
                 {
-                    string nombreLimpio = HelperTextCleaner.LimpiarTexto(nombre);
-                    urlImagen = idUsuario + "_" + nombreLimpio + "_" + idFinca + extension;
-                    string path = this.helper.MapPath(urlImagen, Folders.Productos);
-                    using (Stream stream = new FileStream(path, FileMode.Create))
-                    {
-                        await imagen.CopyToAsync(stream);
-                    }
-                }
-                else
-                {
-                    ViewBag.ErrorMensaje = "El archivo pasado no es una imagen, tiene q tener extension: .jpg, .jpeg o .png."; 
+                    ViewBag.ErrorMensaje = "El archivo pasado no es una imagen, tiene q tener extension: .jpg, .jpeg o .png.";
                     ViewBag.Fincas = await this.serviceApi.GetFincasUsuarioAsync();
                     ViewBag.Categorias = await this.serviceApi.GetCategoriasAsync();
                     ViewBag.Subcategorias = await this.serviceApi.GetSubcategoriasAsync();
@@ -339,7 +294,7 @@ namespace MvcSazonLocal.Controllers
             decimal nuevoPrecio = Convert.ToDecimal(precioUnidad, culture);
             nuevoPrecio *= 1.15m;
             int nuevoStock = int.Parse(stock);
-            await this.serviceApi.InsertarProductoAsync(nombre, descripcion, urlImagen, nuevoPrecio, unidadMedida, nuevoStock, estaActivo, idFinca, idCategoria, idSubcategoria);
+            await this.serviceApi.InsertarProductoAsync(nombre, descripcion, imagen, nuevoPrecio, unidadMedida, nuevoStock, estaActivo, idFinca, idCategoria, idSubcategoria);
             
             TempData["Mensaje"] = "Producto creado correctamente";
             return AjaxOkOrRedirect("MisProductos");

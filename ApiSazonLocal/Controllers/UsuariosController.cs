@@ -139,7 +139,11 @@ namespace ApiSazonLocal.Controllers
 
                         using (var stream = imagen.OpenReadStream())
                         {
-                            await service.UploadBlobAsync(containerName, nombreImagenFinal, stream);
+                            if (usuarioExistente.Imagen != "usuario-generico.png")
+                            {
+                                await this.service.DeleteBlobAsync(containerName, usuarioExistente.Imagen);
+                            }
+                            await this.service.UploadBlobAsync(containerName, nombreImagenFinal, stream);
                         }
                     }
                 }

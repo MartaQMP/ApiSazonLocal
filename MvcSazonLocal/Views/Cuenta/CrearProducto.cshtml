@@ -17,7 +17,7 @@
                 <div class="col-md-8">
                     <div class="card-form p-4 shadow-sm mb-4">
                         <div class="mb-4">
-                            <label class="info-label">Nombre del Producto</label>
+                            <label class="info-label">Nombre del Producto <strong>*</strong></label>
                             <input type="text" name="nombre" class="form-control" required>
                         </div>
                         <div class="mb-4">
@@ -37,7 +37,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="info-label">Categoría</label>
+                                <label class="info-label">Categoría <strong>*</strong></label>
                                 <select id="select-categoria" name="idCategoria" class="form-select" required>
                                     <option value="">Seleccione Categoría...</option>
                                     @foreach (var cat in categorias)
@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label class="info-label">Subcategoría</label>
+                                <label class="info-label">Subcategoría <strong>*</strong></label>
                                 <select id="select-subcategoria" name="idSubcategoria" class="form-select" required disabled>
                                     <option value="">Esperando categoría...</option>
                                 </select>
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="info-label">Precio y Stock</label>
+                            <label class="info-label">Precio y Stock <strong>*</strong></label>
                             <div class="input-group mb-2">
                                 <span class="input-group-text">€</span>
                                 <input type="number" step="0.01" name="precioUnidad" class="form-control" placeholder="0.00" min="0.0" required>
@@ -86,7 +86,7 @@
                             <input type="number" step="1" name="stock" class="form-control mt-3" placeholder="Stock disponible" min="0" required>
                         </div>
                         <div class="mb-4">
-                            <label class="info-label">Unidad de Medida</label>
+                            <label class="info-label">Unidad de Medida <strong>*</strong></label>
                             <select name="unidadMedida" class="form-select" required>
                                     @foreach(UnidadMedida medida in unidadesMedida)
                                     {

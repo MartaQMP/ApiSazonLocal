@@ -2,6 +2,7 @@
 using ApiSazonLocal.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SazonLocalHelpers.Helpers;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
@@ -18,6 +19,7 @@ namespace ApiSazonLocal.Controllers
         private BlobService service;
         private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
         private string containerName = "productos-sl";
+        private string containerSubcategoria = "subcategorias-sl";
 
         public ProductosController(IRepository repo, HelperToken helper, BlobService service)
         {
@@ -43,6 +45,10 @@ namespace ApiSazonLocal.Controllers
                 {
                     producto.Imagen = this.service.GetBlobSasUrl(containerName, producto.Imagen);
                 }
+                else
+                {
+                    producto.Imagen = this.service.GetBlobSasUrl(containerSubcategoria, producto.Subcategoria.Imagen);
+                }
             }
             return Ok(result);
         }
@@ -60,6 +66,10 @@ namespace ApiSazonLocal.Controllers
                 {
                     producto.Imagen = this.service.GetBlobSasUrl(containerName, producto.Imagen);
                 }
+                else
+                {
+                    producto.Imagen = this.service.GetBlobSasUrl(containerSubcategoria, producto.Subcategoria.Imagen);
+                }
             }
             return Ok(productos);
         }
@@ -73,12 +83,16 @@ namespace ApiSazonLocal.Controllers
             {
                 producto.Imagen = this.service.GetBlobSasUrl(containerName, producto.Imagen);
             }
+            else
+            {
+                producto.Imagen = this.service.GetBlobSasUrl(containerSubcategoria, producto.Subcategoria.Imagen);
+            }
             return Ok(producto);
         }
 
         [Authorize(Roles = "AGRICULTOR")]
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] ProductoDto producto, IFormFile imagen)
+        public async Task<ActionResult> Post([FromForm] ProductoDto producto, IFormFile? imagen)
         {
             UsuarioLogin usuarioLogin = this.helper.GetUsuario();
             try
@@ -90,7 +104,7 @@ namespace ApiSazonLocal.Controllers
                     if (extensionesValidas.Contains(extension))
                     {
                         string nombreLimpio = HelperTextCleaner.LimpiarTexto(producto.Nombre);
-                        urlImagen = usuarioLogin.IdUsuario + "_" + nombreLimpio + "_" + producto.IdFinca + extension;
+                        urlImagen = $"{usuarioLogin.IdUsuario}_{nombreLimpio}_{producto.IdFinca}_{DateTime.Now.Ticks}{extension}";
                         using (var stream = imagen.OpenReadStream())
                         {
                             await service.UploadBlobAsync(containerName, urlImagen, stream);

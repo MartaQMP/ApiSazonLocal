@@ -44,5 +44,11 @@ namespace ApiSazonLocal.Services
             BlobContainerClient blobContainerClient = this.client.GetBlobContainerClient(containerName);
             await blobContainerClient.UploadBlobAsync(blobName, stream);
         }
+
+        public async Task DeleteBlobAsync(string containerName, string blobName)
+        {
+            BlobContainerClient blobContainerClient = this.client.GetBlobContainerClient(containerName);
+            await blobContainerClient.DeleteBlobAsync(blobName);
+        }
     }
 }

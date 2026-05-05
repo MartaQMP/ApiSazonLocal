@@ -98,7 +98,7 @@ namespace ApiSazonLocal.Controllers
                     if (extensionesValidas.Contains(extension))
                     {
                         string nombreLimpio = HelperTextCleaner.LimpiarTexto(subcategoria.Nombre);
-                        urlImagen = nombreLimpio + extension;
+                        urlImagen = $"{nombreLimpio}_{DateTime.Now.Ticks}{extension}";
                         using (var stream = imagen.OpenReadStream())
                         {
                             await service.UploadBlobAsync(containerName, urlImagen, stream);
