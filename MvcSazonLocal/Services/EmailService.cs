@@ -14,7 +14,6 @@ namespace MvcSazonLocal.Services
         public EmailService(IOptions<EmailSettings> options)
         {
             _settings = options.Value;
-            Console.WriteLine($"SMTP SERVER: {_settings.Server}");
         }
 
         #region EMAIL SIN ARCHIVOS

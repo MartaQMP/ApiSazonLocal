@@ -93,7 +93,7 @@ namespace MvcSazonLocal.Controllers
                 }
                 else
                 {
-                    await this.serviceApi.InsertarProductoCarritoAsync(cantidad, idProducto);
+                    await this.serviceApi.InsertarProductoCarritoAsync(cantidad, idProducto, null);
                 }
             }
             if (esCarrito)

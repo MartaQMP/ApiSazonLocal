@@ -22,6 +22,7 @@ SecretClient secretClient = builder.Services.BuildServiceProvider().GetService<S
 
 KeyVaultSecret azureconnection = await secretClient.GetSecretAsync("AzureConnection");
 KeyVaultSecret jwtToken = await secretClient.GetSecretAsync("JwtToken");
+KeyVaultSecret insights = await secretClient.GetSecretAsync("AplicationInsights");
 
 /* ---TOKEN--- */
 HelperCifrado.Initialize(jwtToken.Value);
@@ -38,6 +39,12 @@ KeyVaultSecret storageAccount = await secretClient.GetSecretAsync("BlobStorage")
 BlobServiceClient blobServiceClient = new BlobServiceClient(storageAccount.Value);
 builder.Services.AddTransient<BlobServiceClient>(x => blobServiceClient);
 builder.Services.AddTransient<BlobService>();
+
+/* ---APPLICATION INSIGHTS--- */
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = insights.Value;
+});
 
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();

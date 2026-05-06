@@ -1,21 +1,51 @@
+using Azure.Security.KeyVault.Secrets;
 using dotenv.net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Options;
 using MvcSazonLocal.Services;
 using SazonLocalHelpers.Helpers;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Models;
 using Stripe;
+using static Azure.Core.HttpHeader;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+/* ---KEY VAULT--- */
+builder.Services.AddAzureClients(factory =>
+{
+    factory.AddSecretClient(builder.Configuration.GetSection("KeyVault"));
+});
+SecretClient secretClient = builder.Services.BuildServiceProvider().GetService<SecretClient>();
+
+KeyVaultSecret apiconnection = await secretClient.GetSecretAsync("ApiConnection");
+
+KeyVaultSecret server = await secretClient.GetSecretAsync("EmailSettings--Server");
+KeyVaultSecret port = await secretClient.GetSecretAsync("EmailSettings--Port");
+KeyVaultSecret senderName = await secretClient.GetSecretAsync("EmailSettings--SenderName");
+KeyVaultSecret senderEmail = await secretClient.GetSecretAsync("EmailSettings--SenderEmail");
+KeyVaultSecret username = await secretClient.GetSecretAsync("EmailSettings--Username");
+KeyVaultSecret password = await secretClient.GetSecretAsync("EmailSettings--Password");
+
+KeyVaultSecret insights = await secretClient.GetSecretAsync("ApplicationInsights");
+
+/* ---APPLICATION INSIGHTS--- */
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = insights.Value;
+});
+
 // Add services to the container.
 builder.Services.AddSingleton<HelperPath>();
-builder.Services.AddTransient<SazonApiService>();
+builder.Services.AddTransient(sp =>
+{
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    return new SazonApiService(apiconnection.Value, httpContextAccessor);
+});
 builder.Services.AddHttpContextAccessor();
-
-string connection = builder.Configuration.GetConnectionString("ApiSazon");
 
 builder.Services.AddSession();
 builder.Services.AddAuthentication(options =>
@@ -34,7 +64,15 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllersWithViews(options => options.EnableEndpointRouting = false).AddSessionStateTempDataProvider();
 
 /* --- EMAIL --- */
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<EmailSettings>(options =>
+{
+    options.Server = server.Value;
+    options.Port = int.Parse(port.Value);
+    options.SenderName = senderName.Value;
+    options.SenderEmail = senderEmail.Value;
+    options.Username = username.Value;
+    options.Password = password.Value;
+});
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 /* --- PDF --- */

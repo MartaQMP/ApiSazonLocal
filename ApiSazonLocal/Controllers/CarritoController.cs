@@ -1,7 +1,9 @@
 using ApiSazonLocal.Helpers;
 using ApiSazonLocal.Repositories;
+using ApiSazonLocal.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SazonLocalInterfaces.Interfaces;
 using SazonLocalModels.Dto;
@@ -15,11 +17,15 @@ namespace ApiSazonLocal.Controllers
     {
         private IRepository repo;
         private HelperToken helper;
+        private BlobService service;
+        private string containerName = "productos-sl";
+        private string containerSubcategoria = "subcategorias-sl";
 
-        public CarritoController(IRepository repo, HelperToken helper)
+        public CarritoController(IRepository repo, HelperToken helper, BlobService service)
         {
             this.repo = repo;
             this.helper = helper;
+            this.service = service;
         }
 
         [Authorize]
@@ -28,7 +34,19 @@ namespace ApiSazonLocal.Controllers
         public async Task<ActionResult<List<CarritoItem>>> GetCarritoUsuario()
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
-            var carrito = await this.repo.GetCarritoUsuarioAsync(usuario.IdUsuario);
+            List<CarritoItem> carrito = await this.repo.GetCarritoUsuarioAsync(usuario.IdUsuario);
+            foreach (CarritoItem item in carrito)
+            {
+                
+                if (!string.IsNullOrEmpty(item.Producto.Imagen))
+                {
+                    item.Producto.Imagen = this.service.GetBlobSasUrl(containerName, item.Producto.Imagen);
+                }
+                else
+                {
+                    item.Producto.Imagen = this.service.GetBlobSasUrl(containerSubcategoria, item.Producto.Subcategoria.Imagen);
+                }
+            }
             return Ok(carrito);
         }
 

@@ -15,14 +15,12 @@ namespace MvcSazonLocal.Controllers
     public class CompraController : Controller
     {
         private readonly SazonApiService serviceApi;
-        private readonly HelperPath helper;
         private readonly IEmailService emailService;
         private readonly IPdfService pdfService;
 
-        public CompraController(SazonApiService serviceApi, HelperPath helper, IEmailService emailService, IPdfService pdfService)
+        public CompraController(SazonApiService serviceApi, IEmailService emailService, IPdfService pdfService)
         {
             this.serviceApi = serviceApi;
-            this.helper = helper;
             this.emailService = emailService;
             this.pdfService = pdfService;
         }
@@ -58,13 +56,6 @@ namespace MvcSazonLocal.Controllers
                 listaCarrito = await this.serviceApi.GetCarritoUsuarioAsync();
             }
 
-            foreach (CarritoItem item in listaCarrito)
-            {
-                if (!string.IsNullOrEmpty(item.Producto.Imagen))
-                    item.Producto.Imagen = this.helper.MapUrlPath(item.Producto.Imagen, Folders.Productos);
-                else
-                    item.Producto.Imagen = this.helper.MapUrlPath(item.Producto.Subcategoria.Imagen, Folders.Subcategorias);
-            }
             List<CarritoItem> insuficientes = listaCarrito.Where(c => c.Producto.Stock > 0 && c.Producto.Stock < c.Cantidad).ToList();
             List<CarritoItem> agotados = listaCarrito.Where(c => c.Producto.Stock <= 0).ToList();
 

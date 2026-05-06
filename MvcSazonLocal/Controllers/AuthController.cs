@@ -86,7 +86,7 @@ namespace MvcSazonLocal.Controllers
             string action = TempData["action"]?.ToString() ?? "Productos";
             string controller = TempData["controller"]?.ToString() ?? "Productos";
 
-            await MigrarCarritoSessionABBDD(user.IdUsuario);
+            await MigrarCarritoSessionABBDD(user.IdUsuario, token);
             
             return RedirectToAction(action, controller);
         }
@@ -200,7 +200,7 @@ namespace MvcSazonLocal.Controllers
         #endregion
 
         #region MIGRAR CARRITO SESSION A BBDD
-        private async Task MigrarCarritoSessionABBDD(int idUsuario)
+        private async Task MigrarCarritoSessionABBDD(int idUsuario, string token)
         {
             var carritoSession = HttpContext.Session.GetObject<Dictionary<int, int>>("CARRITO");
 
@@ -208,7 +208,7 @@ namespace MvcSazonLocal.Controllers
             {
                 foreach (var item in carritoSession)
                 {
-                    await this.serviceApi.InsertarProductoCarritoAsync(item.Value, item.Key);
+                    await this.serviceApi.InsertarProductoCarritoAsync(item.Value, item.Key, token);
                 }
                 HttpContext.Session.Remove("CARRITO");
             }

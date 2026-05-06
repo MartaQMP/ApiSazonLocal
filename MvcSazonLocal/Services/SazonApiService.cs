@@ -14,9 +14,9 @@ namespace MvcSazonLocal.Services
         private MediaTypeWithQualityHeaderValue header;
         private IHttpContextAccessor accessor;
 
-        public SazonApiService(IConfiguration configuration, IHttpContextAccessor accessor)
+        public SazonApiService(string connection, IHttpContextAccessor accessor)
         {
-            this.ApiUrl = configuration.GetValue<string>("ApiUrls:ApiSazon");
+            this.ApiUrl = connection;
             this.header = new MediaTypeWithQualityHeaderValue("application/json");
             this.accessor = accessor;
         }
@@ -753,9 +753,12 @@ namespace MvcSazonLocal.Services
         #endregion
 
         #region Carrito
-        public async Task InsertarProductoCarritoAsync(int cantidad, int idProducto)
+        public async Task InsertarProductoCarritoAsync(int cantidad, int idProducto, string? token)
         {
-            string token = this.GetToken();
+            if (token == null)
+            {
+                token = this.GetToken();
+            }
             using (HttpClient client = new HttpClient())
             {
                 string request = "api/Carrito";
@@ -789,7 +792,7 @@ namespace MvcSazonLocal.Services
             string token = this.GetToken();
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/Carrito/ActualizarCantidad";
+                string request = "api/Carrito/ActualizarCantidadProductoCarrito";
                 client.BaseAddress = new Uri(this.ApiUrl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(this.header);
