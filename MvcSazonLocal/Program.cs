@@ -32,6 +32,8 @@ KeyVaultSecret password = await secretClient.GetSecretAsync("EmailSettings--Pass
 
 KeyVaultSecret insights = await secretClient.GetSecretAsync("ApplicationInsights");
 
+KeyVaultSecret strikeyKey = await secretClient.GetSecretAsync("StripeSecretKey");
+
 /* ---APPLICATION INSIGHTS--- */
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
@@ -96,10 +98,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-DotEnv.Load();
-
-var stripeKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
-StripeConfiguration.ApiKey = stripeKey;
+StripeConfiguration.ApiKey = strikeyKey.Value;
 
 app.UseRequestLocalization(localizationOptions);
 
