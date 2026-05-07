@@ -1,5 +1,4 @@
 using Azure.Security.KeyVault.Secrets;
-using dotenv.net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;

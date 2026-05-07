@@ -115,7 +115,7 @@ namespace ApiSazonLocal.Controllers
         [Authorize]
         [HttpPut]
         [Route("[action]")]
-        public async Task<ActionResult> ActualizarPerfil([FromForm] UsuarioDto user, IFormFile imagen)
+        public async Task<ActionResult> ActualizarPerfil([FromForm] UsuarioDto user, IFormFile? imagen)
         {
             UsuarioLogin usuario = this.helper.GetUsuario();
             Usuario usuarioExistente = await this.repo.GetUsuarioByIdAsync(usuario.IdUsuario);
