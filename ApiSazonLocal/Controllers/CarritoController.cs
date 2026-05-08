@@ -18,8 +18,8 @@ namespace ApiSazonLocal.Controllers
         private IRepository repo;
         private HelperToken helper;
         private BlobService service;
-        private string containerName = "productos-sl";
-        private string containerSubcategoria = "subcategorias-sl";
+        private string containerName = "productos";
+        private string containerSubcategoria = "subcategorias";
 
         public CarritoController(IRepository repo, HelperToken helper, BlobService service)
         {

@@ -21,7 +21,7 @@ namespace ApiSazonLocal.Controllers
         private HelperToken helper;
         private BlobService service;
         private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
-        private string containerName = "usuarios-sl";
+        private string containerName = "usuarios";
 
         public UsuariosController(IRepository repo, HelperToken helper, BlobService service)
         {

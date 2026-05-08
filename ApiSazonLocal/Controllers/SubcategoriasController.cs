@@ -18,7 +18,7 @@ namespace ApiSazonLocal.Controllers
         private IRepository repo;
         private BlobService service;
         private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
-        private string containerName = "subcategorias-sl";
+        private string containerName = "subcategorias";
 
         public SubcategoriasController(IRepository repo, BlobService service)
         {

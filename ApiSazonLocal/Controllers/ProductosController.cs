@@ -18,8 +18,8 @@ namespace ApiSazonLocal.Controllers
         private HelperToken helper;
         private BlobService service;
         private static string[] extensionesValidas = { ".jpg", ".jpeg", ".png" };
-        private string containerName = "productos-sl";
-        private string containerSubcategoria = "subcategorias-sl";
+        private string containerName = "productos";
+        private string containerSubcategoria = "subcategorias";
 
         public ProductosController(IRepository repo, HelperToken helper, BlobService service)
         {
